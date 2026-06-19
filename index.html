@@ -1,5 +1,4 @@
 <!DOCTYPE html>
-
 <html lang="es">
 <head>
 <meta charset="UTF-8">
@@ -8,7 +7,6 @@
 <title>DeltaF | Plataforma de Solicitud de Exámenes</title>
 
 <style>
-
 *{
 margin:0;
 padding:0;
@@ -106,20 +104,23 @@ font-weight:700;
 cursor:pointer;
 transition:.3s;
 box-shadow:0 8px 20px rgba(0,0,0,.15);
+text-decoration:none;
+display:inline-block;
 }
 
 .hero-btn:hover{
 transform:translateY(-3px);
 }
 
+.hero-btn.green{
+background:#16a34a;
+color:white;
+}
+
 .section{
 max-width:1200px;
 margin:auto;
 padding:80px 20px;
-}
-
-.hidden{
-display:none;
 }
 
 .section h2{
@@ -162,22 +163,28 @@ color:#06b6d4;
 margin:15px 0;
 }
 
+.card-btn{
+display:inline-block;
+margin-top:20px;
+background:#2563eb;
+color:white;
+padding:14px 22px;
+border-radius:10px;
+text-decoration:none;
+font-weight:800;
+}
+
+.card-btn.green{
+background:#16a34a;
+}
+
 .form-box{
 background:white;
 padding:40px;
 border-radius:20px;
 box-shadow:0 10px 25px rgba(0,0,0,.08);
 margin-top:40px;
-}
-
-input,
-textarea,
-select{
-width:100%;
-padding:15px;
-margin-bottom:15px;
-border:1px solid #cbd5e1;
-border-radius:10px;
+text-align:center;
 }
 
 .submit-btn{
@@ -188,10 +195,8 @@ padding:15px 25px;
 border-radius:10px;
 font-weight:700;
 cursor:pointer;
-}
-
-.submit-btn:hover{
-background:#1d4ed8;
+text-decoration:none;
+display:inline-block;
 }
 
 .footer{
@@ -237,7 +242,6 @@ color:#94a3b8;
 }
 
 @media(max-width:768px){
-
 nav{
 flex-direction:column;
 gap:15px;
@@ -255,33 +259,27 @@ font-size:2rem;
 grid-template-columns:1fr;
 text-align:center;
 }
-
 }
-
 </style>
-
 </head>
 
 <body>
 
 <nav>
-
 <div class="nav-logo">
 <img src="img/logo-deltaf.png" alt="DeltaF">
 </div>
 
 <div class="nav-links">
 <a href="#">Inicio</a>
-<a href="#" onclick="mostrarProfesional()">Profesionales</a>
-<a href="#" onclick="mostrarPaciente()">Pacientes</a>
-<a href="#login">Iniciar Sesión</a>
+<a href="#profesional">Profesionales</a>
+<a href="#paciente">Pacientes</a>
+<a href="login.html">Iniciar Sesión</a>
 <a href="#contacto">Contacto</a>
 </div>
-
 </nav>
 
 <header>
-
 <div class="logo">
 <img src="img/logo-deltaf.png" alt="DeltaF">
 </div>
@@ -293,25 +291,20 @@ Conectamos profesionales de la salud y pacientes con un proceso simple, rápido 
 </p>
 
 <div class="hero-buttons">
-
-<button class="hero-btn" onclick="mostrarProfesional()">
+<a href="#profesional" class="hero-btn">
 🩺 SOY PROFESIONAL
-</button>
+</a>
 
-<button class="hero-btn" onclick="mostrarPaciente()">
-👤 SOY PACIENTE
-</button>
-
+<a href="pacientes.html" class="hero-btn green">
+👤 SOY PACIENTE · ORDEN $4.990
+</a>
 </div>
-
 </header>
 
-<section id="profesional" class="section hidden">
-
+<section id="profesional" class="section">
 <h2>Profesionales de la Salud</h2>
 
 <div class="cards">
-
 <div class="card">
 <h3>Dirigido a</h3>
 <ul>
@@ -321,124 +314,116 @@ Conectamos profesionales de la salud y pacientes con un proceso simple, rápido 
 <li>Fonoaudiólogos(as)</li>
 <li>Terapeutas Ocupacionales</li>
 <li>Acupunturistas</li>
-<li>Naturopatas</li>
+<li>Naturópatas</li>
 </ul>
 </div>
 
 <div class="card">
 <h3>Orden Individual</h3>
 <div class="price">$3.990</div>
-<p>Valor normal $4.990</p>
+<p>Solicitud de orden médica para exámenes clínicos o imagenológicos.</p>
+<a href="login.html" class="card-btn">Ingresar</a>
 </div>
 
 <div class="card">
-<h3>Promoción Lanzamiento</h3>
-<div class="price">10 x $30.000</div>
-<p>Promoción única.</p>
+<h3>Pack Profesional</h3>
+<div class="price">10 x $29.990</div>
+<p>Ideal para profesionales que solicitan órdenes de forma frecuente.</p>
+<a href="comprar-ordenes.html" class="card-btn">Comprar órdenes</a>
 </div>
 
+<div class="card">
+<h3>Registro Profesional</h3>
+<p>
+Crea tu cuenta profesional y solicita validación para comenzar a usar DeltaF.
+</p>
+<a href="registro-profesional.html" class="card-btn">Registrarme</a>
 </div>
-
+</div>
 </section>
 
-<section id="paciente" class="section hidden">
-
-<h2>Pacientes</h2>
+<section id="paciente" class="section">
+<h2>Pacientes Directos</h2>
 
 <div class="cards">
-
 <div class="card">
-<h3>Solicitud Individual</h3>
-<div class="price">$4.990 - $6.990</div>
-<p>Dependiendo del tipo de examen.</p>
+<h3>Orden médica online</h3>
+<div class="price">$4.990</div>
+<p>Valor promocional fijo por solicitud de orden médica de exámenes.</p>
+<a href="pacientes.html" class="card-btn green">Solicitar orden</a>
 </div>
 
 <div class="card">
 <h3>Proceso</h3>
 <ul>
-<li>Completa tus datos</li>
-<li>Selecciona exámenes</li>
-<li>Realiza el pago</li>
-<li>Recibe tu solicitud</li>
+<li>Realiza el pago por Transbank.</li>
+<li>Completa tus datos y exámenes solicitados.</li>
+<li>El médico revisa la solicitud.</li>
+<li>Recibe tu orden en PDF si corresponde.</li>
 </ul>
 </div>
 
+<div class="card">
+<h3>Validación</h3>
+<p>
+Cada orden puede verificarse mediante código de validación DeltaF.
+</p>
 </div>
-
+</div>
 </section>
 
 <section id="login" class="section">
-
-<h2>Iniciar Sesión</h2>
+<h2>Acceso Plataforma</h2>
 
 <div class="form-box">
-
-<input type="email" placeholder="Correo Electrónico">
-
-<input type="password" placeholder="Contraseña">
-
-<button class="submit-btn">
-Ingresar
-</button>
-
+<p>Ingresa a tu cuenta profesional para solicitar órdenes o revisar tus solicitudes.</p>
+<br>
+<a href="login.html" class="submit-btn">
+Ingresar a DeltaF
+</a>
 </div>
-
 </section>
 
 <section id="contacto" class="section">
-
 <h2>Contacto</h2>
 
 <div class="form-box">
-
-<input type="text" placeholder="Nombre">
-
-<input type="email" placeholder="Correo Electrónico">
-
-<textarea rows="5" placeholder="Mensaje"></textarea>
-
-<button class="submit-btn">
-Enviar Consulta
-</button>
-
+<p>
+Para consultas comerciales o soporte, escríbenos a:
+</p>
+<br>
+<a href="mailto:contacto@deltaf.site" class="submit-btn">
+contacto@deltaf.site
+</a>
 </div>
-
 </section>
 
 <footer class="footer">
-
 <div class="footer-container">
 
 <div class="footer-brand">
-
 <img src="img/logo-deltaf.png" alt="DeltaF">
-
 <p>
 Tecnología para facilitar el acceso a exámenes clínicos y apoyar el seguimiento terapéutico de los pacientes.
 </p>
-
 </div>
 
 <div class="footer-column">
-
 <h3>Plataforma</h3>
-
-<a href="#">Inicio</a> <a href="#">Profesionales</a> <a href="#">Pacientes</a> <a href="#login">Iniciar Sesión</a>
-
+<a href="#">Inicio</a>
+<a href="#profesional">Profesionales</a>
+<a href="pacientes.html">Pacientes</a>
+<a href="login.html">Iniciar Sesión</a>
 </div>
 
 <div class="footer-column">
-
 <h3>Contacto</h3>
-
 <a href="mailto:contacto@deltaf.site">
 contacto@deltaf.site
 </a>
-
 <a href="https://www.deltaf.site">
 www.deltaf.site
 </a>
-
 </div>
 
 </div>
@@ -446,32 +431,7 @@ www.deltaf.site
 <div class="footer-bottom">
 © 2026 DeltaF. Todos los derechos reservados.
 </div>
-
 </footer>
-
-<script>
-
-function mostrarProfesional(){
-
-document.getElementById("profesional").classList.remove("hidden");
-document.getElementById("paciente").classList.add("hidden");
-
-document.getElementById("profesional")
-.scrollIntoView({behavior:"smooth"});
-
-}
-
-function mostrarPaciente(){
-
-document.getElementById("paciente").classList.remove("hidden");
-document.getElementById("profesional").classList.add("hidden");
-
-document.getElementById("paciente")
-.scrollIntoView({behavior:"smooth"});
-
-}
-
-</script>
 
 </body>
 </html>
