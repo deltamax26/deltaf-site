@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Comprar Órdenes | DeltaF</title>
+
+<style>
+
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;
+}
+
+body{
+background:#f8fafc;
+padding:30px;
+}
+
+.container{
+max-width:1200px;
+margin:auto;
+}
+
+.header{
+text-align:center;
+margin-bottom:40px;
+}
+
+.header img{
+width:220px;
+margin-bottom:20px;
+}
+
+.header h1{
+color:#2563eb;
+margin-bottom:10px;
+}
+
+.header p{
+color:#64748b;
+}
+
+.plans{
+display:grid;
+grid-template-columns:repeat(auto-fit,minmax(320px,1fr));
+gap:25px;
+}
+
+.plan{
+background:white;
+padding:35px;
+border-radius:20px;
+box-shadow:0 10px 25px rgba(0,0,0,.08);
+text-align:center;
+position:relative;
+}
+
+.featured{
+border:3px solid #2563eb;
+transform:scale(1.03);
+}
+
+.badge{
+position:absolute;
+top:-12px;
+left:50%;
+transform:translateX(-50%);
+background:#2563eb;
+color:white;
+padding:8px 16px;
+border-radius:30px;
+font-size:.85rem;
+font-weight:bold;
+}
+
+.plan h2{
+color:#2563eb;
+margin-bottom:15px;
+}
+
+.price{
+font-size:2.5rem;
+font-weight:800;
+color:#0f172a;
+margin-bottom:15px;
+}
+
+.plan ul{
+list-style:none;
+margin-bottom:25px;
+}
+
+.plan li{
+padding:8px 0;
+color:#475569;
+}
+
+.btn{
+display:block;
+width:100%;
+background:#2563eb;
+color:white;
+text-decoration:none;
+padding:16px;
+border-radius:12px;
+font-weight:bold;
+transition:.3s;
+}
+
+.btn:hover{
+background:#1d4ed8;
+}
+
+.notice{
+margin-top:40px;
+background:#eff6ff;
+padding:25px;
+border-left:5px solid #2563eb;
+border-radius:12px;
+}
+
+.notice h3{
+color:#2563eb;
+margin-bottom:10px;
+}
+
+@media(max-width:768px){
+
+.featured{
+transform:none;
+}
+
+}
+
+</style>
+
+</head>
+
+<body>
+
+<div class="container">
+
+<div class="header">
+
+<img src="img/logo-deltaf.png" alt="DeltaF">
+
+<h1>Comprar Órdenes</h1>
+
+<p>
+Seleccione el plan que mejor se adapte a su práctica profesional.
+</p>
+
+</div>
+
+<div class="plans">
+
+<div class="plan">
+
+<h2>Orden Individual</h2>
+
+<div class="price">$3.990</div>
+
+<ul>
+<li>1 orden médica</li>
+<li>Solicitud inmediata</li>
+<li>Seguimiento de estado</li>
+<li>Validez estándar</li>
+</ul>
+
+<a href="#" class="btn">
+Comprar
+</a>
+
+</div>
+
+<div class="plan featured">
+
+<div class="badge">
+MÁS POPULAR
+</div>
+
+<h2>Pack Profesional</h2>
+
+<div class="price">$29.990</div>
+
+<ul>
+<li>10 órdenes médicas</li>
+<li>$2.999 por orden aprox.</li>
+<li>Ahorro frente a compra individual</li>
+<li>Ideal para consultas frecuentes</li>
+</ul>
+
+<a href="#" class="btn">
+Comprar Pack
+</a>
+
+</div>
+
+<div class="plan">
+
+<h2>Plan Avanzado</h2>
+
+<div class="price">$50.000</div>
+
+<ul>
+<li>20 órdenes médicas</li>
+<li>$2.500 por orden</li>
+<li>Mayor rendimiento</li>
+<li>Ideal para alto volumen</li>
+</ul>
+
+<a href="#" class="btn">
+Comprar Plan
+</a>
+
+</div>
+
+</div>
+
+<div class="notice">
+
+<h3>Información Importante</h3>
+
+<p>
+
+Las órdenes adquiridas podrán utilizarse para solicitudes de exámenes clínicos e imagenológicos disponibles en la plataforma.
+
+<br><br>
+
+Una vez confirmado el pago, las órdenes se acreditarán automáticamente a su cuenta profesional.
+
+</p>
+
+</div>
+
+</div>
+
+</body>
+
+</html>
