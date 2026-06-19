@@ -32,6 +32,9 @@ tr:hover td{background:#f8fafc;}
 .pendiente{background:#fef3c7;color:#92400e;}
 .aprobada{background:#dcfce7;color:#166534;}
 .rechazada{background:#fee2e2;color:#991b1b;}
+.origen{padding:7px 11px;border-radius:8px;font-weight:700;display:inline-block;}
+.origen-profesional{background:#dbeafe;color:#1e40af;}
+.origen-paciente{background:#f3e8ff;color:#6b21a8;}
 .grid{display:grid;grid-template-columns:1fr 1fr;gap:20px;}
 .field{background:#f8fafc;padding:15px;border-radius:10px;}
 .label{font-size:.85rem;color:#64748b;margin-bottom:5px;}
@@ -92,12 +95,13 @@ body{padding:15px;}
 </div>
 
 <div class="table-card">
-<h2>Solicitudes</h2>
+<h2>Solicitudes Profesionales y Pacientes Directos</h2>
 
 <table>
 <thead>
 <tr>
 <th>Código</th>
+<th>Origen</th>
 <th>Paciente</th>
 <th>RUT</th>
 <th>Exámenes</th>
@@ -115,11 +119,13 @@ body{padding:15px;}
 
 <div class="grid">
 <div class="field"><div class="label">Código</div><div id="detalleCodigo" class="value"></div></div>
+<div class="field"><div class="label">Origen</div><div id="detalleOrigen" class="value"></div></div>
 <div class="field"><div class="label">Paciente</div><div id="detallePaciente" class="value"></div></div>
 <div class="field"><div class="label">RUT</div><div id="detalleRut" class="value"></div></div>
 <div class="field"><div class="label">Correo Paciente</div><div id="detalleCorreo" class="value"></div></div>
 <div class="field"><div class="label">Fecha</div><div id="detalleFecha" class="value"></div></div>
 <div class="field"><div class="label">Estado</div><div id="detalleEstado" class="value"></div></div>
+<div class="field"><div class="label">Comprobante</div><div id="detalleComprobante" class="value"></div></div>
 </div>
 
 <br>
@@ -135,7 +141,7 @@ body{padding:15px;}
 <br>
 
 <h3 style="margin-bottom:15px;">Observaciones Médicas</h3>
-<textarea id="observacionesMedicas" placeholder="Agregar observaciones para el profesional..."></textarea>
+<textarea id="observacionesMedicas" placeholder="Agregar observaciones para el profesional o paciente..."></textarea>
 
 <div class="actions">
 <button class="btn approve" onclick="aprobarConPDF()">✅ Aprobar y Generar PDF</button>
@@ -159,6 +165,8 @@ const MEDICO_RUT = "24.891.056-9";
 const MEDICO_REGISTRO = "544925";
 
 let ordenes = [];
+let solicitudesPacientes = [];
+let solicitudesCombinadas = [];
 let ordenSeleccionada = null;
 
 const mensaje = document.getElementById("mensaje");
@@ -222,21 +230,52 @@ return true;
 async function cargarOrdenes(){
 mostrarMensaje("Cargando solicitudes...", "loading");
 
-const { data, error } = await supabaseClient
+const { data: ordenesData, error: ordenesError } = await supabaseClient
 .from("ordenes")
 .select("*")
 .order("created_at", { ascending:false });
 
-if(error){
-mostrarMensaje("Error al cargar órdenes: " + error.message, "error");
+if(ordenesError){
+mostrarMensaje("Error al cargar órdenes profesionales: " + ordenesError.message, "error");
 return;
 }
 
-ordenes = data || [];
+const { data: pacientesData, error: pacientesError } = await supabaseClient
+.from("solicitudes_pacientes")
+.select("*")
+.order("created_at", { ascending:false });
+
+if(pacientesError){
+mostrarMensaje("Error al cargar solicitudes de pacientes: " + pacientesError.message, "error");
+return;
+}
+
+ordenes = ordenesData || [];
+solicitudesPacientes = pacientesData || [];
+
+solicitudesCombinadas = [
+...ordenes.map(o => ({
+...o,
+_origen:"profesional",
+_codigo:o.codigo || "-",
+_examenes:o.tipo_orden || "-",
+_tabla:"ordenes"
+})),
+...solicitudesPacientes.map(p => ({
+...p,
+_origen:"paciente",
+_codigo:"PAC-" + p.id,
+_examenes:p.examenes_solicitados || "-",
+_tabla:"solicitudes_pacientes"
+}))
+];
+
+solicitudesCombinadas.sort((a,b) => new Date(b.created_at) - new Date(a.created_at));
+
 actualizarEstadisticas();
 renderizarTabla();
 
-if(ordenes.length === 0){
+if(solicitudesCombinadas.length === 0){
 mostrarMensaje("No existen solicitudes registradas.", "empty");
 }else{
 ocultarMensaje();
@@ -245,58 +284,62 @@ ocultarMensaje();
 
 function actualizarEstadisticas(){
 document.getElementById("totalPendientes").textContent =
-ordenes.filter(o => o.estado === "pendiente").length;
+solicitudesCombinadas.filter(o => o.estado === "pendiente").length;
 
 document.getElementById("totalAprobadas").textContent =
-ordenes.filter(o => o.estado === "aprobada").length;
+solicitudesCombinadas.filter(o => o.estado === "aprobada").length;
 
 document.getElementById("totalRechazadas").textContent =
-ordenes.filter(o => o.estado === "rechazada").length;
+solicitudesCombinadas.filter(o => o.estado === "rechazada").length;
 }
 
 function renderizarTabla(){
 tablaOrdenes.innerHTML = "";
 
-if(ordenes.length === 0){
-tablaOrdenes.innerHTML = `<tr><td colspan="6">No hay solicitudes.</td></tr>`;
+if(solicitudesCombinadas.length === 0){
+tablaOrdenes.innerHTML = `<tr><td colspan="7">No hay solicitudes.</td></tr>`;
 return;
 }
 
-ordenes.forEach(orden => {
+solicitudesCombinadas.forEach(item => {
 const fila = document.createElement("tr");
 
+const claseOrigen = item._origen === "paciente" ? "origen-paciente" : "origen-profesional";
+const textoOrigen = item._origen === "paciente" ? "Paciente directo" : "Profesional";
+
 fila.innerHTML = `
-<td>${orden.codigo || "-"}</td>
-<td>${orden.nombre_paciente || "-"}</td>
-<td>${orden.rut_paciente || "-"}</td>
-<td>${orden.tipo_orden || "-"}</td>
-<td>${formatearFecha(orden.created_at)}</td>
-<td><span class="status ${orden.estado || "pendiente"}">${orden.estado || "pendiente"}</span></td>
+<td>${item._codigo || "-"}</td>
+<td><span class="origen ${claseOrigen}">${textoOrigen}</span></td>
+<td>${item.nombre_paciente || "-"}</td>
+<td>${item.rut_paciente || "-"}</td>
+<td>${item._examenes || "-"}</td>
+<td>${formatearFecha(item.created_at)}</td>
+<td><span class="status ${item.estado || "pendiente"}">${item.estado || "pendiente"}</span></td>
 `;
 
 fila.addEventListener("click", function(){
-seleccionarOrden(orden.id);
+seleccionarSolicitud(item);
 });
 
 tablaOrdenes.appendChild(fila);
 });
 }
 
-function seleccionarOrden(id){
-ordenSeleccionada = ordenes.find(o => o.id === id);
+function seleccionarSolicitud(item){
+ordenSeleccionada = item;
 
-if(!ordenSeleccionada) return;
+document.getElementById("detalleCodigo").textContent = item._codigo || "-";
+document.getElementById("detalleOrigen").textContent = item._origen === "paciente" ? "Paciente directo" : "Profesional";
+document.getElementById("detallePaciente").textContent = item.nombre_paciente || "-";
+document.getElementById("detalleRut").textContent = item.rut_paciente || "-";
+document.getElementById("detalleCorreo").textContent = item.correo_paciente || "-";
+document.getElementById("detalleFecha").textContent = formatearFecha(item.created_at);
+document.getElementById("detalleEstado").textContent = item.estado || "pendiente";
+document.getElementById("detalleComprobante").textContent = item.comprobante || "-";
+document.getElementById("detalleMotivo").textContent = item.motivo || "-";
+document.getElementById("observacionesMedicas").value = item.observaciones || "";
 
-document.getElementById("detalleCodigo").textContent = ordenSeleccionada.codigo || "-";
-document.getElementById("detallePaciente").textContent = ordenSeleccionada.nombre_paciente || "-";
-document.getElementById("detalleRut").textContent = ordenSeleccionada.rut_paciente || "-";
-document.getElementById("detalleCorreo").textContent = ordenSeleccionada.correo_paciente || "-";
-document.getElementById("detalleFecha").textContent = formatearFecha(ordenSeleccionada.created_at);
-document.getElementById("detalleEstado").textContent = ordenSeleccionada.estado || "pendiente";
-document.getElementById("detalleMotivo").textContent = ordenSeleccionada.motivo || "-";
-document.getElementById("observacionesMedicas").value = ordenSeleccionada.observaciones || "";
-
-const examenes = (ordenSeleccionada.tipo_orden || "").split(",").map(e => e.trim()).filter(Boolean);
+const examenes = (item._examenes || "").split(",").map(e => e.trim()).filter(Boolean);
 const contenedor = document.getElementById("detalleExamenes");
 
 contenedor.innerHTML = "";
@@ -354,7 +397,9 @@ const { jsPDF } = window.jspdf;
 const doc = new jsPDF();
 
 const fechaActual = new Date().toLocaleDateString("es-CL");
-const codigoOrden = orden.codigo || "-";
+const codigoOrden = orden._codigo || orden.codigo || "PAC-" + orden.id;
+const examenesOrden = orden._examenes || orden.tipo_orden || orden.examenes_solicitados || "-";
+
 const urlValidacion =
 "https://deltamax26.github.io/deltaf-site/validar.html?codigo=" + encodeURIComponent(codigoOrden);
 
@@ -422,7 +467,7 @@ doc.setFont("helvetica", "bold");
 doc.text("Exámenes solicitados:", 20, 115);
 
 doc.setFont("helvetica", "normal");
-const examenes = (orden.tipo_orden || "-").split(",").map(e => e.trim()).filter(Boolean);
+const examenes = examenesOrden.split(",").map(e => e.trim()).filter(Boolean);
 let y = 125;
 
 examenes.forEach(examen => {
@@ -485,7 +530,8 @@ return doc.output("blob");
 }
 
 async function subirPDF(orden, pdfBlob){
-const nombreArchivo = `${orden.codigo || "orden"}-${Date.now()}.pdf`;
+const codigoArchivo = orden._codigo || orden.codigo || "PAC-" + orden.id;
+const nombreArchivo = `${codigoArchivo}-${Date.now()}.pdf`;
 
 const { error: uploadError } = await supabaseClient
 .storage
@@ -509,7 +555,7 @@ return publicData.publicUrl;
 
 async function enviarCorreoOrden(orden, pdfUrl){
 if(!orden.correo_paciente){
-console.warn("La orden no tiene correo de paciente.");
+console.warn("La solicitud no tiene correo de paciente.");
 return { ok:false, message:"Sin correo de paciente" };
 }
 
@@ -523,7 +569,7 @@ headers: {
 body: JSON.stringify({
 email: orden.correo_paciente,
 nombre: orden.nombre_paciente || "Paciente",
-codigo: orden.codigo || "Orden médica",
+codigo: orden._codigo || orden.codigo || "Orden médica",
 pdfUrl: pdfUrl
 })
 });
@@ -561,6 +607,19 @@ const observaciones = document.getElementById("observacionesMedicas").value.trim
 const pdfBlob = await generarPDFBlob(ordenActual, observaciones);
 const pdfUrl = await subirPDF(ordenActual, pdfBlob);
 
+let errorUpdate = null;
+
+if(ordenActual._origen === "paciente"){
+const { error } = await supabaseClient
+.from("solicitudes_pacientes")
+.update({
+estado: "aprobada",
+pdf_url: pdfUrl
+})
+.eq("id", ordenId);
+
+errorUpdate = error;
+}else{
 const { error } = await supabaseClient
 .from("ordenes")
 .update({
@@ -570,8 +629,11 @@ pdf_url: pdfUrl
 })
 .eq("id", ordenId);
 
-if(error){
-throw error;
+errorUpdate = error;
+}
+
+if(errorUpdate){
+throw errorUpdate;
 }
 
 const resultadoCorreo = await enviarCorreoOrden(ordenActual, pdfUrl);
@@ -599,9 +661,22 @@ mostrarMensaje("Primero selecciona una solicitud.", "error");
 return;
 }
 
-const ordenId = ordenSeleccionada.id;
+const ordenActual = {...ordenSeleccionada};
+const ordenId = ordenActual.id;
 const observaciones = document.getElementById("observacionesMedicas").value.trim();
 
+let errorUpdate = null;
+
+if(ordenActual._origen === "paciente"){
+const { error } = await supabaseClient
+.from("solicitudes_pacientes")
+.update({
+estado: nuevoEstado
+})
+.eq("id", ordenId);
+
+errorUpdate = error;
+}else{
 const { error } = await supabaseClient
 .from("ordenes")
 .update({
@@ -610,8 +685,11 @@ observaciones: observaciones
 })
 .eq("id", ordenId);
 
-if(error){
-mostrarMensaje("Error al actualizar solicitud: " + error.message, "error");
+errorUpdate = error;
+}
+
+if(errorUpdate){
+mostrarMensaje("Error al actualizar solicitud: " + errorUpdate.message, "error");
 return;
 }
 
@@ -627,7 +705,8 @@ mostrarMensaje("Primero selecciona una solicitud.", "error");
 return;
 }
 
-const ordenId = ordenSeleccionada.id;
+const ordenActual = {...ordenSeleccionada};
+const ordenId = ordenActual.id;
 const observaciones = document.getElementById("observacionesMedicas").value.trim();
 
 if(!observaciones){
@@ -637,6 +716,18 @@ return;
 
 const texto = "Solicitud de modificación médica: " + observaciones;
 
+let errorUpdate = null;
+
+if(ordenActual._origen === "paciente"){
+const { error } = await supabaseClient
+.from("solicitudes_pacientes")
+.update({
+estado: "pendiente"
+})
+.eq("id", ordenId);
+
+errorUpdate = error;
+}else{
 const { error } = await supabaseClient
 .from("ordenes")
 .update({
@@ -645,8 +736,11 @@ observaciones: texto
 })
 .eq("id", ordenId);
 
-if(error){
-mostrarMensaje("Error al solicitar modificación: " + error.message, "error");
+errorUpdate = error;
+}
+
+if(errorUpdate){
+mostrarMensaje("Error al solicitar modificación: " + errorUpdate.message, "error");
 return;
 }
 
