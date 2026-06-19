@@ -1,220 +1,59 @@
 <!DOCTYPE html>
 <html lang="es">
-
 <head>
-
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
 <title>Panel Médico | DeltaF</title>
 
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
 <style>
-
-*{
-margin:0;
-padding:0;
-box-sizing:border-box;
-font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;
-}
-
-body{
-background:#f8fafc;
-padding:30px;
-}
-
-.container{
-max-width:1400px;
-margin:auto;
-}
-
-.header{
-background:white;
-padding:25px;
-border-radius:20px;
-box-shadow:0 10px 25px rgba(0,0,0,.06);
-display:flex;
-justify-content:space-between;
-align-items:center;
-margin-bottom:25px;
-flex-wrap:wrap;
-gap:20px;
-}
-
-.logo{
-height:70px;
-}
-
-.header h1{
-color:#2563eb;
-}
-
-.stats{
-display:grid;
-grid-template-columns:repeat(auto-fit,minmax(250px,1fr));
-gap:20px;
-margin-bottom:25px;
-}
-
-.stat{
-background:white;
-padding:25px;
-border-radius:18px;
-box-shadow:0 10px 25px rgba(0,0,0,.06);
-}
-
-.stat h3{
-color:#64748b;
-margin-bottom:10px;
-}
-
-.number{
-font-size:2rem;
-font-weight:800;
-color:#2563eb;
-}
-
-.card{
-background:white;
-padding:30px;
-border-radius:20px;
-box-shadow:0 10px 25px rgba(0,0,0,.06);
-margin-bottom:25px;
-}
-
-.card h2{
-color:#2563eb;
-margin-bottom:20px;
-}
-
-.grid{
-display:grid;
-grid-template-columns:1fr 1fr;
-gap:20px;
-}
-
-.field{
-background:#f8fafc;
-padding:15px;
-border-radius:10px;
-}
-
-.label{
-font-size:.85rem;
-color:#64748b;
-margin-bottom:5px;
-}
-
-.value{
-font-weight:600;
-}
-
-.exam-list{
-display:grid;
-grid-template-columns:repeat(auto-fit,minmax(250px,1fr));
-gap:10px;
-}
-
-.exam{
-background:#eff6ff;
-padding:12px;
-border-radius:10px;
-}
-
-textarea{
-width:100%;
-padding:15px;
-border:1px solid #cbd5e1;
-border-radius:12px;
-resize:vertical;
-min-height:120px;
-}
-
-.actions{
-display:grid;
-grid-template-columns:repeat(3,1fr);
-gap:15px;
-margin-top:20px;
-}
-
-.btn{
-padding:16px;
-border:none;
-border-radius:12px;
-font-weight:bold;
-cursor:pointer;
-font-size:1rem;
-}
-
-.approve{
-background:#16a34a;
-color:white;
-}
-
-.modify{
-background:#f59e0b;
-color:white;
-}
-
-.reject{
-background:#dc2626;
-color:white;
-}
-
-.table-card{
-background:white;
-padding:25px;
-border-radius:20px;
-box-shadow:0 10px 25px rgba(0,0,0,.06);
-}
-
-table{
-width:100%;
-border-collapse:collapse;
-}
-
-th{
-background:#2563eb;
-color:white;
-padding:15px;
-text-align:left;
-}
-
-td{
-padding:15px;
-border-bottom:1px solid #e2e8f0;
-}
-
-.status{
-padding:8px 12px;
-border-radius:8px;
-font-weight:bold;
-}
-
-.pending{
-background:#fef3c7;
-color:#92400e;
-}
-
+*{margin:0;padding:0;box-sizing:border-box;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;}
+body{background:#f8fafc;padding:30px;color:#1e293b;}
+.container{max-width:1400px;margin:auto;}
+.header{background:white;padding:25px;border-radius:20px;box-shadow:0 10px 25px rgba(0,0,0,.06);display:flex;justify-content:space-between;align-items:center;margin-bottom:25px;flex-wrap:wrap;gap:20px;}
+.logo{height:70px;}
+.header h1{color:#2563eb;}
+.header a{color:#2563eb;text-decoration:none;font-weight:700;}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:20px;margin-bottom:25px;}
+.stat{background:white;padding:25px;border-radius:18px;box-shadow:0 10px 25px rgba(0,0,0,.06);}
+.stat h3{color:#64748b;margin-bottom:10px;}
+.number{font-size:2rem;font-weight:800;color:#2563eb;}
+.card,.table-card{background:white;padding:25px;border-radius:20px;box-shadow:0 10px 25px rgba(0,0,0,.06);margin-bottom:25px;}
+.card h2,.table-card h2{color:#2563eb;margin-bottom:20px;}
+table{width:100%;border-collapse:collapse;}
+th{background:#2563eb;color:white;padding:15px;text-align:left;}
+td{padding:15px;border-bottom:1px solid #e2e8f0;}
+tr{cursor:pointer;}
+tr:hover td{background:#f8fafc;}
+.status{padding:8px 12px;border-radius:8px;font-weight:bold;display:inline-block;text-transform:capitalize;}
+.pendiente{background:#fef3c7;color:#92400e;}
+.aprobada{background:#dcfce7;color:#166534;}
+.rechazada{background:#fee2e2;color:#991b1b;}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:20px;}
+.field{background:#f8fafc;padding:15px;border-radius:10px;}
+.label{font-size:.85rem;color:#64748b;margin-bottom:5px;}
+.value{font-weight:600;white-space:pre-wrap;}
+.exam-list{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:10px;}
+.exam{background:#eff6ff;padding:12px;border-radius:10px;}
+textarea{width:100%;padding:15px;border:1px solid #cbd5e1;border-radius:12px;resize:vertical;min-height:120px;}
+.actions{display:grid;grid-template-columns:repeat(3,1fr);gap:15px;margin-top:20px;}
+.btn{padding:16px;border:none;border-radius:12px;font-weight:bold;cursor:pointer;font-size:1rem;}
+.approve{background:#16a34a;color:white;}
+.modify{background:#f59e0b;color:white;}
+.reject{background:#dc2626;color:white;}
+.message{padding:15px;border-radius:10px;margin-bottom:20px;font-weight:700;}
+.loading{background:white;color:#64748b;}
+.success{background:#dcfce7;color:#166534;border:1px solid #86efac;}
+.error{background:#fee2e2;color:#991b1b;border:1px solid #fca5a5;}
+.empty{background:#eff6ff;color:#1e40af;border:1px solid #93c5fd;}
 @media(max-width:900px){
-
-.grid{
-grid-template-columns:1fr;
+.grid{grid-template-columns:1fr;}
+.actions{grid-template-columns:1fr;}
+table{display:block;overflow-x:auto;white-space:nowrap;}
+body{padding:15px;}
 }
-
-.actions{
-grid-template-columns:1fr;
-}
-
-table{
-display:block;
-overflow-x:auto;
-white-space:nowrap;
-}
-
-}
-
 </style>
-
 </head>
 
 <body>
@@ -222,147 +61,315 @@ white-space:nowrap;
 <div class="container">
 
 <div class="header">
-
 <div>
-<img src="img/logo-deltaf.png" class="logo">
+<img src="./img/logo-deltaf.png" class="logo" alt="DeltaF">
 </div>
-
 <div>
 <h1>Panel Médico Autorizador</h1>
+<a href="dashboard-profesional.html">← Volver</a>
+</div>
 </div>
 
-</div>
+<div id="mensaje" class="message loading">Cargando solicitudes...</div>
 
 <div class="stats">
-
 <div class="stat">
 <h3>Solicitudes Pendientes</h3>
-<div class="number">12</div>
+<div id="totalPendientes" class="number">0</div>
 </div>
 
 <div class="stat">
-<h3>Aprobadas Hoy</h3>
-<div class="number">8</div>
+<h3>Aprobadas</h3>
+<div id="totalAprobadas" class="number">0</div>
 </div>
 
 <div class="stat">
-<h3>Rechazadas Hoy</h3>
-<div class="number">1</div>
+<h3>Rechazadas</h3>
+<div id="totalRechazadas" class="number">0</div>
 </div>
-
 </div>
 
 <div class="table-card">
-
-<h2 style="margin-bottom:20px;color:#2563eb;">
-Solicitudes Pendientes
-</h2>
+<h2>Solicitudes</h2>
 
 <table>
-
+<thead>
 <tr>
-<th>ID</th>
+<th>Código</th>
 <th>Paciente</th>
-<th>Profesional</th>
+<th>RUT</th>
+<th>Exámenes</th>
 <th>Fecha</th>
 <th>Estado</th>
 </tr>
-
-<tr>
-<td>DF-00125</td>
-<td>Juan Pérez</td>
-<td>Nutricionista</td>
-<td>19/06/2026</td>
-<td><span class="status pending">Pendiente</span></td>
-</tr>
-
+</thead>
+<tbody id="tablaOrdenes"></tbody>
 </table>
-
 </div>
 
-<br>
-
-<div class="card">
+<div id="detalleCard" class="card" style="display:none;">
 
 <h2>Revisión de Solicitud</h2>
 
 <div class="grid">
 
 <div class="field">
+<div class="label">Código</div>
+<div id="detalleCodigo" class="value"></div>
+</div>
+
+<div class="field">
 <div class="label">Paciente</div>
-<div class="value">Juan Pérez</div>
+<div id="detallePaciente" class="value"></div>
 </div>
 
 <div class="field">
 <div class="label">RUT</div>
-<div class="value">12.345.678-9</div>
+<div id="detalleRut" class="value"></div>
 </div>
 
 <div class="field">
-<div class="label">Profesional Solicitante</div>
-<div class="value">Nutricionista</div>
+<div class="label">Correo Paciente</div>
+<div id="detalleCorreo" class="value"></div>
 </div>
 
 <div class="field">
 <div class="label">Fecha</div>
-<div class="value">19/06/2026</div>
+<div id="detalleFecha" class="value"></div>
 </div>
-
-</div>
-
-<br>
-
-<h3 style="margin-bottom:15px;">
-Exámenes Solicitados
-</h3>
-
-<div class="exam-list">
-
-<div class="exam">Hemograma</div>
-<div class="exam">Perfil Lipídico</div>
-<div class="exam">Vitamina D</div>
-<div class="exam">Ferritina</div>
-
-</div>
-
-<br>
-
-<h3 style="margin-bottom:15px;">
-Justificación Clínica
-</h3>
 
 <div class="field">
-Seguimiento nutricional y control metabólico.
+<div class="label">Estado</div>
+<div id="detalleEstado" class="value"></div>
+</div>
+
 </div>
 
 <br>
 
-<h3 style="margin-bottom:15px;">
-Observaciones Médicas
-</h3>
+<h3 style="margin-bottom:15px;">Exámenes Solicitados</h3>
+<div id="detalleExamenes" class="exam-list"></div>
 
-<textarea placeholder="Agregar observaciones para el profesional..."></textarea>
+<br>
+
+<h3 style="margin-bottom:15px;">Motivo / Justificación Clínica</h3>
+<div id="detalleMotivo" class="field"></div>
+
+<br>
+
+<h3 style="margin-bottom:15px;">Observaciones Médicas</h3>
+<textarea id="observacionesMedicas" placeholder="Agregar observaciones para el profesional..."></textarea>
 
 <div class="actions">
-
-<button class="btn approve">
-✅ Aprobar Solicitud
-</button>
-
-<button class="btn modify">
-✏️ Solicitar Modificación
-</button>
-
-<button class="btn reject">
-❌ Rechazar Solicitud
-</button>
-
+<button class="btn approve" onclick="actualizarEstado('aprobada')">✅ Aprobar Solicitud</button>
+<button class="btn modify" onclick="solicitarModificacion()">✏️ Solicitar Modificación</button>
+<button class="btn reject" onclick="actualizarEstado('rechazada')">❌ Rechazar Solicitud</button>
 </div>
 
 </div>
 
 </div>
+
+<script>
+const SUPABASE_URL = "https://goxkmtnmfessroveanje.supabase.co";
+const SUPABASE_ANON_KEY = "PEGA_AQUI_TU_PUBLISHABLE_KEY";
+
+const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+let ordenes = [];
+let ordenSeleccionada = null;
+
+const mensaje = document.getElementById("mensaje");
+const tablaOrdenes = document.getElementById("tablaOrdenes");
+const detalleCard = document.getElementById("detalleCard");
+
+function mostrarMensaje(texto,tipo){
+mensaje.textContent = texto;
+mensaje.className = "message " + tipo;
+mensaje.style.display = "block";
+}
+
+function ocultarMensaje(){
+mensaje.style.display = "none";
+}
+
+function formatearFecha(fechaISO){
+if(!fechaISO) return "-";
+return new Date(fechaISO).toLocaleDateString("es-CL");
+}
+
+async function verificarSesion(){
+const { data, error } = await supabaseClient.auth.getSession();
+
+if(error || !data.session){
+window.location.href = "login.html";
+return false;
+}
+
+return true;
+}
+
+async function cargarOrdenes(){
+const sesionOk = await verificarSesion();
+if(!sesionOk) return;
+
+const { data, error } = await supabaseClient
+.from("ordenes")
+.select("*")
+.order("created_at", { ascending:false });
+
+if(error){
+mostrarMensaje("Error al cargar órdenes: " + error.message, "error");
+return;
+}
+
+ordenes = data || [];
+actualizarEstadisticas();
+renderizarTabla();
+
+if(ordenes.length === 0){
+mostrarMensaje("No existen solicitudes registradas.", "empty");
+}else{
+ocultarMensaje();
+}
+}
+
+function actualizarEstadisticas(){
+document.getElementById("totalPendientes").textContent =
+ordenes.filter(o => o.estado === "pendiente").length;
+
+document.getElementById("totalAprobadas").textContent =
+ordenes.filter(o => o.estado === "aprobada").length;
+
+document.getElementById("totalRechazadas").textContent =
+ordenes.filter(o => o.estado === "rechazada").length;
+}
+
+function renderizarTabla(){
+tablaOrdenes.innerHTML = "";
+
+if(ordenes.length === 0){
+tablaOrdenes.innerHTML = `<tr><td colspan="6">No hay solicitudes.</td></tr>`;
+return;
+}
+
+ordenes.forEach(orden => {
+const fila = document.createElement("tr");
+
+fila.innerHTML = `
+<td>${orden.codigo || "-"}</td>
+<td>${orden.nombre_paciente || "-"}</td>
+<td>${orden.rut_paciente || "-"}</td>
+<td>${orden.tipo_orden || "-"}</td>
+<td>${formatearFecha(orden.created_at)}</td>
+<td><span class="status ${orden.estado || "pendiente"}">${orden.estado || "pendiente"}</span></td>
+`;
+
+fila.addEventListener("click", function(){
+seleccionarOrden(orden.id);
+});
+
+tablaOrdenes.appendChild(fila);
+});
+}
+
+function seleccionarOrden(id){
+ordenSeleccionada = ordenes.find(o => o.id === id);
+
+if(!ordenSeleccionada) return;
+
+document.getElementById("detalleCodigo").textContent = ordenSeleccionada.codigo || "-";
+document.getElementById("detallePaciente").textContent = ordenSeleccionada.nombre_paciente || "-";
+document.getElementById("detalleRut").textContent = ordenSeleccionada.rut_paciente || "-";
+document.getElementById("detalleCorreo").textContent = ordenSeleccionada.correo_paciente || "-";
+document.getElementById("detalleFecha").textContent = formatearFecha(ordenSeleccionada.created_at);
+document.getElementById("detalleEstado").textContent = ordenSeleccionada.estado || "pendiente";
+document.getElementById("detalleMotivo").textContent = ordenSeleccionada.motivo || "-";
+document.getElementById("observacionesMedicas").value = ordenSeleccionada.observaciones || "";
+
+const examenes = (ordenSeleccionada.tipo_orden || "").split(",").map(e => e.trim()).filter(Boolean);
+const contenedor = document.getElementById("detalleExamenes");
+
+contenedor.innerHTML = "";
+
+if(examenes.length === 0){
+contenedor.innerHTML = `<div class="exam">Sin exámenes registrados</div>`;
+}else{
+examenes.forEach(examen => {
+const div = document.createElement("div");
+div.className = "exam";
+div.textContent = examen;
+contenedor.appendChild(div);
+});
+}
+
+detalleCard.style.display = "block";
+window.scrollTo({top:detalleCard.offsetTop - 20,behavior:"smooth"});
+}
+
+async function actualizarEstado(nuevoEstado){
+if(!ordenSeleccionada){
+mostrarMensaje("Primero selecciona una solicitud.", "error");
+return;
+}
+
+const observaciones = document.getElementById("observacionesMedicas").value.trim();
+
+const { error } = await supabaseClient
+.from("ordenes")
+.update({
+estado: nuevoEstado,
+observaciones: observaciones
+})
+.eq("id", ordenSeleccionada.id);
+
+if(error){
+mostrarMensaje("Error al actualizar solicitud: " + error.message, "error");
+return;
+}
+
+mostrarMensaje("Solicitud actualizada como " + nuevoEstado + ".", "success");
+detalleCard.style.display = "none";
+ordenSeleccionada = null;
+await cargarOrdenes();
+}
+
+async function solicitarModificacion(){
+if(!ordenSeleccionada){
+mostrarMensaje("Primero selecciona una solicitud.", "error");
+return;
+}
+
+const observaciones = document.getElementById("observacionesMedicas").value.trim();
+
+if(!observaciones){
+mostrarMensaje("Para solicitar modificación debes agregar una observación médica.", "error");
+return;
+}
+
+const texto = "Solicitud de modificación médica: " + observaciones;
+
+const { error } = await supabaseClient
+.from("ordenes")
+.update({
+estado: "pendiente",
+observaciones: texto
+})
+.eq("id", ordenSeleccionada.id);
+
+if(error){
+mostrarMensaje("Error al solicitar modificación: " + error.message, "error");
+return;
+}
+
+mostrarMensaje("Se registró la solicitud de modificación.", "success");
+detalleCard.style.display = "none";
+ordenSeleccionada = null;
+await cargarOrdenes();
+}
+
+cargarOrdenes();
+</script>
 
 </body>
-
 </html>
