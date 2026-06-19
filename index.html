@@ -1,1 +1,146 @@
+<!DOCTYPE html>
+
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DeltaF</title>
+
+<style>
+
+body{
+font-family: Arial, sans-serif;
+margin:0;
+background:#f8fafc;
+color:#1e293b;
+}
+
+header{
+background:linear-gradient(135deg,#2563eb,#06b6d4);
+color:white;
+text-align:center;
+padding:80px 20px;
+}
+
+h1{
+font-size:3rem;
+margin-bottom:20px;
+}
+
+.container{
+max-width:1200px;
+margin:auto;
+padding:40px 20px;
+}
+
+.cards{
+display:grid;
+grid-template-columns:repeat(auto-fit,minmax(250px,1fr));
+gap:20px;
+margin-top:30px;
+}
+
+.card{
+background:white;
+padding:25px;
+border-radius:15px;
+box-shadow:0 4px 12px rgba(0,0,0,.1);
+}
+
+form{
+max-width:600px;
+margin:auto;
+display:flex;
+flex-direction:column;
+gap:15px;
+}
+
+input{
+padding:15px;
+border:1px solid #ccc;
+border-radius:10px;
+}
+
+button{
+background:#2563eb;
+color:white;
+border:none;
+padding:15px;
+border-radius:10px;
+font-size:16px;
+cursor:pointer;
+}
+
+footer{
+background:#0f172a;
+color:white;
+text-align:center;
+padding:30px;
+margin-top:50px;
+}
+
+</style>
+
+</head>
+
+<body>
+
+<header>
+<h1>DeltaF</h1>
+<p>Órdenes de laboratorio para profesionales de la salud</p>
+</header>
+
+<div class="container">
+
+<h2>¿Cómo funciona?</h2>
+
+<div class="cards">
+
+<div class="card">
+<h3>Registro</h3>
+<p>Solicita acceso a la plataforma.</p>
+</div>
+
+<div class="card">
+<h3>Validación</h3>
+<p>Revisamos tus credenciales profesionales.</p>
+</div>
+
+<div class="card">
+<h3>Solicitud</h3>
+<p>Gestiona exámenes para tus pacientes.</p>
+</div>
+
+</div>
+
+<h2 style="margin-top:60px;">Solicitar Acceso</h2>
+
+<form>
+
+<input type="text" placeholder="Nombre Completo">
+
+<input type="text" placeholder="RUT">
+
+<input type="text" placeholder="Profesión">
+
+<input type="text" placeholder="Registro SIS">
+
+<input type="email" placeholder="Correo Electrónico">
+
+<input type="tel" placeholder="Teléfono">
+
+<button type="submit">
+Solicitar Acceso
+</button>
+
+</form>
+
+</div>
+
+<footer>
+DeltaF.site © 2026
+</footer>
+
+</body>
+</html>
 
