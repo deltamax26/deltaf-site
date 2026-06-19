@@ -1,6 +1,5 @@
 <!DOCTYPE html>
 <html lang="es">
-
 <head>
 
 <meta charset="UTF-8">
@@ -8,8 +7,9 @@
 
 <title>Dashboard Profesional | DeltaF</title>
 
-<style>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
+<style>
 *{
 margin:0;
 padding:0;
@@ -48,15 +48,22 @@ flex-direction:column;
 gap:12px;
 }
 
-.menu a{
+.menu a,
+.menu button{
 color:#cbd5e1;
 text-decoration:none;
 padding:14px;
 border-radius:10px;
 transition:.3s;
+background:none;
+border:none;
+text-align:left;
+font-size:1rem;
+cursor:pointer;
 }
 
-.menu a:hover{
+.menu a:hover,
+.menu button:hover{
 background:#1e293b;
 color:white;
 }
@@ -78,6 +85,35 @@ margin-bottom:25px;
 .topbar h1{
 color:#2563eb;
 margin-bottom:5px;
+}
+
+.topbar p{
+color:#334155;
+}
+
+.user-info{
+margin-top:12px;
+font-size:.95rem;
+color:#64748b;
+}
+
+.status{
+display:inline-block;
+margin-top:10px;
+padding:6px 12px;
+border-radius:999px;
+font-size:.85rem;
+font-weight:700;
+}
+
+.status.aprobado{
+background:#dcfce7;
+color:#166534;
+}
+
+.status.pendiente{
+background:#fef3c7;
+color:#92400e;
 }
 
 .cards{
@@ -138,6 +174,8 @@ text-decoration:none;
 padding:12px 20px;
 border-radius:10px;
 font-weight:600;
+border:none;
+cursor:pointer;
 }
 
 .btn:hover{
@@ -157,8 +195,26 @@ margin-bottom:10px;
 color:#2563eb;
 }
 
-@media(max-width:900px){
+.loading{
+background:white;
+padding:25px;
+border-radius:18px;
+box-shadow:0 10px 25px rgba(0,0,0,.06);
+margin-bottom:25px;
+color:#64748b;
+}
 
+.error-box{
+background:#fee2e2;
+color:#991b1b;
+padding:18px;
+border-radius:12px;
+border:1px solid #fca5a5;
+margin-bottom:25px;
+font-weight:600;
+}
+
+@media(max-width:900px){
 .sidebar{
 position:relative;
 width:100%;
@@ -172,9 +228,7 @@ margin-left:0;
 body{
 flex-direction:column;
 }
-
 }
-
 </style>
 
 </head>
@@ -184,38 +238,45 @@ flex-direction:column;
 <div class="sidebar">
 
 <div class="logo">
-<img src="img/logo-deltaf.png" alt="DeltaF">
+<img src="./img/logo-deltaf.png" alt="DeltaF">
 </div>
 
 <div class="menu">
-
-<a href="#">🏠 Inicio</a>
-
-<a href="#">📋 Nueva Solicitud</a>
-
-<a href="#">📂 Mis Solicitudes</a>
-
-<a href="#">✅ Aprobadas</a>
-
-<a href="#">❌ Rechazadas</a>
-
-<a href="#">💳 Comprar Órdenes</a>
-
+<a href="dashboard-profesional.html">🏠 Inicio</a>
+<a href="nueva-solicitud.html">📋 Nueva Solicitud</a>
+<a href="mis-solicitudes.html">📂 Mis Solicitudes</a>
+<a href="mis-solicitudes.html?estado=aprobada">✅ Aprobadas</a>
+<a href="mis-solicitudes.html?estado=rechazada">❌ Rechazadas</a>
+<a href="comprar-ordenes.html">💳 Comprar Órdenes</a>
 <a href="#">👤 Mi Perfil</a>
-
-<a href="index.html">🚪 Cerrar Sesión</a>
-
+<button id="cerrarSesion">🚪 Cerrar Sesión</button>
 </div>
 
 </div>
 
 <div class="main">
 
+<div id="loading" class="loading">
+Cargando información del profesional...
+</div>
+
+<div id="errorBox" class="error-box" style="display:none;"></div>
+
+<div id="contenidoDashboard" style="display:none;">
+
 <div class="topbar">
 
-<h1>Bienvenido a DeltaF</h1>
+<h1 id="bienvenida">Bienvenido a DeltaF</h1>
 
 <p>Panel profesional para gestión de solicitudes de exámenes.</p>
+
+<div class="user-info">
+<span id="correoProfesional"></span>
+<br>
+<span id="profesionProfesional"></span>
+<br>
+<span id="estadoProfesional" class="status"></span>
+</div>
 
 </div>
 
@@ -223,22 +284,22 @@ flex-direction:column;
 
 <div class="card">
 <h3>Órdenes Disponibles</h3>
-<div class="number">10</div>
+<div id="ordenesDisponibles" class="number">0</div>
 </div>
 
 <div class="card">
 <h3>Solicitudes Pendientes</h3>
-<div class="number">3</div>
+<div id="solicitudesPendientes" class="number">0</div>
 </div>
 
 <div class="card">
 <h3>Solicitudes Aprobadas</h3>
-<div class="number">15</div>
+<div id="solicitudesAprobadas" class="number">0</div>
 </div>
 
 <div class="card">
 <h3>Solicitudes Rechazadas</h3>
-<div class="number">1</div>
+<div id="solicitudesRechazadas" class="number">0</div>
 </div>
 
 </div>
@@ -246,53 +307,27 @@ flex-direction:column;
 <div class="actions">
 
 <div class="action-card">
-
 <h2>Nueva Solicitud</h2>
-
-<p>
-Solicita exámenes clínicos o radiografías para tus pacientes.
-</p>
-
-<a href="#" class="btn">
-Crear Solicitud
-</a>
-
+<p>Solicita exámenes clínicos o radiografías para tus pacientes.</p>
+<a href="nueva-solicitud.html" class="btn">Crear Solicitud</a>
 </div>
 
 <div class="action-card">
-
 <h2>Comprar Órdenes</h2>
-
-<p>
-Recarga órdenes individuales o adquiere planes promocionales.
-</p>
-
-<a href="#" class="btn">
-Comprar
-</a>
-
+<p>Recarga órdenes individuales o adquiere planes promocionales.</p>
+<a href="comprar-ordenes.html" class="btn">Comprar</a>
 </div>
 
 <div class="action-card">
-
 <h2>Mis Solicitudes</h2>
-
-<p>
-Consulta el estado de tus solicitudes enviadas.
-</p>
-
-<a href="#" class="btn">
-Ver Historial
-</a>
-
+<p>Consulta el estado de tus solicitudes enviadas.</p>
+<a href="mis-solicitudes.html" class="btn">Ver Historial</a>
 </div>
 
 </div>
 
 <div class="notice">
-
 <h3>Promoción Vigente</h3>
-
 <p>
 Orden individual: $2.990 (valor normal $3.990)
 <br><br>
@@ -300,11 +335,103 @@ Pack promocional: 10 órdenes por $25.000
 <br><br>
 Plan profesional: hasta 50 órdenes por $50.000.
 </p>
-
 </div>
 
 </div>
+
+</div>
+
+<script>
+const SUPABASE_URL = "https://goxkmtnmfessroveanje.supabase.co";
+const SUPABASE_ANON_KEY = "sb_publishable_w8xrtEanlJJAc5FYvk1X5A_fKu9vb5d";
+
+const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+const loading = document.getElementById("loading");
+const errorBox = document.getElementById("errorBox");
+const contenidoDashboard = document.getElementById("contenidoDashboard");
+const cerrarSesion = document.getElementById("cerrarSesion");
+
+function mostrarError(texto){
+loading.style.display = "none";
+contenidoDashboard.style.display = "none";
+errorBox.style.display = "block";
+errorBox.textContent = texto;
+}
+
+async function contarOrdenes(profesionalId, estado){
+const { count, error } = await supabaseClient
+.from("ordenes")
+.select("*", { count: "exact", head: true })
+.eq("profesional_id", profesionalId)
+.eq("estado", estado);
+
+if(error){
+console.error(error);
+return 0;
+}
+
+return count || 0;
+}
+
+async function cargarDashboard(){
+
+const { data: sessionData, error: sessionError } = await supabaseClient.auth.getSession();
+
+if(sessionError || !sessionData.session){
+window.location.href = "login.html";
+return;
+}
+
+const email = sessionData.session.user.email;
+
+const { data: profesional, error: profesionalError } = await supabaseClient
+.from("profesionales")
+.select("*")
+.eq("email", email)
+.single();
+
+if(profesionalError || !profesional){
+mostrarError("No se encontró el perfil profesional asociado a este usuario.");
+return;
+}
+
+if(profesional.estado !== "aprobado"){
+await supabaseClient.auth.signOut();
+window.location.href = "login.html";
+return;
+}
+
+document.getElementById("bienvenida").textContent = "Bienvenido, " + profesional.nombre;
+document.getElementById("correoProfesional").textContent = "Correo: " + profesional.email;
+document.getElementById("profesionProfesional").textContent = "Profesión: " + profesional.profesion;
+
+const estadoSpan = document.getElementById("estadoProfesional");
+estadoSpan.textContent = "Estado: " + profesional.estado;
+estadoSpan.classList.add(profesional.estado);
+
+document.getElementById("ordenesDisponibles").textContent = profesional.ordenes_disponibles || 0;
+
+const pendientes = await contarOrdenes(profesional.id, "pendiente");
+const aprobadas = await contarOrdenes(profesional.id, "aprobada");
+const rechazadas = await contarOrdenes(profesional.id, "rechazada");
+
+document.getElementById("solicitudesPendientes").textContent = pendientes;
+document.getElementById("solicitudesAprobadas").textContent = aprobadas;
+document.getElementById("solicitudesRechazadas").textContent = rechazadas;
+
+loading.style.display = "none";
+contenidoDashboard.style.display = "block";
+}
+
+cerrarSesion.addEventListener("click", async function(){
+await supabaseClient.auth.signOut();
+localStorage.clear();
+window.location.href = "login.html";
+});
+
+cargarDashboard();
+</script>
 
 </body>
-
 </html>
