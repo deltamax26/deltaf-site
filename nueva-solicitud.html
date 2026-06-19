@@ -29,6 +29,8 @@ input,textarea,select{width:100%;padding:14px;border:1px solid #cbd5e1;border-ra
 .message{display:none;margin-bottom:20px;padding:15px;border-radius:10px;font-weight:700;}
 .message.success{display:block;background:#dcfce7;color:#166534;border:1px solid #86efac;}
 .message.error{display:block;background:#fee2e2;color:#991b1b;border:1px solid #fca5a5;}
+.message.info{display:block;background:#eff6ff;color:#1e40af;border:1px solid #93c5fd;}
+.saldo-box{background:#eff6ff;border-left:5px solid #2563eb;padding:18px;border-radius:12px;margin-bottom:25px;font-weight:700;color:#1e40af;}
 .top-links{margin-top:15px;}
 .top-links a{color:#2563eb;text-decoration:none;font-weight:700;}
 @media(max-width:768px){.grid{grid-template-columns:1fr;}body{padding:15px;}}
@@ -48,6 +50,10 @@ input,textarea,select{width:100%;padding:14px;border:1px solid #cbd5e1;border-ra
 </div>
 
 <div id="mensaje" class="message"></div>
+
+<div id="saldoBox" class="saldo-box">
+Verificando órdenes disponibles...
+</div>
 
 <form id="solicitudForm">
 
@@ -158,6 +164,9 @@ const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 const form = document.getElementById("solicitudForm");
 const mensaje = document.getElementById("mensaje");
 const btnEnviar = document.getElementById("btnEnviar");
+const saldoBox = document.getElementById("saldoBox");
+
+let profesionalActual = null;
 
 function mostrarMensaje(texto,tipo){
 mensaje.textContent = texto;
@@ -179,26 +188,47 @@ window.location.href = "login.html";
 return null;
 }
 
-const email = sessionData.session.user.email;
+const email = sessionData.session.user.email.toLowerCase();
 
 const { data: profesional, error } = await supabaseClient
 .from("profesionales")
 .select("*")
 .eq("email", email)
-.single();
+.limit(1);
 
-if(error || !profesional){
+if(error || !profesional || profesional.length === 0){
 mostrarMensaje("No se encontró el profesional asociado a esta sesión.", "error");
 return null;
 }
 
-if(profesional.estado !== "aprobado"){
+const perfil = profesional[0];
+
+if(perfil.estado !== "aprobado"){
 await supabaseClient.auth.signOut();
 window.location.href = "login.html";
 return null;
 }
 
-return profesional;
+return perfil;
+}
+
+async function cargarSaldoInicial(){
+profesionalActual = await obtenerProfesional();
+
+if(!profesionalActual){
+saldoBox.textContent = "No se pudo verificar el saldo de órdenes.";
+return;
+}
+
+const saldo = profesionalActual.ordenes_disponibles || 0;
+
+saldoBox.textContent = "Órdenes disponibles: " + saldo;
+
+if(saldo <= 0){
+mostrarMensaje("No tienes órdenes disponibles. Debes comprar órdenes antes de crear una solicitud.", "error");
+btnEnviar.disabled = true;
+btnEnviar.textContent = "Sin órdenes disponibles";
+}
 }
 
 form.addEventListener("submit", async function(event){
@@ -216,16 +246,21 @@ btnEnviar.textContent = "Enviar Solicitud al Médico Autorizador";
 return;
 }
 
-if((profesional.ordenes_disponibles || 0) <= 0){
+const saldoActual = profesional.ordenes_disponibles || 0;
+
+if(saldoActual <= 0){
 mostrarMensaje("No tienes órdenes disponibles. Debes comprar órdenes antes de crear una solicitud.", "error");
-btnEnviar.disabled = false;
-btnEnviar.textContent = "Enviar Solicitud al Médico Autorizador";
+btnEnviar.disabled = true;
+btnEnviar.textContent = "Sin órdenes disponibles";
 return;
 }
 
 const nombrePaciente = document.getElementById("nombrePaciente").value.trim();
 const rutPaciente = document.getElementById("rutPaciente").value.trim();
 const correoPaciente = document.getElementById("correoPaciente").value.trim().toLowerCase();
+const telefonoPaciente = document.getElementById("telefonoPaciente").value.trim();
+const direccionPaciente = document.getElementById("direccionPaciente").value.trim();
+const fechaNacimiento = document.getElementById("fechaNacimiento").value;
 const otroExamen = document.getElementById("otroExamen").value.trim();
 const justificacionClinica = document.getElementById("justificacionClinica").value.trim();
 const observaciones = document.getElementById("observaciones").value.trim();
@@ -247,6 +282,9 @@ const textoExamenes = examenesSeleccionados.join(", ");
 
 const motivoFinal = [
 "Exámenes solicitados: " + textoExamenes,
+fechaNacimiento ? "Fecha de nacimiento: " + fechaNacimiento : "",
+telefonoPaciente ? "Teléfono paciente: " + telefonoPaciente : "",
+direccionPaciente ? "Dirección paciente: " + direccionPaciente : "",
 justificacionClinica ? "Justificación clínica: " + justificacionClinica : "",
 observaciones ? "Observaciones: " + observaciones : ""
 ].filter(Boolean).join("\n\n");
@@ -271,18 +309,23 @@ if(ordenError){
 throw ordenError;
 }
 
-const nuevasOrdenes = (profesional.ordenes_disponibles || 0) - 1;
+const nuevasOrdenes = saldoActual - 1;
 
 const { error: updateError } = await supabaseClient
 .from("profesionales")
-.update({ ordenes_disponibles: nuevasOrdenes })
+.update({
+ordenes_disponibles: nuevasOrdenes
+})
 .eq("id", profesional.id);
 
 if(updateError){
 throw updateError;
 }
 
-mostrarMensaje("Solicitud enviada correctamente al médico autorizador. Se descontó 1 orden disponible.", "success");
+saldoBox.textContent = "Órdenes disponibles: " + nuevasOrdenes;
+
+mostrarMensaje("Solicitud enviada correctamente. Se descontó 1 orden disponible.", "success");
+
 form.reset();
 
 setTimeout(function(){
@@ -292,11 +335,16 @@ window.location.href = "mis-solicitudes.html";
 }catch(error){
 console.error(error);
 mostrarMensaje("Error al enviar la solicitud: " + error.message, "error");
+btnEnviar.disabled = false;
+btnEnviar.textContent = "Enviar Solicitud al Médico Autorizador";
+return;
 }
 
 btnEnviar.disabled = false;
 btnEnviar.textContent = "Enviar Solicitud al Médico Autorizador";
 });
+
+cargarSaldoInicial();
 </script>
 
 </body>
