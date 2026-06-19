@@ -6,8 +6,6 @@
 <title>Panel Médico | DeltaF</title>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcode/1.5.3/qrcode.min.js"></script>
 
 <style>
 *{margin:0;padding:0;box-sizing:border-box;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;}
@@ -144,7 +142,7 @@ body{padding:15px;}
 <textarea id="observacionesMedicas" placeholder="Agregar observaciones para el profesional o paciente..."></textarea>
 
 <div class="actions">
-<button class="btn approve" onclick="aprobarConPDF()">✅ Aprobar y Generar PDF</button>
+<button class="btn approve" onclick="aprobarConPDF()">✅ Aprobar Solicitud</button>
 <button class="btn modify" onclick="solicitarModificacion()">✏️ Solicitar Modificación</button>
 <button class="btn reject" onclick="actualizarEstado('rechazada')">❌ Rechazar Solicitud</button>
 </div>
@@ -156,13 +154,8 @@ body{padding:15px;}
 <script>
 const SUPABASE_URL = "https://goxkmtnmfessroveanje.supabase.co";
 const SUPABASE_ANON_KEY = "sb_publishable_w8xrtEanlJJAc5FYvk1X5A_fKu9vb5d";
-const FUNCTION_EMAIL_URL = "https://goxkmtnmfessroveanje.supabase.co/functions/v1/resend-email";
 
 const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-
-const MEDICO_NOMBRE = "Dra. Carolina Domínguez";
-const MEDICO_RUT = "24.891.056-9";
-const MEDICO_REGISTRO = "544925";
 
 let ordenes = [];
 let solicitudesPacientes = [];
@@ -359,361 +352,6 @@ detalleCard.style.display = "block";
 window.scrollTo({top:detalleCard.offsetTop - 20,behavior:"smooth"});
 }
 
-async function cargarImagenBase64(url){
-const respuesta = await fetch(url);
-const blob = await respuesta.blob();
-
-return new Promise((resolve, reject) => {
-const reader = new FileReader();
-reader.onloadend = () => resolve(reader.result);
-reader.onerror = reject;
-reader.readAsDataURL(blob);
-});
-}
-
-async function generarQRBase64(texto){
-try{
-if(typeof QRCode === "undefined"){
-throw new Error("QRCode no disponible");
-}
-
-const canvas = document.createElement("canvas");
-
-await QRCode.toCanvas(canvas, texto, {
-width: 180,
-margin: 1
-});
-
-return canvas.toDataURL("image/png");
-
-}catch(error){
-console.warn("QR no generado:", error);
-return null;
-}
-}
-
-function limpiarTexto(texto){
-return String(texto || "-").replace(/\s+/g," ").trim();
-}
-
-function dividirTexto(doc,texto,ancho){
-return doc.splitTextToSize(limpiarTexto(texto), ancho);
-}
-
-function dibujarCaja(doc,x,y,w,h,titulo){
-doc.setDrawColor(226,232,240);
-doc.setFillColor(248,250,252);
-doc.roundedRect(x,y,w,h,3,3,"FD");
-doc.setFont("helvetica","bold");
-doc.setTextColor(37,99,235);
-doc.setFontSize(10);
-doc.text(titulo,x+4,y+7);
-doc.setTextColor(15,23,42);
-}
-
-function agregarPie(doc,codigoOrden){
-const totalPages = doc.internal.getNumberOfPages();
-
-for(let i=1;i<=totalPages;i++){
-doc.setPage(i);
-doc.setDrawColor(226,232,240);
-doc.line(15,278,195,278);
-
-doc.setFont("helvetica","normal");
-doc.setFontSize(7);
-doc.setTextColor(100,116,139);
-doc.text("Documento generado por DeltaF. La validez de esta orden puede ser verificada con su código de verificación.",15,283);
-
-doc.setFont("helvetica","bold");
-doc.setFontSize(8);
-doc.setTextColor(37,99,235);
-doc.text("DeltaF profesional y seguro",105,290,{align:"center"});
-
-doc.setFont("helvetica","normal");
-doc.setFontSize(7);
-doc.setTextColor(100,116,139);
-doc.text("Código: " + codigoOrden,195,290,{align:"right"});
-}
-}
-
-async function generarPDFBlob(orden, observaciones){
-const { jsPDF } = window.jspdf;
-const doc = new jsPDF();
-
-const fechaActual = new Date().toLocaleDateString("es-CL");
-const codigoOrden = orden._codigo || orden.codigo || "PAC-" + orden.id;
-const examenesOrden = orden._examenes || orden.tipo_orden || orden.examenes_solicitados || "-";
-const origenTexto = orden._origen === "paciente" ? "Paciente directo" : "Profesional solicitante";
-const urlValidacion =
-"https://deltamax26.github.io/deltaf-site/validar.html?codigo=" + encodeURIComponent(codigoOrden);
-
-doc.setFillColor(37,99,235);
-doc.rect(0,0,210,30,"F");
-
-try{
-const logo = await cargarImagenBase64("./img/logo-deltaf.png");
-doc.addImage(logo,"PNG",15,6,38,18);
-}catch(error){
-doc.setFont("helvetica","bold");
-doc.setTextColor(255,255,255);
-doc.setFontSize(16);
-doc.text("DeltaF",15,18);
-}
-
-doc.setTextColor(255,255,255);
-doc.setFont("helvetica","bold");
-doc.setFontSize(18);
-doc.text("ORDEN MÉDICA DE EXÁMENES",105,14,{align:"center"});
-
-doc.setFont("helvetica","normal");
-doc.setFontSize(9);
-doc.text("Plataforma de solicitud y validación de órdenes médicas",105,22,{align:"center"});
-
-doc.setTextColor(15,23,42);
-
-const qrBase64 = await generarQRBase64(urlValidacion);
-
-if(qrBase64){
-try{
-doc.addImage(qrBase64,"PNG",165,36,28,28);
-doc.setFontSize(7);
-doc.setFont("helvetica","normal");
-doc.setTextColor(100,116,139);
-doc.text("Validar orden",179,68,{align:"center"});
-}catch(error){
-console.warn("No se pudo insertar QR:",error);
-}
-}
-
-doc.setFont("helvetica","bold");
-doc.setTextColor(37,99,235);
-doc.setFontSize(10);
-doc.text("Código verificación",15,42);
-
-doc.setFont("helvetica","bold");
-doc.setTextColor(15,23,42);
-doc.setFontSize(13);
-doc.text(codigoOrden,15,50);
-
-doc.setFont("helvetica","normal");
-doc.setFontSize(8);
-doc.setTextColor(100,116,139);
-doc.text("Verificar en: deltamax26.github.io/deltaf-site/validar.html",15,58);
-
-doc.setDrawColor(226,232,240);
-doc.line(15,74,195,74);
-
-dibujarCaja(doc,15,82,180,42,"Datos del paciente");
-
-doc.setFont("helvetica","bold");
-doc.setFontSize(9);
-doc.setTextColor(15,23,42);
-doc.text("Paciente:",20,97);
-doc.text("RUT:",20,107);
-doc.text("Correo:",20,117);
-
-doc.setFont("helvetica","normal");
-doc.text(limpiarTexto(orden.nombre_paciente),45,97);
-doc.text(limpiarTexto(orden.rut_paciente),45,107);
-doc.text(limpiarTexto(orden.correo_paciente),45,117);
-
-doc.setFont("helvetica","bold");
-doc.text("Fecha emisión:",115,97);
-doc.text("Origen:",115,107);
-
-doc.setFont("helvetica","normal");
-doc.text(fechaActual,145,97);
-doc.text(origenTexto,145,107);
-
-let y = 135;
-
-doc.setFont("helvetica","bold");
-doc.setFontSize(12);
-doc.setTextColor(37,99,235);
-doc.text("Exámenes solicitados",15,y);
-
-y += 8;
-
-doc.setFont("helvetica","normal");
-doc.setTextColor(15,23,42);
-doc.setFontSize(10);
-
-const examenes = examenesOrden.split(",").map(e => e.trim()).filter(Boolean);
-
-if(examenes.length === 0){
-doc.text("• Sin exámenes registrados",20,y);
-y += 8;
-}else{
-examenes.forEach(examen => {
-if(y > 250){
-doc.addPage();
-y = 25;
-}
-const lineas = doc.splitTextToSize("• " + examen,170);
-doc.text(lineas,20,y);
-y += lineas.length * 6 + 2;
-});
-}
-
-y += 6;
-
-if(y > 230){
-doc.addPage();
-y = 25;
-}
-
-doc.setFont("helvetica","bold");
-doc.setFontSize(12);
-doc.setTextColor(37,99,235);
-doc.text("Justificación / Motivo clínico",15,y);
-
-y += 8;
-
-doc.setFont("helvetica","normal");
-doc.setTextColor(15,23,42);
-doc.setFontSize(9);
-
-const motivoTexto = dividirTexto(doc,orden.motivo || "Sin motivo clínico informado.",175);
-
-motivoTexto.forEach(linea => {
-if(y > 250){
-doc.addPage();
-y = 25;
-}
-doc.text(linea,15,y);
-y += 5.5;
-});
-
-y += 6;
-
-if(y > 230){
-doc.addPage();
-y = 25;
-}
-
-doc.setFont("helvetica","bold");
-doc.setFontSize(12);
-doc.setTextColor(37,99,235);
-doc.text("Observaciones médicas",15,y);
-
-y += 8;
-
-doc.setFont("helvetica","normal");
-doc.setTextColor(15,23,42);
-doc.setFontSize(9);
-
-const obsTexto = dividirTexto(doc,observaciones || "Sin observaciones adicionales.",175);
-
-obsTexto.forEach(linea => {
-if(y > 250){
-doc.addPage();
-y = 25;
-}
-doc.text(linea,15,y);
-y += 5.5;
-});
-
-if(y > 205){
-doc.addPage();
-y = 25;
-}
-
-doc.setDrawColor(226,232,240);
-doc.line(15,218,195,218);
-
-doc.setFont("helvetica","bold");
-doc.setFontSize(11);
-doc.setTextColor(37,99,235);
-doc.text("Médico autorizador",15,230);
-
-doc.setFont("helvetica","normal");
-doc.setTextColor(15,23,42);
-doc.setFontSize(10);
-doc.text(MEDICO_NOMBRE,15,240);
-doc.text("RUT: " + MEDICO_RUT,15,249);
-doc.text("N° Registro SIS: " + MEDICO_REGISTRO,15,258);
-
-try{
-const firma = await cargarImagenBase64("./img/firma-carolina.jpg");
-doc.addImage(firma,"JPEG",125,224,55,28);
-}catch(error){
-console.warn("No se pudo cargar la firma:",error);
-}
-
-doc.setDrawColor(15,23,42);
-doc.line(123,254,185,254);
-
-doc.setFont("helvetica","normal");
-doc.setFontSize(8);
-doc.setTextColor(100,116,139);
-doc.text("Firma médica autorizadora",154,262,{align:"center"});
-
-agregarPie(doc,codigoOrden);
-
-return doc.output("blob");
-}
-
-async function subirPDF(orden, pdfBlob){
-const codigoArchivo = orden._codigo || orden.codigo || "PAC-" + orden.id;
-const nombreArchivo = `${codigoArchivo}-${Date.now()}.pdf`;
-
-const { error: uploadError } = await supabaseClient
-.storage
-.from("ordenes")
-.upload(nombreArchivo, pdfBlob, {
-contentType: "application/pdf",
-upsert: true
-});
-
-if(uploadError){
-throw uploadError;
-}
-
-const { data: publicData } = supabaseClient
-.storage
-.from("ordenes")
-.getPublicUrl(nombreArchivo);
-
-return publicData.publicUrl;
-}
-
-async function enviarCorreoOrden(orden, pdfUrl){
-if(!orden.correo_paciente){
-console.warn("La solicitud no tiene correo de paciente.");
-return { ok:false, message:"Sin correo de paciente" };
-}
-
-try{
-const response = await fetch(FUNCTION_EMAIL_URL, {
-method: "POST",
-headers: {
-"Content-Type": "application/json",
-"Authorization": `Bearer ${SUPABASE_ANON_KEY}`
-},
-body: JSON.stringify({
-email: orden.correo_paciente,
-nombre: orden.nombre_paciente || "Paciente",
-codigo: orden._codigo || orden.codigo || "Orden médica",
-pdfUrl: pdfUrl
-})
-});
-
-const data = await response.json().catch(() => ({}));
-
-if(!response.ok){
-console.error("Error Edge Function:", data);
-return { ok:false, message:data.error || "Error enviando correo" };
-}
-
-console.log("Correo enviado:", data);
-return { ok:true, data:data };
-
-}catch(error){
-console.error("Error fetch correo:", error);
-return { ok:false, message:error.message || "No se pudo conectar con correo" };
-}
-}
-
 async function aprobarConPDF(){
 if(!ordenSeleccionada){
 mostrarMensaje("Primero selecciona una solicitud.", "error");
@@ -722,14 +360,10 @@ return;
 
 const ordenActual = {...ordenSeleccionada};
 const ordenId = ordenActual.id;
-
-try{
-mostrarMensaje("Generando PDF profesional, aprobando solicitud y enviando correo...", "loading");
-
 const observaciones = document.getElementById("observacionesMedicas").value.trim();
 
-const pdfBlob = await generarPDFBlob(ordenActual, observaciones);
-const pdfUrl = await subirPDF(ordenActual, pdfBlob);
+try{
+mostrarMensaje("Aprobando solicitud...", "loading");
 
 let errorUpdate = null;
 
@@ -737,8 +371,7 @@ if(ordenActual._origen === "paciente"){
 const { error } = await supabaseClient
 .from("solicitudes_pacientes")
 .update({
-estado: "aprobada",
-pdf_url: pdfUrl
+estado: "aprobada"
 })
 .eq("id", ordenId);
 
@@ -748,8 +381,7 @@ const { error } = await supabaseClient
 .from("ordenes")
 .update({
 estado: "aprobada",
-observaciones: observaciones,
-pdf_url: pdfUrl
+observaciones: observaciones
 })
 .eq("id", ordenId);
 
@@ -760,13 +392,7 @@ if(errorUpdate){
 throw errorUpdate;
 }
 
-const resultadoCorreo = await enviarCorreoOrden(ordenActual, pdfUrl);
-
-if(resultadoCorreo.ok){
-mostrarMensaje("Solicitud aprobada, PDF generado y correo enviado correctamente.", "success");
-}else{
-mostrarMensaje("Solicitud aprobada y PDF generado. No se pudo enviar el correo: " + resultadoCorreo.message, "success");
-}
+mostrarMensaje("Solicitud aprobada correctamente.", "success");
 
 detalleCard.style.display = "none";
 ordenSeleccionada = null;
@@ -775,7 +401,7 @@ await cargarOrdenes();
 
 }catch(error){
 console.error(error);
-mostrarMensaje("Error al generar PDF, aprobar o enviar correo: " + error.message, "error");
+mostrarMensaje("Error al aprobar solicitud: " + error.message, "error");
 }
 }
 
@@ -789,6 +415,7 @@ const ordenActual = {...ordenSeleccionada};
 const ordenId = ordenActual.id;
 const observaciones = document.getElementById("observacionesMedicas").value.trim();
 
+try{
 let errorUpdate = null;
 
 if(ordenActual._origen === "paciente"){
@@ -813,14 +440,18 @@ errorUpdate = error;
 }
 
 if(errorUpdate){
-mostrarMensaje("Error al actualizar solicitud: " + errorUpdate.message, "error");
-return;
+throw errorUpdate;
 }
 
 mostrarMensaje("Solicitud actualizada como " + nuevoEstado + ".", "success");
 detalleCard.style.display = "none";
 ordenSeleccionada = null;
 await cargarOrdenes();
+
+}catch(error){
+console.error(error);
+mostrarMensaje("Error al actualizar solicitud: " + error.message, "error");
+}
 }
 
 async function solicitarModificacion(){
@@ -838,8 +469,7 @@ mostrarMensaje("Para solicitar modificación debes agregar una observación méd
 return;
 }
 
-const texto = "Solicitud de modificación médica: " + observaciones;
-
+try{
 let errorUpdate = null;
 
 if(ordenActual._origen === "paciente"){
@@ -852,6 +482,8 @@ estado: "pendiente"
 
 errorUpdate = error;
 }else{
+const texto = "Solicitud de modificación médica: " + observaciones;
+
 const { error } = await supabaseClient
 .from("ordenes")
 .update({
@@ -864,14 +496,18 @@ errorUpdate = error;
 }
 
 if(errorUpdate){
-mostrarMensaje("Error al solicitar modificación: " + errorUpdate.message, "error");
-return;
+throw errorUpdate;
 }
 
 mostrarMensaje("Se registró la solicitud de modificación.", "success");
 detalleCard.style.display = "none";
 ordenSeleccionada = null;
 await cargarOrdenes();
+
+}catch(error){
+console.error(error);
+mostrarMensaje("Error al solicitar modificación: " + error.message, "error");
+}
 }
 
 (async function iniciarPanelMedico(){
