@@ -5,12 +5,11 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Ingreso Profesional | DeltaF</title>
+<title>Ingreso | DeltaF</title>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
 <style>
-
 *{
 margin:0;
 padding:0;
@@ -165,7 +164,6 @@ background:#fee2e2;
 color:#991b1b;
 border:1px solid #fca5a5;
 }
-
 </style>
 
 </head>
@@ -180,10 +178,10 @@ border:1px solid #fca5a5;
 <img src="./img/logo-deltaf.png" alt="DeltaF">
 </div>
 
-<h1>Ingreso Profesional</h1>
+<h1>Ingreso DeltaF</h1>
 
 <p class="subtitle">
-Accede a tu panel de solicitudes DeltaF
+Accede a tu panel según tu rol
 </p>
 
 <div id="mensaje" class="message"></div>
@@ -228,11 +226,11 @@ Crear cuenta profesional
 
 <div class="info-box">
 
-<strong>Acceso exclusivo para profesionales registrados.</strong>
+<strong>Acceso para usuarios registrados de DeltaF.</strong>
 
 <br><br>
 
-Una vez validada su información y registro profesional, podrá acceder a la plataforma para solicitar exámenes clínicos para sus pacientes.
+Según el rol asignado, el sistema redirigirá al panel profesional, médico o administrador.
 
 </div>
 
@@ -287,15 +285,61 @@ if(error){
 throw error;
 }
 
-const { data: profesional, error: profesionalError } = await supabaseClient
+/* Primero revisamos si tiene rol especial */
+const { data: usuariosData, error: usuarioError } = await supabaseClient
+.from("usuarios")
+.select("*")
+.eq("email", email)
+.limit(1);
+
+if(usuarioError){
+throw usuarioError;
+}
+
+if(usuariosData && usuariosData.length > 0){
+const usuario = usuariosData[0];
+
+if(usuario.rol === "superadmin"){
+mostrarMensaje("Ingreso administrador correcto. Redirigiendo...", "success");
+setTimeout(function(){
+window.location.href = "panel-admin.html";
+}, 800);
+return;
+}
+
+if(usuario.rol === "medico"){
+mostrarMensaje("Ingreso médico correcto. Redirigiendo...", "success");
+setTimeout(function(){
+window.location.href = "panel-medico.html";
+}, 800);
+return;
+}
+
+if(usuario.rol === "profesional"){
+/* Sigue validación como profesional abajo */
+}
+}
+
+/* Si no tiene rol especial, validamos como profesional */
+const { data: profesionalesData, error: profesionalError } = await supabaseClient
 .from("profesionales")
 .select("*")
 .eq("email", email)
-.single();
+.limit(1);
 
 if(profesionalError){
 throw profesionalError;
 }
+
+if(!profesionalesData || profesionalesData.length === 0){
+await supabaseClient.auth.signOut();
+mostrarMensaje("Usuario autenticado, pero no existe perfil profesional asociado.", "error");
+btnLogin.disabled = false;
+btnLogin.textContent = "Ingresar";
+return;
+}
+
+const profesional = profesionalesData[0];
 
 if(profesional.estado !== "aprobado"){
 await supabaseClient.auth.signOut();
@@ -309,15 +353,18 @@ localStorage.setItem("deltaf_profesional_email", profesional.email);
 localStorage.setItem("deltaf_profesional_nombre", profesional.nombre);
 localStorage.setItem("deltaf_profesional_id", profesional.id);
 
-mostrarMensaje("Ingreso correcto. Redirigiendo...", "success");
+mostrarMensaje("Ingreso profesional correcto. Redirigiendo...", "success");
 
 setTimeout(function(){
 window.location.href = "dashboard-profesional.html";
-}, 1000);
+}, 800);
 
 }catch(error){
 console.error(error);
 mostrarMensaje("Error de ingreso: " + error.message, "error");
+btnLogin.disabled = false;
+btnLogin.textContent = "Ingresar";
+return;
 }
 
 btnLogin.disabled = false;
