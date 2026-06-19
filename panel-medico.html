@@ -6,6 +6,7 @@
 <title>Panel Médico | DeltaF</title>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 
 <style>
 *{margin:0;padding:0;box-sizing:border-box;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;}
@@ -161,7 +162,7 @@ body{padding:15px;}
 <textarea id="observacionesMedicas" placeholder="Agregar observaciones para el profesional..."></textarea>
 
 <div class="actions">
-<button class="btn approve" onclick="actualizarEstado('aprobada')">✅ Aprobar Solicitud</button>
+<button class="btn approve" onclick="aprobarConPDF()">✅ Aprobar y Generar PDF</button>
 <button class="btn modify" onclick="solicitarModificacion()">✏️ Solicitar Modificación</button>
 <button class="btn reject" onclick="actualizarEstado('rechazada')">❌ Rechazar Solicitud</button>
 </div>
@@ -175,6 +176,10 @@ const SUPABASE_URL = "https://goxkmtnmfessroveanje.supabase.co";
 const SUPABASE_ANON_KEY = "sb_publishable_w8xrtEanlJJAc5FYvk1X5A_fKu9vb5d";
 
 const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+const MEDICO_NOMBRE = "Dra. Carolina Domínguez";
+const MEDICO_RUT = "24.891.056-9";
+const MEDICO_REGISTRO = "544925";
 
 let ordenes = [];
 let ordenSeleccionada = null;
@@ -332,6 +337,165 @@ contenedor.appendChild(div);
 
 detalleCard.style.display = "block";
 window.scrollTo({top:detalleCard.offsetTop - 20,behavior:"smooth"});
+}
+
+function generarPDFBlob(orden, observaciones){
+const { jsPDF } = window.jspdf;
+const doc = new jsPDF();
+
+const fechaActual = new Date().toLocaleDateString("es-CL");
+
+doc.setFont("helvetica", "bold");
+doc.setFontSize(20);
+doc.text("ORDEN MÉDICA DE EXÁMENES", 105, 20, { align: "center" });
+
+doc.setFontSize(12);
+doc.setFont("helvetica", "normal");
+doc.text("DeltaF - Plataforma de Solicitudes de Exámenes", 105, 28, { align: "center" });
+
+doc.line(20, 35, 190, 35);
+
+doc.setFont("helvetica", "bold");
+doc.text("Código de Orden:", 20, 48);
+doc.setFont("helvetica", "normal");
+doc.text(orden.codigo || "-", 65, 48);
+
+doc.setFont("helvetica", "bold");
+doc.text("Fecha de emisión:", 20, 58);
+doc.setFont("helvetica", "normal");
+doc.text(fechaActual, 65, 58);
+
+doc.setFont("helvetica", "bold");
+doc.text("Paciente:", 20, 75);
+doc.setFont("helvetica", "normal");
+doc.text(orden.nombre_paciente || "-", 65, 75);
+
+doc.setFont("helvetica", "bold");
+doc.text("RUT Paciente:", 20, 85);
+doc.setFont("helvetica", "normal");
+doc.text(orden.rut_paciente || "-", 65, 85);
+
+doc.setFont("helvetica", "bold");
+doc.text("Correo Paciente:", 20, 95);
+doc.setFont("helvetica", "normal");
+doc.text(orden.correo_paciente || "-", 65, 95);
+
+doc.setFont("helvetica", "bold");
+doc.text("Exámenes solicitados:", 20, 115);
+
+doc.setFont("helvetica", "normal");
+const examenes = (orden.tipo_orden || "-").split(",").map(e => e.trim()).filter(Boolean);
+let y = 125;
+
+examenes.forEach(examen => {
+doc.text("• " + examen, 25, y);
+y += 8;
+if(y > 250){
+doc.addPage();
+y = 25;
+}
+});
+
+y += 8;
+
+doc.setFont("helvetica", "bold");
+doc.text("Justificación / Motivo:", 20, y);
+y += 8;
+
+doc.setFont("helvetica", "normal");
+const motivoTexto = doc.splitTextToSize(orden.motivo || "-", 170);
+doc.text(motivoTexto, 20, y);
+y += motivoTexto.length * 7 + 8;
+
+if(y > 230){
+doc.addPage();
+y = 25;
+}
+
+doc.setFont("helvetica", "bold");
+doc.text("Observaciones médicas:", 20, y);
+y += 8;
+
+doc.setFont("helvetica", "normal");
+const obsTexto = doc.splitTextToSize(observaciones || "Sin observaciones adicionales.", 170);
+doc.text(obsTexto, 20, y);
+
+doc.setFont("helvetica", "bold");
+doc.text("Médico autorizador:", 20, 245);
+doc.setFont("helvetica", "normal");
+doc.text(MEDICO_NOMBRE, 20, 255);
+doc.text("RUT: " + MEDICO_RUT, 20, 263);
+doc.text("N° Registro SIS: " + MEDICO_REGISTRO, 20, 271);
+
+doc.line(125, 255, 185, 255);
+doc.setFontSize(10);
+doc.text("Firma médica", 145, 263);
+
+doc.setFontSize(9);
+doc.text("Documento generado digitalmente por DeltaF.", 105, 287, { align: "center" });
+
+return doc.output("blob");
+}
+
+async function subirPDF(orden, pdfBlob){
+const nombreArchivo = `${orden.codigo || "orden"}-${Date.now()}.pdf`;
+
+const { error: uploadError } = await supabaseClient
+.storage
+.from("ordenes")
+.upload(nombreArchivo, pdfBlob, {
+contentType: "application/pdf",
+upsert: true
+});
+
+if(uploadError){
+throw uploadError;
+}
+
+const { data: publicData } = supabaseClient
+.storage
+.from("ordenes")
+.getPublicUrl(nombreArchivo);
+
+return publicData.publicUrl;
+}
+
+async function aprobarConPDF(){
+if(!ordenSeleccionada){
+mostrarMensaje("Primero selecciona una solicitud.", "error");
+return;
+}
+
+try{
+mostrarMensaje("Generando PDF y aprobando solicitud...", "loading");
+
+const observaciones = document.getElementById("observacionesMedicas").value.trim();
+
+const pdfBlob = generarPDFBlob(ordenSeleccionada, observaciones);
+const pdfUrl = await subirPDF(ordenSeleccionada, pdfBlob);
+
+const { error } = await supabaseClient
+.from("ordenes")
+.update({
+estado: "aprobada",
+observaciones: observaciones,
+pdf_url: pdfUrl
+})
+.eq("id", ordenSeleccionada.id);
+
+if(error){
+throw error;
+}
+
+mostrarMensaje("Solicitud aprobada y PDF generado correctamente.", "success");
+detalleCard.style.display = "none";
+ordenSeleccionada = null;
+await cargarOrdenes();
+
+}catch(error){
+console.error(error);
+mostrarMensaje("Error al generar PDF o aprobar solicitud: " + error.message, "error");
+}
 }
 
 async function actualizarEstado(nuevoEstado){
