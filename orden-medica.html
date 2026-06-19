@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Orden Médica | DeltaF</title>
+
+<style>
+
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+font-family:Arial, Helvetica, sans-serif;
+}
+
+body{
+background:#f1f5f9;
+padding:30px;
+}
+
+.documento{
+max-width:900px;
+margin:auto;
+background:white;
+padding:50px;
+box-shadow:0 0 20px rgba(0,0,0,.1);
+}
+
+.header{
+display:flex;
+justify-content:space-between;
+align-items:center;
+border-bottom:3px solid #2563eb;
+padding-bottom:20px;
+margin-bottom:30px;
+}
+
+.logo{
+height:80px;
+}
+
+.titulo{
+text-align:right;
+}
+
+.titulo h1{
+color:#2563eb;
+font-size:2rem;
+}
+
+.titulo p{
+color:#64748b;
+}
+
+.bloque{
+margin-bottom:25px;
+}
+
+.bloque h2{
+color:#2563eb;
+font-size:1.1rem;
+margin-bottom:10px;
+border-bottom:1px solid #cbd5e1;
+padding-bottom:5px;
+}
+
+.grid{
+display:grid;
+grid-template-columns:1fr 1fr;
+gap:15px;
+}
+
+.campo{
+padding:12px;
+background:#f8fafc;
+border-radius:8px;
+}
+
+.label{
+font-size:.8rem;
+color:#64748b;
+margin-bottom:4px;
+}
+
+.valor{
+font-weight:bold;
+}
+
+.examenes{
+margin-top:10px;
+}
+
+.examen{
+padding:12px;
+border:1px solid #cbd5e1;
+margin-bottom:8px;
+border-radius:8px;
+}
+
+.justificacion{
+background:#f8fafc;
+padding:15px;
+border-radius:8px;
+line-height:1.6;
+}
+
+.firma{
+margin-top:80px;
+display:flex;
+justify-content:flex-end;
+}
+
+.firma-box{
+text-align:center;
+width:300px;
+}
+
+.linea{
+border-top:2px solid #000;
+margin-bottom:10px;
+}
+
+.firma-box h3{
+font-size:1rem;
+}
+
+.firma-box p{
+font-size:.9rem;
+color:#64748b;
+}
+
+.timbre{
+margin-top:20px;
+border:2px dashed #2563eb;
+padding:15px;
+border-radius:10px;
+color:#2563eb;
+font-weight:bold;
+}
+
+.footer{
+margin-top:50px;
+font-size:.8rem;
+color:#64748b;
+text-align:center;
+border-top:1px solid #cbd5e1;
+padding-top:15px;
+}
+
+@media print{
+
+body{
+background:white;
+padding:0;
+}
+
+.documento{
+box-shadow:none;
+padding:20px;
+}
+
+}
+
+</style>
+
+</head>
+
+<body>
+
+<div class="documento">
+
+<div class="header">
+
+<img src="img/logo-deltaf.png" class="logo">
+
+<div class="titulo">
+<h1>ORDEN MÉDICA</h1>
+<p>DeltaF - Plataforma de Gestión Clínica</p>
+</div>
+
+</div>
+
+<div class="bloque">
+
+<h2>Datos del Paciente</h2>
+
+<div class="grid">
+
+<div class="campo">
+<div class="label">Nombre</div>
+<div class="valor">Juan Pérez González</div>
+</div>
+
+<div class="campo">
+<div class="label">RUT</div>
+<div class="valor">12.345.678-9</div>
+</div>
+
+<div class="campo">
+<div class="label">Fecha Nacimiento</div>
+<div class="valor">01/01/1985</div>
+</div>
+
+<div class="campo">
+<div class="label">Fecha Solicitud</div>
+<div class="valor">19/06/2026</div>
+</div>
+
+</div>
+
+</div>
+
+<div class="bloque">
+
+<h2>Exámenes Solicitados</h2>
+
+<div class="examenes">
+
+<div class="examen">✓ Hemograma Completo</div>
+
+<div class="examen">✓ Perfil Lipídico</div>
+
+<div class="examen">✓ Vitamina D</div>
+
+<div class="examen">✓ Ferritina</div>
+
+</div>
+
+</div>
+
+<div class="bloque">
+
+<h2>Justificación Clínica</h2>
+
+<div class="justificacion">
+
+Evaluación y seguimiento terapéutico del paciente para control metabólico, estado nutricional y monitoreo de parámetros clínicos relevantes según criterio profesional.
+
+</div>
+
+</div>
+
+<div class="firma">
+
+<div class="firma-box">
+
+<div class="linea"></div>
+
+<h3>Dr. Nombre Médico</h3>
+
+<p>Médico Cirujano</p>
+
+<p>Registro SIS N° XXXXX</p>
+
+<div class="timbre">
+
+AUTORIZADO DIGITALMENTE
+
+</div>
+
+</div>
+
+</div>
+
+<div class="footer">
+
+Documento generado por DeltaF.
+Esta orden médica posee trazabilidad digital y registro de autorización profesional.
+
+</div>
+
+</div>
+
+</body>
+
+</html>
