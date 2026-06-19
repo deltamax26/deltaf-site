@@ -510,7 +510,10 @@ mostrarMensaje("Error al solicitar modificación: " + error.message, "error");
 }
 }
 
+let pendientesAnteriores = 0;
+
 (async function iniciarPanelMedico(){
+
 const permitido = await verificarPermisosMedico();
 
 if(!permitido){
@@ -518,8 +521,45 @@ return;
 }
 
 await cargarOrdenes();
-})();
-</script>
 
-</body>
-</html>
+pendientesAnteriores =
+solicitudesCombinadas.filter(
+o => o.estado === "pendiente"
+).length;
+
+setInterval(async () => {
+
+await cargarOrdenes();
+
+const pendientesActuales =
+solicitudesCombinadas.filter(
+o => o.estado === "pendiente"
+).length;
+
+if(pendientesActuales > pendientesAnteriores){
+
+try{
+
+const audio = new Audio(
+"https://actions.google.com/sounds/v1/alarms/beep_short.ogg"
+);
+
+audio.play();
+
+alert(
+"🔔 NUEVA SOLICITUD DELTAF\n\n" +
+"Solicitudes pendientes: " +
+pendientesActuales
+);
+
+}catch(error){
+console.log(error);
+}
+
+}
+
+pendientesAnteriores = pendientesActuales;
+
+},30000);
+
+})();
