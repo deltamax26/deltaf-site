@@ -1,175 +1,52 @@
 <!DOCTYPE html>
 <html lang="es">
-
 <head>
-
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
 <title>Mis Solicitudes | DeltaF</title>
 
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
 <style>
-
-*{
-margin:0;
-padding:0;
-box-sizing:border-box;
-font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;
-}
-
-body{
-background:#f8fafc;
-padding:30px;
-}
-
-.container{
-max-width:1400px;
-margin:auto;
-}
-
-.header{
-background:white;
-padding:25px;
-border-radius:20px;
-box-shadow:0 10px 25px rgba(0,0,0,.06);
-margin-bottom:25px;
-display:flex;
-justify-content:space-between;
-align-items:center;
-flex-wrap:wrap;
-gap:20px;
-}
-
-.header img{
-width:200px;
-}
-
-.header h1{
-color:#2563eb;
-}
-
-.card{
-background:white;
-padding:25px;
-border-radius:20px;
-box-shadow:0 10px 25px rgba(0,0,0,.06);
-}
-
-.filters{
-display:grid;
-grid-template-columns:1fr 1fr 1fr;
-gap:15px;
-margin-bottom:20px;
-}
-
-input,
-select{
-padding:12px;
-border:1px solid #cbd5e1;
-border-radius:10px;
-width:100%;
-}
-
-table{
-width:100%;
-border-collapse:collapse;
-}
-
-th{
-background:#2563eb;
-color:white;
-padding:15px;
-text-align:left;
-}
-
-td{
-padding:15px;
-border-bottom:1px solid #e2e8f0;
-}
-
-.status{
-padding:8px 12px;
-border-radius:8px;
-font-weight:600;
-display:inline-block;
-}
-
-.pendiente{
-background:#fef3c7;
-color:#92400e;
-}
-
-.aprobada{
-background:#dcfce7;
-color:#166534;
-}
-
-.rechazada{
-background:#fee2e2;
-color:#991b1b;
-}
-
-.btn{
-padding:10px 15px;
-border:none;
-border-radius:8px;
-cursor:pointer;
-font-weight:600;
-text-decoration:none;
-display:inline-block;
-}
-
-.btn-view{
-background:#2563eb;
-color:white;
-}
-
-.btn-pdf{
-background:#10b981;
-color:white;
-}
-
-.stats{
-display:grid;
-grid-template-columns:repeat(auto-fit,minmax(250px,1fr));
-gap:20px;
-margin-bottom:25px;
-}
-
-.stat-card{
-background:white;
-padding:25px;
-border-radius:20px;
-box-shadow:0 10px 25px rgba(0,0,0,.06);
-}
-
-.stat-card h3{
-color:#64748b;
-margin-bottom:10px;
-}
-
-.number{
-font-size:2rem;
-font-weight:800;
-color:#2563eb;
-}
-
+*{margin:0;padding:0;box-sizing:border-box;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;}
+body{background:#f8fafc;padding:30px;color:#1e293b;}
+.container{max-width:1400px;margin:auto;}
+.header{background:white;padding:25px;border-radius:20px;box-shadow:0 10px 25px rgba(0,0,0,.06);margin-bottom:25px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:20px;}
+.header img{width:200px;}
+.header h1{color:#2563eb;}
+.header a{color:#2563eb;text-decoration:none;font-weight:700;}
+.card{background:white;padding:25px;border-radius:20px;box-shadow:0 10px 25px rgba(0,0,0,.06);}
+.filters{display:grid;grid-template-columns:1fr 1fr 1fr;gap:15px;margin-bottom:20px;}
+input,select{padding:12px;border:1px solid #cbd5e1;border-radius:10px;width:100%;}
+table{width:100%;border-collapse:collapse;}
+th{background:#2563eb;color:white;padding:15px;text-align:left;}
+td{padding:15px;border-bottom:1px solid #e2e8f0;vertical-align:top;}
+.status{padding:8px 12px;border-radius:8px;font-weight:600;display:inline-block;text-transform:capitalize;}
+.pendiente{background:#fef3c7;color:#92400e;}
+.aprobada{background:#dcfce7;color:#166534;}
+.rechazada{background:#fee2e2;color:#991b1b;}
+.btn{padding:10px 15px;border:none;border-radius:8px;cursor:pointer;font-weight:600;text-decoration:none;display:inline-block;}
+.btn-view{background:#2563eb;color:white;}
+.btn-pdf{background:#10b981;color:white;margin-left:5px;}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:20px;margin-bottom:25px;}
+.stat-card{background:white;padding:25px;border-radius:20px;box-shadow:0 10px 25px rgba(0,0,0,.06);}
+.stat-card h3{color:#64748b;margin-bottom:10px;}
+.number{font-size:2rem;font-weight:800;color:#2563eb;}
+.message{padding:18px;border-radius:12px;margin-bottom:20px;font-weight:700;}
+.loading{background:white;color:#64748b;}
+.error{background:#fee2e2;color:#991b1b;border:1px solid #fca5a5;}
+.empty{background:#eff6ff;color:#1e40af;border:1px solid #93c5fd;}
+.modal{display:none;position:fixed;inset:0;background:rgba(15,23,42,.65);z-index:1000;align-items:center;justify-content:center;padding:20px;}
+.modal-content{background:white;max-width:800px;width:100%;border-radius:20px;padding:30px;max-height:85vh;overflow:auto;}
+.modal-content h2{color:#2563eb;margin-bottom:15px;}
+.modal-content p{margin-bottom:12px;line-height:1.5;}
+.close-btn{background:#0f172a;color:white;border:none;border-radius:10px;padding:12px 18px;font-weight:700;cursor:pointer;margin-top:15px;}
 @media(max-width:900px){
-
-.filters{
-grid-template-columns:1fr;
+.filters{grid-template-columns:1fr;}
+table{display:block;overflow-x:auto;white-space:nowrap;}
+body{padding:15px;}
 }
-
-table{
-display:block;
-overflow-x:auto;
-white-space:nowrap;
-}
-
-}
-
 </style>
-
 </head>
 
 <body>
@@ -177,117 +54,263 @@ white-space:nowrap;
 <div class="container">
 
 <div class="header">
-
 <div>
-<img src="img/logo-deltaf.png">
+<img src="./img/logo-deltaf.png" alt="DeltaF">
 </div>
-
 <div>
 <h1>Mis Solicitudes</h1>
+<a href="dashboard-profesional.html">← Volver al Dashboard</a>
+</div>
 </div>
 
-</div>
+<div id="mensaje" class="message loading">Cargando solicitudes...</div>
 
 <div class="stats">
-
 <div class="stat-card">
 <h3>Total Solicitudes</h3>
-<div class="number">19</div>
+<div id="totalSolicitudes" class="number">0</div>
 </div>
 
 <div class="stat-card">
 <h3>Pendientes</h3>
-<div class="number">3</div>
+<div id="totalPendientes" class="number">0</div>
 </div>
 
 <div class="stat-card">
 <h3>Aprobadas</h3>
-<div class="number">15</div>
+<div id="totalAprobadas" class="number">0</div>
 </div>
 
 <div class="stat-card">
 <h3>Rechazadas</h3>
-<div class="number">1</div>
+<div id="totalRechazadas" class="number">0</div>
 </div>
-
 </div>
 
 <div class="card">
 
 <div class="filters">
+<input id="buscarPaciente" type="text" placeholder="Buscar paciente">
 
-<input type="text" placeholder="Buscar paciente">
-
-<select>
-<option>Todos los estados</option>
-<option>Pendiente</option>
-<option>Aprobada</option>
-<option>Rechazada</option>
+<select id="filtroEstado">
+<option value="">Todos los estados</option>
+<option value="pendiente">Pendiente</option>
+<option value="aprobada">Aprobada</option>
+<option value="rechazada">Rechazada</option>
 </select>
 
-<input type="date">
-
+<input id="filtroFecha" type="date">
 </div>
 
 <table>
-
 <thead>
-
 <tr>
-<th>ID</th>
+<th>Código</th>
 <th>Fecha</th>
 <th>Paciente</th>
-<th>Profesional</th>
+<th>RUT</th>
+<th>Exámenes</th>
 <th>Estado</th>
 <th>Acciones</th>
 </tr>
-
 </thead>
 
-<tbody>
-
-<tr>
-<td>DF-001</td>
-<td>18/06/2026</td>
-<td>María González</td>
-<td>Nutricionista</td>
-<td><span class="status pendiente">Pendiente</span></td>
-<td>
-<a href="#" class="btn btn-view">Ver</a>
-</td>
-</tr>
-
-<tr>
-<td>DF-002</td>
-<td>18/06/2026</td>
-<td>Juan Pérez</td>
-<td>Kinesiólogo</td>
-<td><span class="status aprobada">Aprobada</span></td>
-<td>
-<a href="#" class="btn btn-view">Ver</a>
-<a href="#" class="btn btn-pdf">PDF</a>
-</td>
-</tr>
-
-<tr>
-<td>DF-003</td>
-<td>17/06/2026</td>
-<td>Ana Morales</td>
-<td>Enfermera</td>
-<td><span class="status rechazada">Rechazada</span></td>
-<td>
-<a href="#" class="btn btn-view">Ver</a>
-</td>
-</tr>
-
+<tbody id="tablaSolicitudes">
 </tbody>
-
 </table>
 
 </div>
-
 </div>
 
-</body>
+<div id="modalDetalle" class="modal">
+<div class="modal-content">
+<h2>Detalle de Solicitud</h2>
+<div id="detalleContenido"></div>
+<button class="close-btn" onclick="cerrarModal()">Cerrar</button>
+</div>
+</div>
 
+<script>
+const SUPABASE_URL = "https://goxkmtnmfessroveanje.supabase.co";
+const SUPABASE_ANON_KEY = "sb_publishable_w8xrtEanlJJAc5FYvk1X5A_fKu9vb5d";
+
+const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+const mensaje = document.getElementById("mensaje");
+const tablaSolicitudes = document.getElementById("tablaSolicitudes");
+const buscarPaciente = document.getElementById("buscarPaciente");
+const filtroEstado = document.getElementById("filtroEstado");
+const filtroFecha = document.getElementById("filtroFecha");
+
+let solicitudes = [];
+let profesionalActual = null;
+
+function formatearFecha(fechaISO){
+if(!fechaISO) return "-";
+const fecha = new Date(fechaISO);
+return fecha.toLocaleDateString("es-CL");
+}
+
+function mostrarMensaje(texto,tipo){
+mensaje.textContent = texto;
+mensaje.className = "message " + tipo;
+mensaje.style.display = "block";
+}
+
+function ocultarMensaje(){
+mensaje.style.display = "none";
+}
+
+async function obtenerProfesional(){
+const { data: sessionData, error: sessionError } = await supabaseClient.auth.getSession();
+
+if(sessionError || !sessionData.session){
+window.location.href = "login.html";
+return null;
+}
+
+const email = sessionData.session.user.email;
+
+const { data: profesional, error } = await supabaseClient
+.from("profesionales")
+.select("*")
+.eq("email", email)
+.single();
+
+if(error || !profesional){
+mostrarMensaje("No se encontró el profesional asociado a esta sesión.", "error");
+return null;
+}
+
+return profesional;
+}
+
+async function cargarSolicitudes(){
+profesionalActual = await obtenerProfesional();
+
+if(!profesionalActual) return;
+
+const { data, error } = await supabaseClient
+.from("ordenes")
+.select("*")
+.eq("profesional_id", profesionalActual.id)
+.order("created_at", { ascending:false });
+
+if(error){
+mostrarMensaje("Error al cargar solicitudes: " + error.message, "error");
+return;
+}
+
+solicitudes = data || [];
+actualizarEstadisticas();
+renderizarTabla();
+
+if(solicitudes.length === 0){
+mostrarMensaje("Aún no tienes solicitudes registradas.", "empty");
+}else{
+ocultarMensaje();
+}
+}
+
+function actualizarEstadisticas(){
+document.getElementById("totalSolicitudes").textContent = solicitudes.length;
+
+document.getElementById("totalPendientes").textContent =
+solicitudes.filter(s => s.estado === "pendiente").length;
+
+document.getElementById("totalAprobadas").textContent =
+solicitudes.filter(s => s.estado === "aprobada").length;
+
+document.getElementById("totalRechazadas").textContent =
+solicitudes.filter(s => s.estado === "rechazada").length;
+}
+
+function obtenerSolicitudesFiltradas(){
+const texto = buscarPaciente.value.trim().toLowerCase();
+const estado = filtroEstado.value;
+const fecha = filtroFecha.value;
+
+return solicitudes.filter(solicitud => {
+const coincidePaciente = !texto ||
+(solicitud.nombre_paciente || "").toLowerCase().includes(texto) ||
+(solicitud.rut_paciente || "").toLowerCase().includes(texto) ||
+(solicitud.codigo || "").toLowerCase().includes(texto);
+
+const coincideEstado = !estado || solicitud.estado === estado;
+
+const fechaSolicitud = solicitud.created_at ? solicitud.created_at.slice(0,10) : "";
+const coincideFecha = !fecha || fechaSolicitud === fecha;
+
+return coincidePaciente && coincideEstado && coincideFecha;
+});
+}
+
+function renderizarTabla(){
+const filtradas = obtenerSolicitudesFiltradas();
+
+tablaSolicitudes.innerHTML = "";
+
+if(filtradas.length === 0){
+tablaSolicitudes.innerHTML = `
+<tr>
+<td colspan="7">No hay solicitudes para los filtros seleccionados.</td>
+</tr>
+`;
+return;
+}
+
+filtradas.forEach(solicitud => {
+const fila = document.createElement("tr");
+
+fila.innerHTML = `
+<td>${solicitud.codigo || "-"}</td>
+<td>${formatearFecha(solicitud.created_at)}</td>
+<td>${solicitud.nombre_paciente || "-"}</td>
+<td>${solicitud.rut_paciente || "-"}</td>
+<td>${solicitud.tipo_orden || "-"}</td>
+<td><span class="status ${solicitud.estado || "pendiente"}">${solicitud.estado || "pendiente"}</span></td>
+<td>
+<button class="btn btn-view" onclick="verDetalle(${solicitud.id})">Ver</button>
+${solicitud.pdf_url ? `<a href="${solicitud.pdf_url}" class="btn btn-pdf" target="_blank">PDF</a>` : ""}
+</td>
+`;
+
+tablaSolicitudes.appendChild(fila);
+});
+}
+
+function verDetalle(id){
+const solicitud = solicitudes.find(s => s.id === id);
+
+if(!solicitud) return;
+
+const detalle = document.getElementById("detalleContenido");
+
+detalle.innerHTML = `
+<p><strong>Código:</strong> ${solicitud.codigo || "-"}</p>
+<p><strong>Fecha:</strong> ${formatearFecha(solicitud.created_at)}</p>
+<p><strong>Paciente:</strong> ${solicitud.nombre_paciente || "-"}</p>
+<p><strong>RUT:</strong> ${solicitud.rut_paciente || "-"}</p>
+<p><strong>Correo paciente:</strong> ${solicitud.correo_paciente || "-"}</p>
+<p><strong>Estado:</strong> ${solicitud.estado || "-"}</p>
+<p><strong>Exámenes:</strong><br>${solicitud.tipo_orden || "-"}</p>
+<p><strong>Motivo / Justificación:</strong><br>${(solicitud.motivo || "-").replaceAll("\n","<br>")}</p>
+<p><strong>Observaciones:</strong><br>${(solicitud.observaciones || "-").replaceAll("\n","<br>")}</p>
+`;
+
+document.getElementById("modalDetalle").style.display = "flex";
+}
+
+function cerrarModal(){
+document.getElementById("modalDetalle").style.display = "none";
+}
+
+buscarPaciente.addEventListener("input", renderizarTabla);
+filtroEstado.addEventListener("change", renderizarTabla);
+filtroFecha.addEventListener("change", renderizarTabla);
+
+cargarSolicitudes();
+</script>
+
+</body>
 </html>
