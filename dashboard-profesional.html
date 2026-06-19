@@ -104,6 +104,7 @@ padding:6px 12px;
 border-radius:999px;
 font-size:.85rem;
 font-weight:700;
+text-transform:capitalize;
 }
 
 .status.aprobado{
@@ -182,6 +183,14 @@ cursor:pointer;
 background:#1d4ed8;
 }
 
+.btn-green{
+background:#10b981;
+}
+
+.btn-green:hover{
+background:#059669;
+}
+
 .notice{
 margin-top:30px;
 background:#eff6ff;
@@ -193,6 +202,17 @@ border-radius:12px;
 .notice h3{
 margin-bottom:10px;
 color:#2563eb;
+}
+
+.alert{
+margin-bottom:25px;
+background:#fef3c7;
+border-left:5px solid #f59e0b;
+padding:18px;
+border-radius:12px;
+color:#92400e;
+font-weight:600;
+display:none;
 }
 
 .loading{
@@ -264,6 +284,10 @@ Cargando información del profesional...
 
 <div id="contenidoDashboard" style="display:none;">
 
+<div id="alertaOrdenes" class="alert">
+⚠️ No tienes órdenes disponibles. Debes comprar órdenes antes de crear una nueva solicitud.
+</div>
+
 <div class="topbar">
 
 <h1 id="bienvenida">Bienvenido a DeltaF</h1>
@@ -309,7 +333,7 @@ Cargando información del profesional...
 <div class="action-card">
 <h2>Nueva Solicitud</h2>
 <p>Solicita exámenes clínicos o radiografías para tus pacientes.</p>
-<a href="nueva-solicitud.html" class="btn">Crear Solicitud</a>
+<a id="btnNuevaSolicitud" href="nueva-solicitud.html" class="btn">Crear Solicitud</a>
 </div>
 
 <div class="action-card">
@@ -320,8 +344,8 @@ Cargando información del profesional...
 
 <div class="action-card">
 <h2>Mis Solicitudes</h2>
-<p>Consulta el estado de tus solicitudes enviadas.</p>
-<a href="mis-solicitudes.html" class="btn">Ver Historial</a>
+<p>Consulta el estado de tus solicitudes enviadas y descarga tus PDF aprobados.</p>
+<a href="mis-solicitudes.html" class="btn btn-green">Ver Historial / PDFs</a>
 </div>
 
 </div>
@@ -351,12 +375,32 @@ const loading = document.getElementById("loading");
 const errorBox = document.getElementById("errorBox");
 const contenidoDashboard = document.getElementById("contenidoDashboard");
 const cerrarSesion = document.getElementById("cerrarSesion");
+const alertaOrdenes = document.getElementById("alertaOrdenes");
+const btnNuevaSolicitud = document.getElementById("btnNuevaSolicitud");
 
 function mostrarError(texto){
 loading.style.display = "none";
 contenidoDashboard.style.display = "none";
 errorBox.style.display = "block";
 errorBox.textContent = texto;
+}
+
+async function verificarRolEspecial(email){
+const { data, error } = await supabaseClient
+.from("usuarios")
+.select("*")
+.eq("email", email)
+.limit(1);
+
+if(error){
+return null;
+}
+
+if(data && data.length > 0){
+return data[0].rol;
+}
+
+return null;
 }
 
 async function contarOrdenes(profesionalId, estado){
@@ -383,18 +427,37 @@ window.location.href = "login.html";
 return;
 }
 
-const email = sessionData.session.user.email;
+const email = sessionData.session.user.email.toLowerCase();
 
-const { data: profesional, error: profesionalError } = await supabaseClient
+const rolEspecial = await verificarRolEspecial(email);
+
+if(rolEspecial === "superadmin"){
+window.location.href = "panel-admin.html";
+return;
+}
+
+if(rolEspecial === "medico"){
+window.location.href = "panel-medico.html";
+return;
+}
+
+const { data: profesionalesData, error: profesionalError } = await supabaseClient
 .from("profesionales")
 .select("*")
 .eq("email", email)
-.single();
+.limit(1);
 
-if(profesionalError || !profesional){
+if(profesionalError){
+mostrarError("Error al cargar el perfil profesional.");
+return;
+}
+
+if(!profesionalesData || profesionalesData.length === 0){
 mostrarError("No se encontró el perfil profesional asociado a este usuario.");
 return;
 }
+
+const profesional = profesionalesData[0];
 
 if(profesional.estado !== "aprobado"){
 await supabaseClient.auth.signOut();
@@ -410,7 +473,15 @@ const estadoSpan = document.getElementById("estadoProfesional");
 estadoSpan.textContent = "Estado: " + profesional.estado;
 estadoSpan.classList.add(profesional.estado);
 
-document.getElementById("ordenesDisponibles").textContent = profesional.ordenes_disponibles || 0;
+const ordenesDisponibles = profesional.ordenes_disponibles || 0;
+
+document.getElementById("ordenesDisponibles").textContent = ordenesDisponibles;
+
+if(ordenesDisponibles <= 0){
+alertaOrdenes.style.display = "block";
+btnNuevaSolicitud.href = "comprar-ordenes.html";
+btnNuevaSolicitud.textContent = "Comprar Órdenes";
+}
 
 const pendientes = await contarOrdenes(profesional.id, "pendiente");
 const aprobadas = await contarOrdenes(profesional.id, "aprobada");
