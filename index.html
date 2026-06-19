@@ -1,16 +1,21 @@
 <!DOCTYPE html>
-
 <html lang="es">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
 <title>DeltaF</title>
 
 <style>
 
-body{
-font-family: Arial, sans-serif;
+*{
 margin:0;
+padding:0;
+box-sizing:border-box;
+font-family:Arial, Helvetica, sans-serif;
+}
+
+body{
 background:#f8fafc;
 color:#1e293b;
 }
@@ -18,46 +23,109 @@ color:#1e293b;
 header{
 background:linear-gradient(135deg,#2563eb,#06b6d4);
 color:white;
-text-align:center;
 padding:80px 20px;
+text-align:center;
 }
 
-h1{
+.logo{
 font-size:3rem;
+font-weight:900;
 margin-bottom:20px;
 }
 
-.container{
+header h1{
+font-size:2.8rem;
+margin-bottom:20px;
+}
+
+header p{
+max-width:800px;
+margin:auto;
+font-size:1.2rem;
+line-height:1.7;
+}
+
+.hero-buttons{
+margin-top:40px;
+display:flex;
+justify-content:center;
+gap:20px;
+flex-wrap:wrap;
+}
+
+.btn{
+background:white;
+color:#2563eb;
+padding:15px 30px;
+border-radius:12px;
+font-weight:bold;
+text-decoration:none;
+transition:.3s;
+}
+
+.btn:hover{
+transform:translateY(-3px);
+}
+
+.section{
 max-width:1200px;
 margin:auto;
-padding:40px 20px;
+padding:80px 20px;
+}
+
+.section h2{
+text-align:center;
+font-size:2rem;
+margin-bottom:40px;
 }
 
 .cards{
 display:grid;
-grid-template-columns:repeat(auto-fit,minmax(250px,1fr));
-gap:20px;
-margin-top:30px;
+grid-template-columns:repeat(auto-fit,minmax(280px,1fr));
+gap:25px;
 }
 
 .card{
 background:white;
-padding:25px;
-border-radius:15px;
-box-shadow:0 4px 12px rgba(0,0,0,.1);
+padding:30px;
+border-radius:20px;
+box-shadow:0 10px 25px rgba(0,0,0,.08);
 }
 
-form{
-max-width:600px;
+.card h3{
+margin-bottom:15px;
+color:#2563eb;
+}
+
+.card ul{
+padding-left:20px;
+line-height:1.8;
+}
+
+.price{
+font-size:2rem;
+font-weight:bold;
+margin:15px 0;
+color:#06b6d4;
+}
+
+.form-container{
+background:white;
+padding:40px;
+border-radius:20px;
+box-shadow:0 10px 25px rgba(0,0,0,.08);
+max-width:800px;
 margin:auto;
-display:flex;
-flex-direction:column;
-gap:15px;
 }
 
-input{
-padding:15px;
-border:1px solid #ccc;
+input,
+select,
+textarea{
+width:100%;
+padding:14px;
+margin-top:10px;
+margin-bottom:20px;
+border:1px solid #d1d5db;
 border-radius:10px;
 }
 
@@ -65,57 +133,157 @@ button{
 background:#2563eb;
 color:white;
 border:none;
-padding:15px;
+padding:15px 25px;
 border-radius:10px;
-font-size:16px;
 cursor:pointer;
+font-weight:bold;
 }
 
 footer{
 background:#0f172a;
 color:white;
 text-align:center;
-padding:30px;
-margin-top:50px;
+padding:40px;
+margin-top:80px;
+}
+
+@media(max-width:768px){
+
+header h1{
+font-size:2rem;
+}
+
+.logo{
+font-size:2.2rem;
+}
+
 }
 
 </style>
-
 </head>
 
 <body>
 
 <header>
-<h1>DeltaF</h1>
-<p>Órdenes de laboratorio para profesionales de la salud</p>
+
+<div class="logo">
+DELTΔF
+</div>
+
+<h1>
+Facilitamos el acceso a exámenes para profesionales de la salud
+</h1>
+
+<p>
+Apoya la evaluación clínica, seguimiento terapéutico y monitorización de resultados mediante una plataforma digital rápida, segura y accesible.
+</p>
+
+<div class="hero-buttons">
+
+<a href="#profesional" class="btn">
+🩺 Soy Profesional
+</a>
+
+<a href="#paciente" class="btn">
+👤 Soy Paciente
+</a>
+
+</div>
+
 </header>
 
-<div class="container">
+<section class="section" id="profesional">
 
-<h2>¿Cómo funciona?</h2>
+<h2>Profesionales de la Salud</h2>
 
 <div class="cards">
 
 <div class="card">
-<h3>Registro</h3>
-<p>Solicita acceso a la plataforma.</p>
+
+<h3>Profesionales Admitidos</h3>
+
+<ul>
+<li>Nutricionistas</li>
+<li>Enfermeros</li>
+<li>Kinesiólogos</li>
+<li>Fonoaudiólogos</li>
+<li>Terapeutas Ocupacionales</li>
+<li>Acupunturistas</li>
+<li>Naturopatas</li>
+</ul>
+
 </div>
 
 <div class="card">
-<h3>Validación</h3>
-<p>Revisamos tus credenciales profesionales.</p>
+
+<h3>Orden Individual</h3>
+
+<div class="price">
+$2.990
+</div>
+
+<p>
+Valor normal: $3.990
+</p>
+
 </div>
 
 <div class="card">
-<h3>Solicitud</h3>
-<p>Gestiona exámenes para tus pacientes.</p>
+
+<h3>Promoción Lanzamiento</h3>
+
+<div class="price">
+10 x $25.000
+</div>
+
+<p>
+Promoción válida por única vez.
+</p>
+
 </div>
 
 </div>
 
-<h2 style="margin-top:60px;">Solicitar Acceso</h2>
+</section>
 
-<form>
+<section class="section" id="paciente">
+
+<h2>Pacientes</h2>
+
+<div class="cards">
+
+<div class="card">
+
+<h3>Solicitud Directa</h3>
+
+<p>
+Accede a órdenes de exámenes desde $4.990 a $6.990.
+</p>
+
+</div>
+
+<div class="card">
+
+<h3>Proceso</h3>
+
+<ul>
+<li>Completa tus datos</li>
+<li>Selecciona examen</li>
+<li>Realiza pago</li>
+<li>Procesamiento de solicitud</li>
+</ul>
+
+</div>
+
+</div>
+
+</section>
+
+<section class="section">
+
+<h2>Registro Profesional</h2>
+
+<div class="form-container">
 
 <input type="text" placeholder="Nombre Completo">
 
@@ -123,22 +291,32 @@ margin-top:50px;
 
 <input type="text" placeholder="Profesión">
 
-<input type="text" placeholder="Registro SIS">
+<input type="text" placeholder="Registro Superintendencia">
 
 <input type="email" placeholder="Correo Electrónico">
 
 <input type="tel" placeholder="Teléfono">
 
-<button type="submit">
-Solicitar Acceso
+<button>
+Solicitar Registro
 </button>
-
-</form>
 
 </div>
 
+</section>
+
 <footer>
-DeltaF.site © 2026
+
+<h3>DeltaF</h3>
+
+<p>
+Tecnología para facilitar el acceso a exámenes y apoyar el seguimiento clínico de los pacientes.
+</p>
+
+<p>
+www.deltaf.site
+</p>
+
 </footer>
 
 </body>
