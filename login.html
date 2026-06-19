@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Ingreso Profesional | DeltaF</title>
+
+<style>
+
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;
+}
+
+body{
+background:#f8fafc;
+min-height:100vh;
+display:flex;
+justify-content:center;
+align-items:center;
+padding:20px;
+}
+
+.login-container{
+width:100%;
+max-width:480px;
+}
+
+.login-card{
+background:white;
+padding:40px;
+border-radius:24px;
+box-shadow:0 15px 40px rgba(0,0,0,.08);
+}
+
+.logo{
+text-align:center;
+margin-bottom:30px;
+}
+
+.logo img{
+width:220px;
+max-width:100%;
+}
+
+h1{
+text-align:center;
+color:#2563eb;
+margin-bottom:10px;
+font-size:2rem;
+}
+
+.subtitle{
+text-align:center;
+color:#64748b;
+margin-bottom:35px;
+}
+
+label{
+display:block;
+font-weight:600;
+margin-bottom:8px;
+color:#334155;
+}
+
+input{
+width:100%;
+padding:15px;
+border:1px solid #cbd5e1;
+border-radius:12px;
+margin-bottom:20px;
+font-size:1rem;
+}
+
+input:focus{
+outline:none;
+border-color:#2563eb;
+}
+
+.login-btn{
+width:100%;
+padding:16px;
+background:#2563eb;
+color:white;
+border:none;
+border-radius:12px;
+font-size:1rem;
+font-weight:bold;
+cursor:pointer;
+transition:.3s;
+}
+
+.login-btn:hover{
+background:#1d4ed8;
+}
+
+.links{
+margin-top:25px;
+display:flex;
+flex-direction:column;
+gap:12px;
+text-align:center;
+}
+
+.links a{
+text-decoration:none;
+color:#2563eb;
+font-weight:600;
+}
+
+.links a:hover{
+text-decoration:underline;
+}
+
+.back-home{
+margin-top:30px;
+text-align:center;
+}
+
+.back-home a{
+text-decoration:none;
+color:#64748b;
+}
+
+.info-box{
+margin-top:25px;
+padding:18px;
+background:#eff6ff;
+border-left:4px solid #2563eb;
+border-radius:10px;
+font-size:.95rem;
+color:#334155;
+}
+
+</style>
+
+</head>
+
+<body>
+
+<div class="login-container">
+
+<div class="login-card">
+
+<div class="logo">
+<img src="img/logo-deltaf.png" alt="DeltaF">
+</div>
+
+<h1>Ingreso Profesional</h1>
+
+<p class="subtitle">
+Accede a tu panel de solicitudes DeltaF
+</p>
+
+<form>
+
+<label>Correo Electrónico</label>
+
+<input
+type="email"
+placeholder="correo@ejemplo.cl"
+required
+>
+
+<label>Contraseña</label>
+
+<input
+type="password"
+placeholder="Ingrese su contraseña"
+required
+>
+
+<button class="login-btn" type="submit">
+Ingresar
+</button>
+
+</form>
+
+<div class="links">
+
+<a href="#">
+¿Olvidó su contraseña?
+</a>
+
+<a href="registro-profesional.html">
+Crear cuenta profesional
+</a>
+
+</div>
+
+<div class="info-box">
+
+<strong>Acceso exclusivo para profesionales registrados.</strong>
+
+<br><br>
+
+Una vez validada su información y registro profesional, podrá acceder a la plataforma para solicitar exámenes clínicos para sus pacientes.
+
+</div>
+
+<div class="back-home">
+
+<a href="index.html">
+← Volver al inicio
+</a>
+
+</div>
+
+</div>
+
+</div>
+
+</body>
+
+</html>
