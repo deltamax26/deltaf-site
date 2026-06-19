@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+
+<html lang="es">
+<head>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Registro Profesional | DeltaF</title>
+
+<style>
+
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;
+}
+
+body{
+background:#f8fafc;
+color:#1e293b;
+}
+
+header{
+background:linear-gradient(135deg,#2563eb,#06b6d4);
+padding:30px;
+text-align:center;
+}
+
+header img{
+max-width:250px;
+}
+
+.container{
+max-width:900px;
+margin:50px auto;
+padding:20px;
+}
+
+.card{
+background:white;
+padding:40px;
+border-radius:20px;
+box-shadow:0 10px 30px rgba(0,0,0,.08);
+}
+
+h1{
+text-align:center;
+margin-bottom:15px;
+color:#2563eb;
+}
+
+.subtitle{
+text-align:center;
+margin-bottom:40px;
+color:#64748b;
+}
+
+.form-grid{
+display:grid;
+grid-template-columns:1fr 1fr;
+gap:20px;
+}
+
+.full{
+grid-column:1 / -1;
+}
+
+label{
+display:block;
+margin-bottom:8px;
+font-weight:600;
+}
+
+input,
+select,
+textarea{
+width:100%;
+padding:14px;
+border:1px solid #cbd5e1;
+border-radius:10px;
+}
+
+button{
+background:#2563eb;
+color:white;
+border:none;
+padding:16px 30px;
+border-radius:10px;
+font-weight:bold;
+cursor:pointer;
+width:100%;
+font-size:1rem;
+}
+
+button:hover{
+background:#1d4ed8;
+}
+
+.notice{
+margin-top:30px;
+padding:20px;
+background:#eff6ff;
+border-left:4px solid #2563eb;
+border-radius:10px;
+}
+
+@media(max-width:768px){
+
+.form-grid{
+grid-template-columns:1fr;
+}
+
+}
+
+</style>
+
+</head>
+
+<body>
+
+<header>
+
+<img src="img/logo-deltaf.png" alt="DeltaF">
+
+</header>
+
+<div class="container">
+
+<div class="card">
+
+<h1>Registro Profesional</h1>
+
+<p class="subtitle">
+Complete sus antecedentes para solicitar acceso a la plataforma DeltaF.
+</p>
+
+<form>
+
+<div class="form-grid">
+
+<div>
+
+<label>Nombre</label>
+
+<input type="text" required>
+
+</div>
+
+<div>
+
+<label>Apellidos</label>
+
+<input type="text" required>
+
+</div>
+
+<div>
+
+<label>RUT</label>
+
+<input type="text" placeholder="12.345.678-9" required>
+
+</div>
+
+<div>
+
+<label>Fecha de Nacimiento</label>
+
+<input type="date">
+
+</div>
+
+<div>
+
+<label>Profesión</label>
+
+<select required>
+
+<option value="">Seleccione</option>
+
+<option>Nutricionista</option>
+
+<option>Enfermero(a)</option>
+
+<option>Kinesiólogo(a)</option>
+
+<option>Fonoaudiólogo(a)</option>
+
+<option>Terapeuta Ocupacional</option>
+
+<option>Acupunturista</option>
+
+<option>Naturopata</option>
+
+</select>
+
+</div>
+
+<div>
+
+<label>N° Registro Superintendencia</label>
+
+<input type="text" required>
+
+</div>
+
+<div>
+
+<label>Correo Electrónico</label>
+
+<input type="email" required>
+
+</div>
+
+<div>
+
+<label>Teléfono</label>
+
+<input type="tel" required>
+
+</div>
+
+<div class="full">
+
+<label>Dirección</label>
+
+<input type="text">
+
+</div>
+
+<div class="full">
+
+<label>Logo Profesional (URL opcional)</label>
+
+<input type="text" placeholder="https://misitio.cl/logo.png">
+
+</div>
+
+<div>
+
+<label>Contraseña</label>
+
+<input type="password" required>
+
+</div>
+
+<div>
+
+<label>Confirmar Contraseña</label>
+
+<input type="password" required>
+
+</div>
+
+<div class="full">
+
+<label>Información Adicional</label>
+
+<textarea rows="5"></textarea>
+
+</div>
+
+<div class="full">
+
+<button type="submit">
+
+Solicitar Registro
+
+</button>
+
+</div>
+
+</div>
+
+</form>
+
+<div class="notice">
+
+<strong>Proceso de Validación:</strong>
+
+<br><br>
+
+Su solicitud será revisada por DeltaF.
+
+Para ser aprobado deberá acreditar:
+
+<ul style="margin-top:10px; margin-left:20px;">
+<li>Identidad válida.</li>
+<li>Profesión declarada.</li>
+<li>Registro vigente cuando corresponda.</li>
+</ul>
+
+Una vez aprobado recibirá un correo de confirmación para acceder a la plataforma.
+
+</div>
+
+</div>
+
+</div>
+
+</body>
+</html>
