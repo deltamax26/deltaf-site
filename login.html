@@ -1,12 +1,13 @@
 <!DOCTYPE html>
 <html lang="es">
-
 <head>
 
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 <title>Ingreso Profesional | DeltaF</title>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
 <style>
 
@@ -99,6 +100,11 @@ transition:.3s;
 background:#1d4ed8;
 }
 
+.login-btn:disabled{
+background:#94a3b8;
+cursor:not-allowed;
+}
+
 .links{
 margin-top:25px;
 display:flex;
@@ -137,6 +143,29 @@ font-size:.95rem;
 color:#334155;
 }
 
+.message{
+display:none;
+margin-bottom:20px;
+padding:14px;
+border-radius:10px;
+font-weight:600;
+font-size:.95rem;
+}
+
+.message.success{
+display:block;
+background:#dcfce7;
+color:#166534;
+border:1px solid #86efac;
+}
+
+.message.error{
+display:block;
+background:#fee2e2;
+color:#991b1b;
+border:1px solid #fca5a5;
+}
+
 </style>
 
 </head>
@@ -148,7 +177,7 @@ color:#334155;
 <div class="login-card">
 
 <div class="logo">
-<img src="img/logo-deltaf.png" alt="DeltaF">
+<img src="./img/logo-deltaf.png" alt="DeltaF">
 </div>
 
 <h1>Ingreso Profesional</h1>
@@ -157,25 +186,29 @@ color:#334155;
 Accede a tu panel de solicitudes DeltaF
 </p>
 
-<form>
+<div id="mensaje" class="message"></div>
 
-<label>Correo Electrónico</label>
+<form id="loginForm">
+
+<label for="email">Correo Electrónico</label>
 
 <input
+id="email"
 type="email"
 placeholder="correo@ejemplo.cl"
 required
 >
 
-<label>Contraseña</label>
+<label for="password">Contraseña</label>
 
 <input
+id="password"
 type="password"
 placeholder="Ingrese su contraseña"
 required
 >
 
-<button class="login-btn" type="submit">
+<button id="btnLogin" class="login-btn" type="submit">
 Ingresar
 </button>
 
@@ -183,7 +216,7 @@ Ingresar
 
 <div class="links">
 
-<a href="#">
+<a href="#" id="recuperarPassword">
 ¿Olvidó su contraseña?
 </a>
 
@@ -215,6 +248,109 @@ Una vez validada su información y registro profesional, podrá acceder a la pla
 
 </div>
 
-</body>
+<script>
+const SUPABASE_URL = "https://goxkmtnmfessroveanje.supabase.co";
+const SUPABASE_ANON_KEY = "sb_publishable_w8xrtEanlJJAc5FYvk1X5A_fKu9vb5d";
 
+const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+const loginForm = document.getElementById("loginForm");
+const mensaje = document.getElementById("mensaje");
+const btnLogin = document.getElementById("btnLogin");
+const recuperarPassword = document.getElementById("recuperarPassword");
+
+function mostrarMensaje(texto, tipo){
+mensaje.textContent = texto;
+mensaje.className = "message " + tipo;
+}
+
+loginForm.addEventListener("submit", async function(event){
+event.preventDefault();
+
+mensaje.className = "message";
+mensaje.textContent = "";
+
+btnLogin.disabled = true;
+btnLogin.textContent = "Ingresando...";
+
+const email = document.getElementById("email").value.trim().toLowerCase();
+const password = document.getElementById("password").value;
+
+try{
+
+const { data, error } = await supabaseClient.auth.signInWithPassword({
+email: email,
+password: password
+});
+
+if(error){
+throw error;
+}
+
+const { data: profesional, error: profesionalError } = await supabaseClient
+.from("profesionales")
+.select("*")
+.eq("email", email)
+.single();
+
+if(profesionalError){
+throw profesionalError;
+}
+
+if(profesional.estado !== "aprobado"){
+await supabaseClient.auth.signOut();
+mostrarMensaje("Su cuenta aún está pendiente de aprobación por DeltaF.", "error");
+btnLogin.disabled = false;
+btnLogin.textContent = "Ingresar";
+return;
+}
+
+localStorage.setItem("deltaf_profesional_email", profesional.email);
+localStorage.setItem("deltaf_profesional_nombre", profesional.nombre);
+localStorage.setItem("deltaf_profesional_id", profesional.id);
+
+mostrarMensaje("Ingreso correcto. Redirigiendo...", "success");
+
+setTimeout(function(){
+window.location.href = "dashboard-profesional.html";
+}, 1000);
+
+}catch(error){
+console.error(error);
+mostrarMensaje("Error de ingreso: " + error.message, "error");
+}
+
+btnLogin.disabled = false;
+btnLogin.textContent = "Ingresar";
+});
+
+recuperarPassword.addEventListener("click", async function(event){
+event.preventDefault();
+
+const email = document.getElementById("email").value.trim().toLowerCase();
+
+if(!email){
+mostrarMensaje("Ingrese su correo electrónico para recuperar la contraseña.", "error");
+return;
+}
+
+try{
+const { error } = await supabaseClient.auth.resetPasswordForEmail(email, {
+redirectTo: "https://deltamax26.github.io/deltaf-site/login.html"
+});
+
+if(error){
+throw error;
+}
+
+mostrarMensaje("Se envió un correo para recuperar su contraseña.", "success");
+
+}catch(error){
+console.error(error);
+mostrarMensaje("Error: " + error.message, "error");
+}
+});
+</script>
+
+</body>
 </html>
