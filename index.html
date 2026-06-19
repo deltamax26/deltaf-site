@@ -1,6 +1,34 @@
 <!DOCTYPE html>
 <html lang="es">
+<nav>
 
+<div class="nav-logo">
+DELTΔF
+</div>
+
+<div class="nav-links">
+
+<a href="#">Inicio</a>
+
+<a href="#" onclick="mostrarProfesional()">
+Profesionales
+</a>
+
+<a href="#" onclick="mostrarPaciente()">
+Pacientes
+</a>
+
+<a href="#login">
+Iniciar Sesión
+</a>
+
+<a href="#contacto">
+Contacto
+</a>
+
+</div>
+
+</nav>
 <head>
 
 <meta charset="UTF-8">
@@ -57,6 +85,7 @@ font-weight:bold;
 color:#2563eb;
 }
 header{
+margin-top:70px;
 background:linear-gradient(135deg,#2563eb,#06b6d4);
 color:white;
 padding:100px 20px;
@@ -176,7 +205,48 @@ border-radius:10px;
 cursor:pointer;
 font-weight:bold;
 }
+<section class="section" id="login" style="display:block;">
 
+<h2>Iniciar Sesión</h2>
+
+<div class="form-box">
+
+<input type="email" placeholder="Correo Electrónico">
+
+<input type="password" placeholder="Contraseña">
+
+<button class="submit-btn">
+Ingresar
+</button>
+
+</div>
+
+</section>
+  <section class="section" id="contacto" style="display:block;">
+
+<h2>Contacto</h2>
+
+<div class="form-box">
+
+<p>
+¿Tienes dudas sobre DeltaF?
+</p>
+
+<br>
+
+<input type="text" placeholder="Nombre">
+
+<input type="email" placeholder="Correo Electrónico">
+
+<textarea rows="5" placeholder="Mensaje"></textarea>
+
+<button class="submit-btn">
+Enviar Consulta
+</button>
+
+</div>
+
+</section>
 footer{
 background:#0f172a;
 color:white;
