@@ -70,7 +70,7 @@ body{padding:15px;}
 </div>
 </div>
 
-<div id="mensaje" class="message loading">Cargando solicitudes...</div>
+<div id="mensaje" class="message loading">Verificando acceso...</div>
 
 <div class="stats">
 <div class="stat">
@@ -198,11 +198,39 @@ if(!fechaISO) return "-";
 return new Date(fechaISO).toLocaleDateString("es-CL");
 }
 
-async function verificarSesion(){
-const { data, error } = await supabaseClient.auth.getSession();
+async function verificarPermisosMedico(){
+const { data: sessionData, error: sessionError } = await supabaseClient.auth.getSession();
 
-if(error || !data.session){
+if(sessionError || !sessionData.session){
 window.location.href = "login.html";
+return false;
+}
+
+const email = sessionData.session.user.email.toLowerCase();
+
+const { data: usuarioData, error: usuarioError } = await supabaseClient
+.from("usuarios")
+.select("*")
+.eq("email", email)
+.limit(1);
+
+if(usuarioError){
+alert("Error al verificar permisos.");
+window.location.href = "login.html";
+return false;
+}
+
+if(!usuarioData || usuarioData.length === 0){
+alert("Acceso restringido. Usuario sin rol médico.");
+window.location.href = "dashboard-profesional.html";
+return false;
+}
+
+const rol = usuarioData[0].rol;
+
+if(rol !== "medico" && rol !== "superadmin"){
+alert("Acceso restringido. Solo médicos autorizadores pueden ingresar.");
+window.location.href = "dashboard-profesional.html";
 return false;
 }
 
@@ -210,8 +238,7 @@ return true;
 }
 
 async function cargarOrdenes(){
-const sesionOk = await verificarSesion();
-if(!sesionOk) return;
+mostrarMensaje("Cargando solicitudes...", "loading");
 
 const { data, error } = await supabaseClient
 .from("ordenes")
@@ -368,7 +395,15 @@ ordenSeleccionada = null;
 await cargarOrdenes();
 }
 
-cargarOrdenes();
+(async function iniciarPanelMedico(){
+const permitido = await verificarPermisosMedico();
+
+if(!permitido){
+return;
+}
+
+await cargarOrdenes();
+})();
 </script>
 
 </body>
