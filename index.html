@@ -1,6 +1,8 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
+
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
@@ -23,51 +25,55 @@ color:#1e293b;
 header{
 background:linear-gradient(135deg,#2563eb,#06b6d4);
 color:white;
-padding:80px 20px;
+padding:100px 20px;
 text-align:center;
 }
 
 .logo{
-font-size:3rem;
+font-size:4rem;
 font-weight:900;
 margin-bottom:20px;
+letter-spacing:2px;
 }
 
 header h1{
-font-size:2.8rem;
+font-size:3rem;
 margin-bottom:20px;
 }
 
 header p{
-max-width:800px;
+max-width:900px;
 margin:auto;
 font-size:1.2rem;
-line-height:1.7;
+line-height:1.8;
 }
 
 .hero-buttons{
-margin-top:40px;
+margin-top:50px;
 display:flex;
 justify-content:center;
 gap:20px;
 flex-wrap:wrap;
 }
 
-.btn{
+.hero-btn{
 background:white;
 color:#2563eb;
-padding:15px 30px;
+border:none;
+padding:18px 35px;
 border-radius:12px;
+font-size:1rem;
 font-weight:bold;
-text-decoration:none;
+cursor:pointer;
 transition:.3s;
 }
 
-.btn:hover{
-transform:translateY(-3px);
+.hero-btn:hover{
+transform:translateY(-4px);
 }
 
 .section{
+display:none;
 max-width:1200px;
 margin:auto;
 padding:80px 20px;
@@ -75,13 +81,14 @@ padding:80px 20px;
 
 .section h2{
 text-align:center;
-font-size:2rem;
+font-size:2.3rem;
 margin-bottom:40px;
+color:#2563eb;
 }
 
 .cards{
 display:grid;
-grid-template-columns:repeat(auto-fit,minmax(280px,1fr));
+grid-template-columns:repeat(auto-fit,minmax(300px,1fr));
 gap:25px;
 }
 
@@ -93,7 +100,7 @@ box-shadow:0 10px 25px rgba(0,0,0,.08);
 }
 
 .card h3{
-margin-bottom:15px;
+margin-bottom:20px;
 color:#2563eb;
 }
 
@@ -109,31 +116,28 @@ margin:15px 0;
 color:#06b6d4;
 }
 
-.form-container{
+.form-box{
 background:white;
 padding:40px;
 border-radius:20px;
 box-shadow:0 10px 25px rgba(0,0,0,.08);
-max-width:800px;
-margin:auto;
+margin-top:40px;
 }
 
-input,
-select,
-textarea{
+input, textarea, select{
 width:100%;
-padding:14px;
+padding:15px;
 margin-top:10px;
 margin-bottom:20px;
 border:1px solid #d1d5db;
 border-radius:10px;
 }
 
-button{
+.submit-btn{
 background:#2563eb;
 color:white;
 border:none;
-padding:15px 25px;
+padding:15px 30px;
 border-radius:10px;
 cursor:pointer;
 font-weight:bold;
@@ -143,8 +147,12 @@ footer{
 background:#0f172a;
 color:white;
 text-align:center;
-padding:40px;
+padding:50px 20px;
 margin-top:80px;
+}
+
+footer h3{
+margin-bottom:10px;
 }
 
 @media(max-width:768px){
@@ -154,12 +162,13 @@ font-size:2rem;
 }
 
 .logo{
-font-size:2.2rem;
+font-size:2.5rem;
 }
 
 }
 
 </style>
+
 </head>
 
 <body>
@@ -171,28 +180,30 @@ DELTΔF
 </div>
 
 <h1>
-Facilitamos el acceso a exámenes para profesionales de la salud
+Facilitamos el acceso a exámenes clínicos
 </h1>
 
 <p>
-Apoya la evaluación clínica, seguimiento terapéutico y monitorización de resultados mediante una plataforma digital rápida, segura y accesible.
+Una plataforma diseñada para profesionales de la salud y pacientes, facilitando la gestión de solicitudes de exámenes de laboratorio e imagenología mediante una experiencia simple, rápida y segura.
 </p>
 
 <div class="hero-buttons">
 
-<a href="#profesional" class="btn">
-🩺 Soy Profesional
-</a>
+<button class="hero-btn" onclick="mostrarProfesional()">
+🩺 SOY PROFESIONAL
+</button>
 
-<a href="#paciente" class="btn">
-👤 Soy Paciente
-</a>
+<button class="hero-btn" onclick="mostrarPaciente()">
+👤 SOY PACIENTE
+</button>
 
 </div>
 
 </header>
 
-<section class="section" id="profesional">
+<!-- PROFESIONAL -->
+
+<section id="profesional" class="section">
 
 <h2>Profesionales de la Salud</h2>
 
@@ -200,19 +211,41 @@ Apoya la evaluación clínica, seguimiento terapéutico y monitorización de res
 
 <div class="card">
 
-<h3>Profesionales Admitidos</h3>
+<h3>Dirigido a</h3>
 
 <ul>
 <li>Nutricionistas</li>
-<li>Enfermeros</li>
-<li>Kinesiólogos</li>
-<li>Fonoaudiólogos</li>
+<li>Enfermeros(as)</li>
+<li>Kinesiólogos(as)</li>
+<li>Fonoaudiólogos(as)</li>
 <li>Terapeutas Ocupacionales</li>
 <li>Acupunturistas</li>
 <li>Naturopatas</li>
 </ul>
 
+<p style="margin-top:15px;">
+* Requiere inscripción y validación previa.
+</p>
+
 </div>
+
+<div class="card">
+
+<h3>Beneficios</h3>
+
+<ul>
+<li>Solicitud rápida de exámenes</li>
+<li>Seguimiento terapéutico</li>
+<li>Historial de solicitudes</li>
+<li>Disponibilidad 24/7</li>
+<li>Convenios asociados</li>
+</ul>
+
+</div>
+
+</div>
+
+<div class="cards" style="margin-top:40px;">
 
 <div class="card">
 
@@ -222,9 +255,7 @@ Apoya la evaluación clínica, seguimiento terapéutico y monitorización de res
 $2.990
 </div>
 
-<p>
-Valor normal: $3.990
-</p>
+<p>Valor normal $3.990</p>
 
 </div>
 
@@ -233,57 +264,36 @@ Valor normal: $3.990
 <h3>Promoción Lanzamiento</h3>
 
 <div class="price">
-10 x $25.000
+10 Órdenes
 </div>
 
 <p>
+$25.000<br>
 Promoción válida por única vez.
 </p>
 
 </div>
 
-</div>
-
-</section>
-
-<section class="section" id="paciente">
-
-<h2>Pacientes</h2>
-
-<div class="cards">
-
 <div class="card">
 
-<h3>Solicitud Directa</h3>
+<h3>Plan Profesional</h3>
+
+<div class="price">
+$50.000
+</div>
 
 <p>
-Accede a órdenes de exámenes desde $4.990 a $6.990.
+Hasta 50 órdenes.<br>
+Vigencia de 3 meses.
 </p>
 
 </div>
 
-<div class="card">
-
-<h3>Proceso</h3>
-
-<ul>
-<li>Completa tus datos</li>
-<li>Selecciona examen</li>
-<li>Realiza pago</li>
-<li>Procesamiento de solicitud</li>
-</ul>
-
 </div>
 
-</div>
+<div class="form-box">
 
-</section>
-
-<section class="section">
-
-<h2>Registro Profesional</h2>
-
-<div class="form-container">
+<h3>Solicitud de Registro Profesional</h3>
 
 <input type="text" placeholder="Nombre Completo">
 
@@ -297,8 +307,69 @@ Accede a órdenes de exámenes desde $4.990 a $6.990.
 
 <input type="tel" placeholder="Teléfono">
 
-<button>
+<button class="submit-btn">
 Solicitar Registro
+</button>
+
+</div>
+
+</section>
+
+<!-- PACIENTE -->
+
+<section id="paciente" class="section">
+
+<h2>Pacientes</h2>
+
+<div class="cards">
+
+<div class="card">
+
+<h3>¿Cómo funciona?</h3>
+
+<ul>
+<li>Completa tu solicitud</li>
+<li>Selecciona el examen requerido</li>
+<li>Realiza el pago</li>
+<li>Procesamiento de la orden</li>
+</ul>
+
+</div>
+
+<div class="card">
+
+<h3>Valor de Solicitud</h3>
+
+<div class="price">
+$4.990 - $6.990
+</div>
+
+<p>
+Según el tipo de examen solicitado.
+</p>
+
+</div>
+
+</div>
+
+<div class="form-box">
+
+<h3>Solicitud de Exámenes</h3>
+
+<input type="text" placeholder="Nombre Completo">
+
+<input type="text" placeholder="RUT">
+
+<input type="text" placeholder="Dirección">
+
+<input type="email" placeholder="Correo Electrónico">
+
+<input type="tel" placeholder="Teléfono">
+
+<textarea rows="5" placeholder="Observaciones"></textarea>
+
+<button class="submit-btn">
+Continuar Solicitud
 </button>
 
 </div>
@@ -310,8 +381,10 @@ Solicitar Registro
 <h3>DeltaF</h3>
 
 <p>
-Tecnología para facilitar el acceso a exámenes y apoyar el seguimiento clínico de los pacientes.
+Tecnología para facilitar el acceso a exámenes clínicos y apoyar el seguimiento terapéutico de los pacientes.
 </p>
+
+<br>
 
 <p>
 www.deltaf.site
@@ -319,6 +392,33 @@ www.deltaf.site
 
 </footer>
 
+<script>
+
+function mostrarProfesional(){
+
+document.getElementById("profesional").style.display="block";
+document.getElementById("paciente").style.display="none";
+
+window.scrollTo({
+top:500,
+behavior:"smooth"
+});
+
+}
+
+function mostrarPaciente(){
+
+document.getElementById("paciente").style.display="block";
+document.getElementById("profesional").style.display="none";
+
+window.scrollTo({
+top:500,
+behavior:"smooth"
+});
+
+}
+
+</script>
+
 </body>
 </html>
-
