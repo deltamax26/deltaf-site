@@ -329,6 +329,11 @@ reader.readAsDataURL(blob);
 }
 
 async function generarQRBase64(texto){
+try{
+if(typeof QRCode === "undefined"){
+throw new Error("QRCode no disponible");
+}
+
 const canvas = document.createElement("canvas");
 
 await QRCode.toCanvas(canvas, texto, {
@@ -337,6 +342,11 @@ margin: 1
 });
 
 return canvas.toDataURL("image/png");
+
+}catch(error){
+console.warn("QR no generado:", error);
+return null;
+}
 }
 
 async function generarPDFBlob(orden, observaciones){
@@ -344,6 +354,9 @@ const { jsPDF } = window.jspdf;
 const doc = new jsPDF();
 
 const fechaActual = new Date().toLocaleDateString("es-CL");
+const codigoOrden = orden.codigo || "-";
+const urlValidacion =
+"https://deltamax26.github.io/deltaf-site/validar.html?codigo=" + encodeURIComponent(codigoOrden);
 
 doc.setFont("helvetica", "bold");
 doc.setFontSize(20);
@@ -353,25 +366,37 @@ doc.setFontSize(12);
 doc.setFont("helvetica", "normal");
 doc.text("DeltaF - Plataforma de Solicitudes de Exámenes", 105, 28, { align: "center" });
 
-const urlValidacion =
-`https://deltamax26.github.io/deltaf-site/validar.html?codigo=${orden.codigo}`;
+doc.line(20, 35, 190, 35);
 
-try{
 const qrBase64 = await generarQRBase64(urlValidacion);
+
+if(qrBase64){
+try{
 doc.addImage(qrBase64, "PNG", 153, 38, 32, 32);
 doc.setFontSize(7);
 doc.setFont("helvetica", "normal");
 doc.text("Validar orden", 169, 74, { align: "center" });
 }catch(error){
-console.error("Error generando QR:", error);
+console.warn("No se pudo insertar QR en PDF:", error);
+}
 }
 
-doc.line(20, 35, 190, 35);
+doc.setFont("helvetica", "bold");
+doc.setFontSize(10);
+doc.text("Código verificación:", 135, 82);
+doc.setFont("helvetica", "normal");
+doc.text(codigoOrden, 135, 88);
+
+doc.setFontSize(7);
+doc.text("Verificar en:", 135, 95);
+const urlCorta = "deltamax26.github.io/deltaf-site/validar.html";
+doc.text(urlCorta, 135, 100);
 
 doc.setFont("helvetica", "bold");
+doc.setFontSize(12);
 doc.text("Código de Orden:", 20, 48);
 doc.setFont("helvetica", "normal");
-doc.text(orden.codigo || "-", 65, 48);
+doc.text(codigoOrden, 65, 48);
 
 doc.setFont("helvetica", "bold");
 doc.text("Fecha de emisión:", 20, 58);
@@ -488,6 +513,7 @@ console.warn("La orden no tiene correo de paciente.");
 return { ok:false, message:"Sin correo de paciente" };
 }
 
+try{
 const response = await fetch(FUNCTION_EMAIL_URL, {
 method: "POST",
 headers: {
@@ -511,6 +537,11 @@ return { ok:false, message:data.error || "Error enviando correo" };
 
 console.log("Correo enviado:", data);
 return { ok:true, data:data };
+
+}catch(error){
+console.error("Error fetch correo:", error);
+return { ok:false, message:error.message || "No se pudo conectar con correo" };
+}
 }
 
 async function aprobarConPDF(){
