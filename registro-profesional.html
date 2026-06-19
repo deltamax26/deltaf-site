@@ -1,15 +1,14 @@
 <!DOCTYPE html>
-
 <html lang="es">
 <head>
-
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 <title>Registro Profesional | DeltaF</title>
 
-<style>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
+<style>
 *{
 margin:0;
 padding:0;
@@ -80,6 +79,7 @@ width:100%;
 padding:14px;
 border:1px solid #cbd5e1;
 border-radius:10px;
+font-size:1rem;
 }
 
 button{
@@ -98,6 +98,11 @@ button:hover{
 background:#1d4ed8;
 }
 
+button:disabled{
+background:#94a3b8;
+cursor:not-allowed;
+}
+
 .notice{
 margin-top:30px;
 padding:20px;
@@ -106,28 +111,43 @@ border-left:4px solid #2563eb;
 border-radius:10px;
 }
 
-@media(max-width:768px){
+.message{
+display:none;
+margin-bottom:25px;
+padding:15px;
+border-radius:10px;
+font-weight:600;
+}
 
+.message.success{
+display:block;
+background:#dcfce7;
+color:#166534;
+border:1px solid #86efac;
+}
+
+.message.error{
+display:block;
+background:#fee2e2;
+color:#991b1b;
+border:1px solid #fca5a5;
+}
+
+@media(max-width:768px){
 .form-grid{
 grid-template-columns:1fr;
 }
-
 }
-
 </style>
-
 </head>
 
 <body>
 
 <header>
-
-<img src="img/logo-deltaf.png" alt="DeltaF">
-
+<img src="./img/logo-deltaf.png" alt="DeltaF">
 </header>
 
 <div class="container">
-
 <div class="card">
 
 <h1>Registro Profesional</h1>
@@ -136,140 +156,83 @@ grid-template-columns:1fr;
 Complete sus antecedentes para solicitar acceso a la plataforma DeltaF.
 </p>
 
-<form>
+<div id="mensaje" class="message"></div>
+
+<form id="registroProfesionalForm">
 
 <div class="form-grid">
 
 <div>
-
-<label>Nombre</label>
-
-<input type="text" required>
-
+<label for="nombre">Nombre</label>
+<input id="nombre" type="text" required>
 </div>
 
 <div>
-
-<label>Apellidos</label>
-
-<input type="text" required>
-
+<label for="apellidos">Apellidos</label>
+<input id="apellidos" type="text" required>
 </div>
 
 <div>
-
-<label>RUT</label>
-
-<input type="text" placeholder="12.345.678-9" required>
-
+<label for="rut">RUT</label>
+<input id="rut" type="text" placeholder="12.345.678-9" required>
 </div>
 
 <div>
-
-<label>Fecha de Nacimiento</label>
-
-<input type="date">
-
+<label for="fechaNacimiento">Fecha de Nacimiento</label>
+<input id="fechaNacimiento" type="date">
 </div>
 
 <div>
-
-<label>Profesión</label>
-
-<select required>
-
+<label for="profesion">Profesión</label>
+<select id="profesion" required>
 <option value="">Seleccione</option>
-
-<option>Nutricionista</option>
-
-<option>Enfermero(a)</option>
-
-<option>Kinesiólogo(a)</option>
-
-<option>Fonoaudiólogo(a)</option>
-
-<option>Terapeuta Ocupacional</option>
-
-<option>Acupunturista</option>
-
-<option>Naturopata</option>
-
+<option value="Nutricionista">Nutricionista</option>
+<option value="Enfermero(a)">Enfermero(a)</option>
+<option value="Kinesiólogo(a)">Kinesiólogo(a)</option>
+<option value="Fonoaudiólogo(a)">Fonoaudiólogo(a)</option>
+<option value="Terapeuta Ocupacional">Terapeuta Ocupacional</option>
+<option value="Acupunturista">Acupunturista</option>
+<option value="Naturopata">Naturopata</option>
 </select>
-
 </div>
 
 <div>
-
-<label>N° Registro Superintendencia</label>
-
-<input type="text" required>
-
+<label for="registroSis">N° Registro Superintendencia</label>
+<input id="registroSis" type="text" required>
 </div>
 
 <div>
-
-<label>Correo Electrónico</label>
-
-<input type="email" required>
-
+<label for="email">Correo Electrónico</label>
+<input id="email" type="email" required>
 </div>
 
 <div>
-
-<label>Teléfono</label>
-
-<input type="tel" required>
-
+<label for="telefono">Teléfono</label>
+<input id="telefono" type="tel" required>
 </div>
 
 <div class="full">
-
-<label>Dirección</label>
-
-<input type="text">
-
-</div>
-
-<div class="full">
-
-<label>Logo Profesional (URL opcional)</label>
-
-<input type="text" placeholder="https://misitio.cl/logo.png">
-
+<label for="direccion">Dirección</label>
+<input id="direccion" type="text">
 </div>
 
 <div>
-
-<label>Contraseña</label>
-
-<input type="password" required>
-
+<label for="password">Contraseña</label>
+<input id="password" type="password" required minlength="6">
 </div>
 
 <div>
-
-<label>Confirmar Contraseña</label>
-
-<input type="password" required>
-
+<label for="confirmarPassword">Confirmar Contraseña</label>
+<input id="confirmarPassword" type="password" required minlength="6">
 </div>
 
 <div class="full">
-
-<label>Información Adicional</label>
-
-<textarea rows="5"></textarea>
-
+<label for="informacionAdicional">Información Adicional</label>
+<textarea id="informacionAdicional" rows="5"></textarea>
 </div>
 
 <div class="full">
-
-<button type="submit">
-
-Solicitar Registro
-
-</button>
-
+<button id="btnRegistro" type="submit">Solicitar Registro</button>
 </div>
 
 </div>
@@ -277,28 +240,114 @@ Solicitar Registro
 </form>
 
 <div class="notice">
-
 <strong>Proceso de Validación:</strong>
-
 <br><br>
-
 Su solicitud será revisada por DeltaF.
-
+<br><br>
 Para ser aprobado deberá acreditar:
-
 <ul style="margin-top:10px; margin-left:20px;">
 <li>Identidad válida.</li>
 <li>Profesión declarada.</li>
 <li>Registro vigente cuando corresponda.</li>
 </ul>
-
+<br>
 Una vez aprobado recibirá un correo de confirmación para acceder a la plataforma.
-
 </div>
 
 </div>
-
 </div>
+
+<script>
+const SUPABASE_URL = "https://goxkmtnmfessroveanje.supabase.co";
+const SUPABASE_ANON_KEY = "sb_publishable_w8xrtEanlJJAc5FYvk1X5A_fKu9vb5d";
+
+const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+const form = document.getElementById("registroProfesionalForm");
+const mensaje = document.getElementById("mensaje");
+const btnRegistro = document.getElementById("btnRegistro");
+
+function mostrarMensaje(texto, tipo){
+mensaje.textContent = texto;
+mensaje.className = "message " + tipo;
+}
+
+form.addEventListener("submit", async function(event){
+event.preventDefault();
+
+mensaje.className = "message";
+mensaje.textContent = "";
+
+btnRegistro.disabled = true;
+btnRegistro.textContent = "Enviando solicitud...";
+
+const nombre = document.getElementById("nombre").value.trim();
+const apellidos = document.getElementById("apellidos").value.trim();
+const rut = document.getElementById("rut").value.trim();
+const profesion = document.getElementById("profesion").value;
+const registroSis = document.getElementById("registroSis").value.trim();
+const email = document.getElementById("email").value.trim().toLowerCase();
+const telefono = document.getElementById("telefono").value.trim();
+const password = document.getElementById("password").value;
+const confirmarPassword = document.getElementById("confirmarPassword").value;
+
+if(password !== confirmarPassword){
+mostrarMensaje("Las contraseñas no coinciden.", "error");
+btnRegistro.disabled = false;
+btnRegistro.textContent = "Solicitar Registro";
+return;
+}
+
+if(password.length < 6){
+mostrarMensaje("La contraseña debe tener al menos 6 caracteres.", "error");
+btnRegistro.disabled = false;
+btnRegistro.textContent = "Solicitar Registro";
+return;
+}
+
+try{
+const { data: authData, error: authError } = await supabaseClient.auth.signUp({
+email: email,
+password: password
+});
+
+if(authError){
+throw authError;
+}
+
+const nombreCompleto = nombre + " " + apellidos;
+
+const { error: insertError } = await supabaseClient
+.from("profesionales")
+.insert([
+{
+nombre: nombreCompleto,
+rut: rut,
+profesion: profesion,
+registro_sis: registroSis,
+telefono: telefono,
+email: email,
+estado: "pendiente",
+ordenes_disponibles: 0
+}
+]);
+
+if(insertError){
+throw insertError;
+}
+
+mostrarMensaje("Solicitud enviada correctamente. DeltaF revisará sus antecedentes y le contactará por correo.", "success");
+form.reset();
+
+}catch(error){
+console.error(error);
+mostrarMensaje("Error: " + error.message, "error");
+}
+
+btnRegistro.disabled = false;
+btnRegistro.textContent = "Solicitar Registro";
+});
+</script>
 
 </body>
 </html>
