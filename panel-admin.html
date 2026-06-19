@@ -10,7 +10,7 @@
 <style>
 *{margin:0;padding:0;box-sizing:border-box;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;}
 body{background:#f8fafc;padding:30px;color:#1e293b;}
-.container{max-width:1500px;margin:auto;}
+.container{max-width:1600px;margin:auto;}
 .header{background:white;padding:25px;border-radius:20px;box-shadow:0 10px 25px rgba(0,0,0,.06);display:flex;justify-content:space-between;align-items:center;gap:20px;flex-wrap:wrap;margin-bottom:25px;}
 .header img{width:200px;}
 .header h1{color:#2563eb;}
@@ -68,19 +68,40 @@ table{display:block;overflow-x:auto;white-space:nowrap;}
 </div>
 
 <div class="stat">
-<h3>Pendientes</h3>
+<h3>Profesionales Pendientes</h3>
 <div id="profesionalesPendientes" class="number">0</div>
-</div>
-
-<div class="stat">
-<h3>Órdenes Totales</h3>
-<div id="totalOrdenes" class="number">0</div>
 </div>
 
 <div class="stat">
 <h3>Órdenes Pendientes</h3>
 <div id="ordenesPendientes" class="number">0</div>
 </div>
+
+<div class="stat">
+<h3>Compras Pendientes</h3>
+<div id="comprasPendientes" class="number">0</div>
+</div>
+</div>
+
+<div class="card">
+<h2>Solicitudes de Compra de Órdenes</h2>
+
+<table>
+<thead>
+<tr>
+<th>ID</th>
+<th>Fecha</th>
+<th>Profesional</th>
+<th>Plan</th>
+<th>Órdenes</th>
+<th>Monto</th>
+<th>Comprobante</th>
+<th>Estado</th>
+<th>Acciones</th>
+</tr>
+</thead>
+<tbody id="tablaCompras"></tbody>
+</table>
 </div>
 
 <div class="card">
@@ -144,11 +165,13 @@ const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 const mensaje = document.getElementById("mensaje");
 const tablaProfesionales = document.getElementById("tablaProfesionales");
 const tablaOrdenes = document.getElementById("tablaOrdenes");
+const tablaCompras = document.getElementById("tablaCompras");
 const buscarProfesional = document.getElementById("buscarProfesional");
 const filtroEstadoProfesional = document.getElementById("filtroEstadoProfesional");
 
 let profesionales = [];
 let ordenes = [];
+let compras = [];
 
 function mostrarMensaje(texto,tipo){
 mensaje.textContent = texto;
@@ -165,6 +188,10 @@ if(!fechaISO) return "-";
 return new Date(fechaISO).toLocaleDateString("es-CL");
 }
 
+function formatearMonto(monto){
+return "$" + Number(monto || 0).toLocaleString("es-CL");
+}
+
 async function verificarSesion(){
 const { data, error } = await supabaseClient.auth.getSession();
 
@@ -179,15 +206,15 @@ const { data: usuario, error: usuarioError } = await supabaseClient
 .from("usuarios")
 .select("*")
 .eq("email", email)
-.single();
+.limit(1);
 
-if(usuarioError || !usuario){
+if(usuarioError || !usuario || usuario.length === 0){
 alert("Acceso denegado. Usuario sin rol autorizado.");
 window.location.href = "dashboard-profesional.html";
 return false;
 }
 
-if(usuario.rol !== "superadmin"){
+if(usuario[0].rol !== "superadmin"){
 alert("Acceso denegado. Solo administradores pueden ingresar.");
 window.location.href = "dashboard-profesional.html";
 return false;
@@ -220,10 +247,22 @@ mostrarMensaje("Error al cargar órdenes: " + ordenesError.message, "error");
 return;
 }
 
+const { data: comprasData, error: comprasError } = await supabaseClient
+.from("compras_ordenes")
+.select("*")
+.order("created_at", { ascending:false });
+
+if(comprasError){
+mostrarMensaje("Error al cargar compras: " + comprasError.message, "error");
+return;
+}
+
 profesionales = profesionalesData || [];
 ordenes = ordenesData || [];
+compras = comprasData || [];
 
 actualizarEstadisticas();
+renderizarCompras();
 renderizarProfesionales();
 renderizarOrdenes();
 ocultarMensaje();
@@ -232,8 +271,40 @@ ocultarMensaje();
 function actualizarEstadisticas(){
 document.getElementById("totalProfesionales").textContent = profesionales.length;
 document.getElementById("profesionalesPendientes").textContent = profesionales.filter(p => p.estado === "pendiente").length;
-document.getElementById("totalOrdenes").textContent = ordenes.length;
 document.getElementById("ordenesPendientes").textContent = ordenes.filter(o => o.estado === "pendiente").length;
+document.getElementById("comprasPendientes").textContent = compras.filter(c => c.estado === "pendiente").length;
+}
+
+function renderizarCompras(){
+tablaCompras.innerHTML = "";
+
+if(compras.length === 0){
+tablaCompras.innerHTML = `<tr><td colspan="9">No hay solicitudes de compra registradas.</td></tr>`;
+return;
+}
+
+compras.forEach(c => {
+const fila = document.createElement("tr");
+
+fila.innerHTML = `
+<td>${c.id}</td>
+<td>${formatearFecha(c.created_at)}</td>
+<td>${c.profesional_email || "-"}</td>
+<td>${c.plan || "-"}</td>
+<td>${c.cantidad_ordenes || 0}</td>
+<td>${formatearMonto(c.monto)}</td>
+<td>${c.comprobante || "-"}</td>
+<td><span class="status ${c.estado || "pendiente"}">${c.estado || "pendiente"}</span></td>
+<td>
+${c.estado === "pendiente" ? `
+<button class="btn btn-green" onclick="aprobarCompra(${c.id})">Aprobar</button>
+<button class="btn btn-red" onclick="rechazarCompra(${c.id})">Rechazar</button>
+` : "-"}
+</td>
+`;
+
+tablaCompras.appendChild(fila);
+});
 }
 
 function filtrarProfesionales(){
@@ -347,6 +418,81 @@ return;
 }
 
 mostrarMensaje("Órdenes disponibles actualizadas.", "success");
+await cargarDatos();
+}
+
+async function aprobarCompra(compraId){
+const compra = compras.find(c => c.id === compraId);
+
+if(!compra){
+mostrarMensaje("No se encontró la compra.", "error");
+return;
+}
+
+if(compra.estado !== "pendiente"){
+mostrarMensaje("Esta compra ya fue procesada.", "error");
+return;
+}
+
+const profesional = profesionales.find(p => p.id === compra.profesional_id);
+
+if(!profesional){
+mostrarMensaje("No se encontró el profesional asociado.", "error");
+return;
+}
+
+const saldoActual = profesional.ordenes_disponibles || 0;
+const nuevasOrdenes = saldoActual + (compra.cantidad_ordenes || 0);
+
+const confirmar = confirm(
+"¿Aprobar esta compra y cargar " +
+(compra.cantidad_ordenes || 0) +
+" órdenes a " +
+(profesional.email || compra.profesional_email) +
+"?"
+);
+
+if(!confirmar) return;
+
+const { error: updateProfesionalError } = await supabaseClient
+.from("profesionales")
+.update({ ordenes_disponibles: nuevasOrdenes })
+.eq("id", profesional.id);
+
+if(updateProfesionalError){
+mostrarMensaje("Error al cargar órdenes: " + updateProfesionalError.message, "error");
+return;
+}
+
+const { error: updateCompraError } = await supabaseClient
+.from("compras_ordenes")
+.update({ estado: "aprobada" })
+.eq("id", compraId);
+
+if(updateCompraError){
+mostrarMensaje("Órdenes cargadas, pero error al actualizar compra: " + updateCompraError.message, "error");
+return;
+}
+
+mostrarMensaje("Compra aprobada. Se cargaron las órdenes al profesional.", "success");
+await cargarDatos();
+}
+
+async function rechazarCompra(compraId){
+const confirmar = confirm("¿Rechazar esta solicitud de compra?");
+if(!confirmar) return;
+
+const { error } = await supabaseClient
+.from("compras_ordenes")
+.update({ estado: "rechazada" })
+.eq("id", compraId);
+
+if(error){
+mostrarMensaje("Error al rechazar compra: " + error.message, "error");
+return;
+}
+
+mostrarMensaje("Compra rechazada.", "success");
 await cargarDatos();
 }
 
