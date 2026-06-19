@@ -149,6 +149,7 @@ body{padding:15px;}
 <script>
 const SUPABASE_URL = "https://goxkmtnmfessroveanje.supabase.co";
 const SUPABASE_ANON_KEY = "sb_publishable_w8xrtEanlJJAc5FYvk1X5A_fKu9vb5d";
+const FUNCTION_EMAIL_URL = "https://goxkmtnmfessroveanje.supabase.co/functions/v1/resend-email";
 
 const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
@@ -417,7 +418,7 @@ doc.text("N° Registro SIS: " + MEDICO_REGISTRO, 20, 261);
 
 try{
 const firma = await cargarImagenBase64("./img/firma-carolina.jpg");
-doc.addImage(firma, "PNG", 123, 220, 60, 35);
+doc.addImage(firma, "JPEG", 123, 220, 60, 35);
 }catch(error){
 console.warn("No se pudo cargar la firma:", error);
 }
@@ -456,6 +457,37 @@ const { data: publicData } = supabaseClient
 return publicData.publicUrl;
 }
 
+async function enviarCorreoOrden(orden, pdfUrl){
+if(!orden.correo_paciente){
+console.warn("La orden no tiene correo de paciente.");
+return { ok:false, message:"Sin correo de paciente" };
+}
+
+const response = await fetch(FUNCTION_EMAIL_URL, {
+method: "POST",
+headers: {
+"Content-Type": "application/json",
+"Authorization": `Bearer ${SUPABASE_ANON_KEY}`
+},
+body: JSON.stringify({
+email: orden.correo_paciente,
+nombre: orden.nombre_paciente || "Paciente",
+codigo: orden.codigo || "Orden médica",
+pdfUrl: pdfUrl
+})
+});
+
+const data = await response.json().catch(() => ({}));
+
+if(!response.ok){
+console.error("Error Edge Function:", data);
+return { ok:false, message:data.error || "Error enviando correo" };
+}
+
+console.log("Correo enviado:", data);
+return { ok:true, data:data };
+}
+
 async function aprobarConPDF(){
 if(!ordenSeleccionada){
 mostrarMensaje("Primero selecciona una solicitud.", "error");
@@ -466,7 +498,7 @@ const ordenActual = {...ordenSeleccionada};
 const ordenId = ordenActual.id;
 
 try{
-mostrarMensaje("Generando PDF y aprobando solicitud...", "loading");
+mostrarMensaje("Generando PDF, aprobando solicitud y enviando correo...", "loading");
 
 const observaciones = document.getElementById("observacionesMedicas").value.trim();
 
@@ -486,7 +518,13 @@ if(error){
 throw error;
 }
 
-mostrarMensaje("Solicitud aprobada y PDF generado correctamente.", "success");
+const resultadoCorreo = await enviarCorreoOrden(ordenActual, pdfUrl);
+
+if(resultadoCorreo.ok){
+mostrarMensaje("Solicitud aprobada, PDF generado y correo enviado correctamente.", "success");
+}else{
+mostrarMensaje("Solicitud aprobada y PDF generado. No se pudo enviar el correo: " + resultadoCorreo.message, "success");
+}
 
 detalleCard.style.display = "none";
 ordenSeleccionada = null;
@@ -495,7 +533,7 @@ await cargarOrdenes();
 
 }catch(error){
 console.error(error);
-mostrarMensaje("Error al generar PDF o aprobar solicitud: " + error.message, "error");
+mostrarMensaje("Error al generar PDF, aprobar o enviar correo: " + error.message, "error");
 }
 }
 
