@@ -416,7 +416,7 @@ doc.text("RUT: " + MEDICO_RUT, 20, 253);
 doc.text("N° Registro SIS: " + MEDICO_REGISTRO, 20, 261);
 
 try{
-const firma = await cargarImagenBase64("./img/firma-carolina.PNG");
+const firma = await cargarImagenBase64("./img/firma-carolina.jpg");
 doc.addImage(firma, "PNG", 123, 220, 60, 35);
 }catch(error){
 console.warn("No se pudo cargar la firma:", error);
