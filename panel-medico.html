@@ -314,7 +314,19 @@ detalleCard.style.display = "block";
 window.scrollTo({top:detalleCard.offsetTop - 20,behavior:"smooth"});
 }
 
-function generarPDFBlob(orden, observaciones){
+async function cargarImagenBase64(url){
+const respuesta = await fetch(url);
+const blob = await respuesta.blob();
+
+return new Promise((resolve, reject) => {
+const reader = new FileReader();
+reader.onloadend = () => resolve(reader.result);
+reader.onerror = reject;
+reader.readAsDataURL(blob);
+});
+}
+
+async function generarPDFBlob(orden, observaciones){
 const { jsPDF } = window.jspdf;
 const doc = new jsPDF();
 
@@ -365,7 +377,7 @@ let y = 125;
 examenes.forEach(examen => {
 doc.text("• " + examen, 25, y);
 y += 8;
-if(y > 240){
+if(y > 220){
 doc.addPage();
 y = 25;
 }
@@ -382,7 +394,7 @@ const motivoTexto = doc.splitTextToSize(orden.motivo || "-", 170);
 doc.text(motivoTexto, 20, y);
 y += motivoTexto.length * 7 + 8;
 
-if(y > 220){
+if(y > 210){
 doc.addPage();
 y = 25;
 }
@@ -396,18 +408,27 @@ const obsTexto = doc.splitTextToSize(observaciones || "Sin observaciones adicion
 doc.text(obsTexto, 20, y);
 
 doc.setFont("helvetica", "bold");
-doc.text("Médico autorizador:", 20, 245);
+doc.text("Médico autorizador:", 20, 235);
+
 doc.setFont("helvetica", "normal");
-doc.text(MEDICO_NOMBRE, 20, 255);
-doc.text("RUT: " + MEDICO_RUT, 20, 263);
-doc.text("N° Registro SIS: " + MEDICO_REGISTRO, 20, 271);
+doc.text(MEDICO_NOMBRE, 20, 245);
+doc.text("RUT: " + MEDICO_RUT, 20, 253);
+doc.text("N° Registro SIS: " + MEDICO_REGISTRO, 20, 261);
+
+try{
+const firma = await cargarImagenBase64("./img/firma-carolina.PNG");
+doc.addImage(firma, "PNG", 123, 220, 60, 35);
+}catch(error){
+console.warn("No se pudo cargar la firma:", error);
+}
 
 doc.line(125, 255, 185, 255);
 doc.setFontSize(10);
 doc.text("Firma médica", 145, 263);
 
 doc.setFontSize(9);
-doc.text("Documento generado digitalmente por DeltaF.", 105, 287, { align: "center" });
+doc.setFont("helvetica", "bold");
+doc.text("DeltaF profesional y seguro", 105, 287, { align: "center" });
 
 return doc.output("blob");
 }
@@ -449,7 +470,7 @@ mostrarMensaje("Generando PDF y aprobando solicitud...", "loading");
 
 const observaciones = document.getElementById("observacionesMedicas").value.trim();
 
-const pdfBlob = generarPDFBlob(ordenActual, observaciones);
+const pdfBlob = await generarPDFBlob(ordenActual, observaciones);
 const pdfUrl = await subirPDF(ordenActual, pdfBlob);
 
 const { error } = await supabaseClient
