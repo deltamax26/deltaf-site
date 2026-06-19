@@ -1,530 +1,406 @@
 <!DOCTYPE html>
 <html lang="es">
-<nav>
 
-<div class="nav-logo">
-DELTΔF
-</div>
-
-<div class="nav-links">
-
-<a href="#">Inicio</a>
-
-<a href="#" onclick="mostrarProfesional()">
-Profesionales
-</a>
-
-<a href="#" onclick="mostrarPaciente()">
-Pacientes
-</a>
-
-<a href="#login">
-Iniciar Sesión
-</a>
-
-<a href="#contacto">
-Contacto
-</a>
-
-</div>
-
-</nav>
 <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DeltaF</title>
 
-<title>DeltaF</title>
+    <style>
+        *{
+            margin:0;
+            padding:0;
+            box-sizing:border-box;
+            font-family:Arial, Helvetica, sans-serif;
+        }
 
-<style>
+        body{
+            background:#f8fafc;
+            color:#1e293b;
+        }
 
-*{
-margin:0;
-padding:0;
-box-sizing:border-box;
-font-family:Arial, Helvetica, sans-serif;
-}
+        nav{
+            position:fixed;
+            top:0;
+            left:0;
+            width:100%;
+            background:white;
+            box-shadow:0 2px 10px rgba(0,0,0,.08);
+            padding:15px 30px;
+            display:flex;
+            justify-content:space-between;
+            align-items:center;
+            z-index:999;
+        }
 
-body{
-background:#f8fafc;
-color:#1e293b;
-}
-nav{
-position:fixed;
-top:0;
-left:0;
-width:100%;
-background:white;
-box-shadow:0 2px 10px rgba(0,0,0,.08);
-padding:15px 30px;
-display:flex;
-justify-content:space-between;
-align-items:center;
-z-index:999;
-}
+        .nav-logo img{
+            height:48px;
+            width:auto;
+            display:block;
+        }
 
-.nav-logo{
-font-size:1.5rem;
-font-weight:900;
-color:#2563eb;
-}
+        .nav-links{
+            display:flex;
+            gap:25px;
+            flex-wrap:wrap;
+        }
 
-.nav-links{
-display:flex;
-gap:25px;
-flex-wrap:wrap;
-}
+        .nav-links a{
+            text-decoration:none;
+            color:#1e293b;
+            font-weight:bold;
+            transition:.3s;
+        }
 
-.nav-links a{
-text-decoration:none;
-color:#1e293b;
-font-weight:bold;
-}
+        .nav-links a:hover{
+            color:#2563eb;
+        }
 
-.nav-links a:hover{
-color:#2563eb;
-}
-header{
-margin-top:70px;
-background:linear-gradient(135deg,#2563eb,#06b6d4);
-color:white;
-padding:100px 20px;
-text-align:center;
-}
+        header{
+            margin-top:80px;
+            background:linear-gradient(135deg,#2563eb,#06b6d4);
+            color:white;
+            padding:100px 20px;
+            text-align:center;
+        }
 
-.logo{
-font-size:4rem;
-font-weight:900;
-margin-bottom:20px;
-letter-spacing:2px;
-}
+        .logo img{
+            width:320px;
+            max-width:90%;
+            height:auto;
+            display:block;
+            margin:0 auto 25px;
+        }
 
-header h1{
-font-size:3rem;
-margin-bottom:20px;
-}
+        header h1{
+            font-size:3rem;
+            margin-bottom:20px;
+        }
 
-header p{
-max-width:900px;
-margin:auto;
-font-size:1.2rem;
-line-height:1.8;
-}
+        header p{
+            max-width:900px;
+            margin:auto;
+            font-size:1.2rem;
+            line-height:1.8;
+        }
 
-.hero-buttons{
-margin-top:50px;
-display:flex;
-justify-content:center;
-gap:20px;
-flex-wrap:wrap;
-}
+        .hero-buttons{
+            margin-top:50px;
+            display:flex;
+            justify-content:center;
+            gap:20px;
+            flex-wrap:wrap;
+        }
 
-.hero-btn{
-background:white;
-color:#2563eb;
-border:none;
-padding:18px 35px;
-border-radius:12px;
-font-size:1rem;
-font-weight:bold;
-cursor:pointer;
-transition:.3s;
-}
+        .hero-btn{
+            background:white;
+            color:#2563eb;
+            border:none;
+            padding:18px 35px;
+            border-radius:12px;
+            font-size:1rem;
+            font-weight:bold;
+            cursor:pointer;
+            transition:.3s;
+        }
 
-.hero-btn:hover{
-transform:translateY(-4px);
-}
+        .hero-btn:hover{
+            transform:translateY(-4px);
+        }
 
-.section{
-display:none;
-max-width:1200px;
-margin:auto;
-padding:80px 20px;
-}
+        .section{
+            display:none;
+            max-width:1200px;
+            margin:auto;
+            padding:80px 20px;
+        }
 
-.section h2{
-text-align:center;
-font-size:2.3rem;
-margin-bottom:40px;
-color:#2563eb;
-}
+        .section h2{
+            text-align:center;
+            font-size:2.3rem;
+            margin-bottom:40px;
+            color:#2563eb;
+        }
 
-.cards{
-display:grid;
-grid-template-columns:repeat(auto-fit,minmax(300px,1fr));
-gap:25px;
-}
+        .cards{
+            display:grid;
+            grid-template-columns:repeat(auto-fit,minmax(300px,1fr));
+            gap:25px;
+        }
 
-.card{
-background:white;
-padding:30px;
-border-radius:20px;
-box-shadow:0 10px 25px rgba(0,0,0,.08);
-}
+        .card{
+            background:white;
+            padding:30px;
+            border-radius:20px;
+            box-shadow:0 10px 25px rgba(0,0,0,.08);
+        }
 
-.card h3{
-margin-bottom:20px;
-color:#2563eb;
-}
+        .card h3{
+            margin-bottom:20px;
+            color:#2563eb;
+        }
 
-.card ul{
-padding-left:20px;
-line-height:1.8;
-}
+        .card ul{
+            padding-left:20px;
+            line-height:1.8;
+        }
 
-.price{
-font-size:2rem;
-font-weight:bold;
-margin:15px 0;
-color:#06b6d4;
-}
+        .price{
+            font-size:2rem;
+            font-weight:bold;
+            margin:15px 0;
+            color:#06b6d4;
+        }
 
-.form-box{
-background:white;
-padding:40px;
-border-radius:20px;
-box-shadow:0 10px 25px rgba(0,0,0,.08);
-margin-top:40px;
-}
+        .form-box{
+            background:white;
+            padding:40px;
+            border-radius:20px;
+            box-shadow:0 10px 25px rgba(0,0,0,.08);
+            margin-top:40px;
+        }
 
-input, textarea, select{
-width:100%;
-padding:15px;
-margin-top:10px;
-margin-bottom:20px;
-border:1px solid #d1d5db;
-border-radius:10px;
-}
+        input, textarea, select{
+            width:100%;
+            padding:15px;
+            margin-top:10px;
+            margin-bottom:20px;
+            border:1px solid #d1d5db;
+            border-radius:10px;
+        }
 
-.submit-btn{
-background:#2563eb;
-color:white;
-border:none;
-padding:15px 30px;
-border-radius:10px;
-cursor:pointer;
-font-weight:bold;
-}
-<section class="section" id="login" style="display:block;">
+        .submit-btn{
+            background:#2563eb;
+            color:white;
+            border:none;
+            padding:15px 30px;
+            border-radius:10px;
+            cursor:pointer;
+            font-weight:bold;
+            transition:.3s;
+        }
 
-<h2>Iniciar Sesión</h2>
+        .submit-btn:hover{
+            background:#1d4ed8;
+        }
 
-<div class="form-box">
+        .footer{
+            background:linear-gradient(135deg,#0f172a,#1e293b);
+            color:#cbd5e1;
+            margin-top:100px;
+        }
 
-<input type="email" placeholder="Correo Electrónico">
+        .footer-container{
+            max-width:1200px;
+            margin:auto;
+            padding:70px 20px 40px;
+            display:grid;
+            grid-template-columns:2fr 1fr 1fr;
+            gap:50px;
+        }
 
-<input type="password" placeholder="Contraseña">
+        .footer-brand img{
+            width:180px;
+            margin-bottom:20px;
+        }
 
-<button class="submit-btn">
-Ingresar
-</button>
+        .footer-brand p{
+            line-height:1.8;
+            max-width:420px;
+        }
 
-</div>
+        .footer-column{
+            display:flex;
+            flex-direction:column;
+            gap:14px;
+        }
 
-</section>
-  <section class="section" id="contacto" style="display:block;">
+        .footer-column h3{
+            color:white;
+            margin-bottom:15px;
+        }
 
-<h2>Contacto</h2>
+        .footer-column a,
+        .footer-column span{
+            color:#cbd5e1;
+            text-decoration:none;
+            transition:.3s;
+        }
 
-<div class="form-box">
+        .footer-column a:hover{
+            color:#22d3ee;
+            transform:translateX(4px);
+        }
 
-<p>
-¿Tienes dudas sobre DeltaF?
-</p>
+        .footer-bottom{
+            border-top:1px solid rgba(255,255,255,.1);
+            text-align:center;
+            padding:25px 20px;
+            color:#94a3b8;
+        }
 
-<br>
+        @media(max-width:768px){
 
-<input type="text" placeholder="Nombre">
+            nav{
+                flex-direction:column;
+                gap:15px;
+            }
 
-<input type="email" placeholder="Correo Electrónico">
+            .nav-links{
+                justify-content:center;
+            }
 
-<textarea rows="5" placeholder="Mensaje"></textarea>
+            header h1{
+                font-size:2rem;
+            }
 
-<button class="submit-btn">
-Enviar Consulta
-</button>
+            .footer-container{
+                grid-template-columns:1fr;
+                text-align:center;
+            }
 
-</div>
+            .footer-brand p{
+                margin:auto;
+            }
 
-</section>
-footer{
-background:#0f172a;
-color:white;
-text-align:center;
-padding:50px 20px;
-margin-top:80px;
-}
+            .footer-brand img{
+                margin:0 auto 20px;
+            }
 
-footer h3{
-margin-bottom:10px;
-}
-
-@media(max-width:768px){
-
-header h1{
-font-size:2rem;
-}
-
-.logo{
-font-size:2.5rem;
-}
-
-}
-
-</style>
-
+            .footer-column a:hover{
+                transform:none;
+            }
+        }
+    </style>
 </head>
 
 <body>
 
-<header>
+    <nav>
 
-<div class="logo">
-DELTΔF
-</div>
+        <div class="nav-logo">
+            <img src="img/logo-deltaf.png" alt="DeltaF">
+        </div>
 
-<h1>
-Facilitamos el acceso a exámenes clínicos
-</h1>
+        <div class="nav-links">
+            <a href="#">Inicio</a>
+            <a href="#" onclick="mostrarProfesional()">Profesionales</a>
+            <a href="#" onclick="mostrarPaciente()">Pacientes</a>
+            <a href="#login">Iniciar Sesión</a>
+            <a href="#contacto">Contacto</a>
+        </div>
 
-<p>
-Una plataforma diseñada para profesionales de la salud y pacientes, facilitando la gestión de solicitudes de exámenes de laboratorio e imagenología mediante una experiencia simple, rápida y segura.
-</p>
+    </nav>
 
-<div class="hero-buttons">
+    <header>
 
-<button class="hero-btn" onclick="mostrarProfesional()">
-🩺 SOY PROFESIONAL
-</button>
+        <div class="logo">
+            <img src="img/logo-deltaf.png" alt="DeltaF">
+        </div>
 
-<button class="hero-btn" onclick="mostrarPaciente()">
-👤 SOY PACIENTE
-</button>
+        <h1>Facilitamos el acceso a exámenes clínicos</h1>
 
-</div>
+        <p>
+            Una plataforma diseñada para profesionales de la salud y pacientes,
+            facilitando la gestión de solicitudes de exámenes de laboratorio e
+            imagenología mediante una experiencia simple, rápida y segura.
+        </p>
 
-</header>
+        <div class="hero-buttons">
 
-<!-- PROFESIONAL -->
+            <button class="hero-btn" onclick="mostrarProfesional()">
+                🩺 SOY PROFESIONAL
+            </button>
 
-<section id="profesional" class="section">
+            <button class="hero-btn" onclick="mostrarPaciente()">
+                👤 SOY PACIENTE
+            </button>
 
-<h2>Profesionales de la Salud</h2>
+        </div>
 
-<div class="cards">
+    </header>
 
-<div class="card">
+    <!-- AQUÍ DEJA TODAS TUS SECCIONES ACTUALES:
+         PROFESIONAL
+         PACIENTE
+         LOGIN
+         CONTACTO -->
 
-<h3>Dirigido a</h3>
+    <footer class="footer">
 
-<ul>
-<li>Nutricionistas</li>
-<li>Enfermeros(as)</li>
-<li>Kinesiólogos(as)</li>
-<li>Fonoaudiólogos(as)</li>
-<li>Terapeutas Ocupacionales</li>
-<li>Acupunturistas</li>
-<li>Naturopatas</li>
-</ul>
+        <div class="footer-container">
 
-<p style="margin-top:15px;">
-* Requiere inscripción y validación previa.
-</p>
+            <div class="footer-brand">
 
-</div>
+                <img src="img/logo-deltaf.png" alt="DeltaF">
 
-<div class="card">
+                <p>
+                    Facilitamos el acceso a exámenes clínicos para profesionales
+                    de la salud y pacientes mediante una plataforma digital
+                    simple, rápida y segura.
+                </p>
 
-<h3>Beneficios</h3>
+            </div>
 
-<ul>
-<li>Solicitud rápida de exámenes</li>
-<li>Seguimiento terapéutico</li>
-<li>Historial de solicitudes</li>
-<li>Disponibilidad 24/7</li>
-<li>Convenios asociados</li>
-</ul>
+            <div class="footer-column">
 
-</div>
+                <h3>Plataforma</h3>
 
-</div>
+                <a href="#">Inicio</a>
 
-<div class="cards" style="margin-top:40px;">
+                <a href="#" onclick="mostrarProfesional()">
+                    Profesionales
+                </a>
 
-<div class="card">
+                <a href="#" onclick="mostrarPaciente()">
+                    Pacientes
+                </a>
 
-<h3>Orden Individual</h3>
+                <a href="#login">
+                    Iniciar Sesión
+                </a>
 
-<div class="price">
-$2.990
-</div>
+            </div>
 
-<p>Valor normal $3.990</p>
+            <div class="footer-column">
 
-</div>
+                <h3>Contacto</h3>
 
-<div class="card">
+                <a href="mailto:contacto@deltaf.site">
+                    contacto@deltaf.site
+                </a>
 
-<h3>Promoción Lanzamiento</h3>
+                <a href="https://www.deltaf.site" target="_blank">
+                    www.deltaf.site
+                </a>
 
-<div class="price">
-10 Órdenes
-</div>
+                <span>Chile</span>
 
-<p>
-$25.000<br>
-Promoción válida por única vez.
-</p>
+            </div>
 
-</div>
+        </div>
 
-<div class="card">
+        <div class="footer-bottom">
+            © 2026 DeltaF. Todos los derechos reservados.
+        </div>
 
-<h3>Plan Profesional</h3>
+    </footer>
 
-<div class="price">
-$50.000
-</div>
+    <script>
+        function mostrarProfesional() {
+            document.getElementById('profesional').style.display = 'block';
+            document.getElementById('paciente').style.display = 'none';
+            window.location.href = '#profesional';
+        }
 
-<p>
-Hasta 50 órdenes.<br>
-Vigencia de 3 meses.
-</p>
+        function mostrarPaciente() {
+            document.getElementById('paciente').style.display = 'block';
+            document.getElementById('profesional').style.display = 'none';
+            window.location.href = '#paciente';
+        }
+    </script>
 
-</div>
+</body>
 
-</div>
-
-<div class="form-box">
-
-<h3>Solicitud de Registro Profesional</h3>
-
-<input type="text" placeholder="Nombre Completo">
-
-<input type="text" placeholder="RUT">
-
-<input type="text" placeholder="Profesión">
-
-<input type="text" placeholder="Registro Superintendencia">
-
-<input type="email" placeholder="Correo Electrónico">
-
-<input type="tel" placeholder="Teléfono">
-
-<button class="submit-btn">
-Solicitar Registro
-</button>
-
-</div>
-
-</section>
-
-<!-- PACIENTE -->
-
-<section id="paciente" class="section">
-
-<h2>Pacientes</h2>
-
-<div class="cards">
-
-<div class="card">
-
-<h3>¿Cómo funciona?</h3>
-
-<ul>
-<li>Completa tu solicitud</li>
-<li>Selecciona el examen requerido</li>
-<li>Realiza el pago</li>
-<li>Procesamiento de la orden</li>
-</ul>
-
-</div>
-
-<div class="card">
-
-<h3>Valor de Solicitud</h3>
-
-<div class="price">
-$4.990 - $6.990
-</div>
-
-<p>
-Según el tipo de examen solicitado.
-</p>
-
-</div>
-
-</div>
-
-<div class="form-box">
-
-<h3>Solicitud de Exámenes</h3>
-
-<input type="text" placeholder="Nombre Completo">
-
-<input type="text" placeholder="RUT">
-
-<input type="text" placeholder="Dirección">
-
-<input type="email" placeholder="Correo Electrónico">
-
-<input type="tel" placeholder="Teléfono">
-
-<textarea rows="5" placeholder="Observaciones"></textarea>
-
-<button class="submit-btn">
-Continuar Solicitud
-</button>
-
-</div>
-
-</section>
-
-<footer>
-
-<footer>
-
-<div class="footer-container">
-
-<div class="footer-brand">
-
-<h2>DELTΔF</h2>
-
-<p>
-Facilitamos el acceso a exámenes clínicos para profesionales de la salud y pacientes mediante una plataforma digital simple, rápida y segura.
-</p>
-
-</div>
-
-<div class="footer-links">
-
-<h3>Plataforma</h3>
-
-<a href="#">Inicio</a>
-<a href="#" onclick="mostrarProfesional()">Profesionales</a>
-<a href="#" onclick="mostrarPaciente()">Pacientes</a>
-<a href="#login">Iniciar Sesión</a>
-
-</div>
-
-<div class="footer-contact">
-
-<h3>Contacto</h3>
-
-<p>contacto@deltaf.site</p>
-
-<p>www.deltaf.site</p>
-
-<p>Chile</p>
-
-</div>
-
-</div>
-
-<div class="footer-bottom">
-
-© 2026 DeltaF. Todos los derechos reservados.
-
-</div>
-
-</footer>
+</html>
