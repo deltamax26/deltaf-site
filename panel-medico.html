@@ -113,37 +113,12 @@ body{padding:15px;}
 <h2>Revisión de Solicitud</h2>
 
 <div class="grid">
-
-<div class="field">
-<div class="label">Código</div>
-<div id="detalleCodigo" class="value"></div>
-</div>
-
-<div class="field">
-<div class="label">Paciente</div>
-<div id="detallePaciente" class="value"></div>
-</div>
-
-<div class="field">
-<div class="label">RUT</div>
-<div id="detalleRut" class="value"></div>
-</div>
-
-<div class="field">
-<div class="label">Correo Paciente</div>
-<div id="detalleCorreo" class="value"></div>
-</div>
-
-<div class="field">
-<div class="label">Fecha</div>
-<div id="detalleFecha" class="value"></div>
-</div>
-
-<div class="field">
-<div class="label">Estado</div>
-<div id="detalleEstado" class="value"></div>
-</div>
-
+<div class="field"><div class="label">Código</div><div id="detalleCodigo" class="value"></div></div>
+<div class="field"><div class="label">Paciente</div><div id="detallePaciente" class="value"></div></div>
+<div class="field"><div class="label">RUT</div><div id="detalleRut" class="value"></div></div>
+<div class="field"><div class="label">Correo Paciente</div><div id="detalleCorreo" class="value"></div></div>
+<div class="field"><div class="label">Fecha</div><div id="detalleFecha" class="value"></div></div>
+<div class="field"><div class="label">Estado</div><div id="detalleEstado" class="value"></div></div>
 </div>
 
 <br>
@@ -390,7 +365,7 @@ let y = 125;
 examenes.forEach(examen => {
 doc.text("• " + examen, 25, y);
 y += 8;
-if(y > 250){
+if(y > 240){
 doc.addPage();
 y = 25;
 }
@@ -407,7 +382,7 @@ const motivoTexto = doc.splitTextToSize(orden.motivo || "-", 170);
 doc.text(motivoTexto, 20, y);
 y += motivoTexto.length * 7 + 8;
 
-if(y > 230){
+if(y > 220){
 doc.addPage();
 y = 25;
 }
@@ -466,13 +441,16 @@ mostrarMensaje("Primero selecciona una solicitud.", "error");
 return;
 }
 
+const ordenActual = {...ordenSeleccionada};
+const ordenId = ordenActual.id;
+
 try{
 mostrarMensaje("Generando PDF y aprobando solicitud...", "loading");
 
 const observaciones = document.getElementById("observacionesMedicas").value.trim();
 
-const pdfBlob = generarPDFBlob(ordenSeleccionada, observaciones);
-const pdfUrl = await subirPDF(ordenSeleccionada, pdfBlob);
+const pdfBlob = generarPDFBlob(ordenActual, observaciones);
+const pdfUrl = await subirPDF(ordenActual, pdfBlob);
 
 const { error } = await supabaseClient
 .from("ordenes")
@@ -481,15 +459,17 @@ estado: "aprobada",
 observaciones: observaciones,
 pdf_url: pdfUrl
 })
-.eq("id", ordenSeleccionada.id);
+.eq("id", ordenId);
 
 if(error){
 throw error;
 }
 
 mostrarMensaje("Solicitud aprobada y PDF generado correctamente.", "success");
+
 detalleCard.style.display = "none";
 ordenSeleccionada = null;
+
 await cargarOrdenes();
 
 }catch(error){
@@ -504,6 +484,7 @@ mostrarMensaje("Primero selecciona una solicitud.", "error");
 return;
 }
 
+const ordenId = ordenSeleccionada.id;
 const observaciones = document.getElementById("observacionesMedicas").value.trim();
 
 const { error } = await supabaseClient
@@ -512,7 +493,7 @@ const { error } = await supabaseClient
 estado: nuevoEstado,
 observaciones: observaciones
 })
-.eq("id", ordenSeleccionada.id);
+.eq("id", ordenId);
 
 if(error){
 mostrarMensaje("Error al actualizar solicitud: " + error.message, "error");
@@ -531,6 +512,7 @@ mostrarMensaje("Primero selecciona una solicitud.", "error");
 return;
 }
 
+const ordenId = ordenSeleccionada.id;
 const observaciones = document.getElementById("observacionesMedicas").value.trim();
 
 if(!observaciones){
@@ -546,7 +528,7 @@ const { error } = await supabaseClient
 estado: "pendiente",
 observaciones: texto
 })
-.eq("id", ordenSeleccionada.id);
+.eq("id", ordenId);
 
 if(error){
 mostrarMensaje("Error al solicitar modificación: " + error.message, "error");
