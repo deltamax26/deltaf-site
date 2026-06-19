@@ -1,127 +1,38 @@
 <!DOCTYPE html>
 <html lang="es">
-
 <head>
-
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
 <title>Nueva Solicitud | DeltaF</title>
 
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
 <style>
-
-*{
-margin:0;
-padding:0;
-box-sizing:border-box;
-font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;
-}
-
-body{
-background:#f8fafc;
-padding:30px;
-}
-
-.container{
-max-width:1200px;
-margin:auto;
-}
-
-.header{
-background:white;
-padding:25px;
-border-radius:20px;
-box-shadow:0 10px 25px rgba(0,0,0,.06);
-margin-bottom:25px;
-text-align:center;
-}
-
-.header img{
-width:220px;
-margin-bottom:15px;
-}
-
-.header h1{
-color:#2563eb;
-}
-
-.card{
-background:white;
-padding:30px;
-border-radius:20px;
-box-shadow:0 10px 25px rgba(0,0,0,.06);
-margin-bottom:25px;
-}
-
-.card h2{
-color:#2563eb;
-margin-bottom:20px;
-}
-
-.grid{
-display:grid;
-grid-template-columns:1fr 1fr;
-gap:20px;
-}
-
-.full{
-grid-column:1/-1;
-}
-
-label{
-display:block;
-font-weight:600;
-margin-bottom:8px;
-}
-
-input,
-textarea,
-select{
-width:100%;
-padding:14px;
-border:1px solid #cbd5e1;
-border-radius:10px;
-}
-
-.checkbox-grid{
-display:grid;
-grid-template-columns:repeat(auto-fit,minmax(250px,1fr));
-gap:12px;
-}
-
-.checkbox-item{
-background:#f8fafc;
-padding:12px;
-border-radius:10px;
-border:1px solid #e2e8f0;
-}
-
-.btn{
-width:100%;
-background:#2563eb;
-color:white;
-padding:18px;
-border:none;
-border-radius:12px;
-font-size:1rem;
-font-weight:bold;
-cursor:pointer;
-}
-
-.btn:hover{
-background:#1d4ed8;
-}
-
-@media(max-width:768px){
-
-.grid{
-grid-template-columns:1fr;
-}
-
-}
-
+*{margin:0;padding:0;box-sizing:border-box;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;}
+body{background:#f8fafc;padding:30px;color:#1e293b;}
+.container{max-width:1200px;margin:auto;}
+.header{background:white;padding:25px;border-radius:20px;box-shadow:0 10px 25px rgba(0,0,0,.06);margin-bottom:25px;text-align:center;}
+.header img{width:220px;margin-bottom:15px;}
+.header h1{color:#2563eb;}
+.card{background:white;padding:30px;border-radius:20px;box-shadow:0 10px 25px rgba(0,0,0,.06);margin-bottom:25px;}
+.card h2{color:#2563eb;margin-bottom:20px;}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:20px;}
+.full{grid-column:1/-1;}
+label{display:block;font-weight:600;margin-bottom:8px;}
+input,textarea,select{width:100%;padding:14px;border:1px solid #cbd5e1;border-radius:10px;}
+.checkbox-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:12px;}
+.checkbox-item{background:#f8fafc;padding:12px;border-radius:10px;border:1px solid #e2e8f0;}
+.checkbox-item input{width:auto;margin-right:8px;}
+.btn{width:100%;background:#2563eb;color:white;padding:18px;border:none;border-radius:12px;font-size:1rem;font-weight:bold;cursor:pointer;}
+.btn:hover{background:#1d4ed8;}
+.btn:disabled{background:#94a3b8;cursor:not-allowed;}
+.message{display:none;margin-bottom:20px;padding:15px;border-radius:10px;font-weight:700;}
+.message.success{display:block;background:#dcfce7;color:#166534;border:1px solid #86efac;}
+.message.error{display:block;background:#fee2e2;color:#991b1b;border:1px solid #fca5a5;}
+.top-links{margin-top:15px;}
+.top-links a{color:#2563eb;text-decoration:none;font-weight:700;}
+@media(max-width:768px){.grid{grid-template-columns:1fr;}body{padding:15px;}}
 </style>
-
 </head>
 
 <body>
@@ -129,130 +40,264 @@ grid-template-columns:1fr;
 <div class="container">
 
 <div class="header">
-
-<img src="img/logo-deltaf.png">
-
+<img src="./img/logo-deltaf.png" alt="DeltaF">
 <h1>Nueva Solicitud de Exámenes</h1>
-
+<div class="top-links">
+<a href="dashboard-profesional.html">← Volver al Dashboard</a>
+</div>
 </div>
 
-<div class="card">
+<div id="mensaje" class="message"></div>
 
+<form id="solicitudForm">
+
+<div class="card">
 <h2>Datos del Paciente</h2>
 
 <div class="grid">
-
 <div>
-<label>Nombre Completo</label>
-<input type="text">
+<label for="nombrePaciente">Nombre Completo</label>
+<input id="nombrePaciente" type="text" required>
 </div>
 
 <div>
-<label>RUT</label>
-<input type="text">
+<label for="rutPaciente">RUT</label>
+<input id="rutPaciente" type="text" required>
 </div>
 
 <div>
-<label>Fecha de Nacimiento</label>
-<input type="date">
+<label for="fechaNacimiento">Fecha de Nacimiento</label>
+<input id="fechaNacimiento" type="date">
 </div>
 
 <div>
-<label>Teléfono</label>
-<input type="text">
+<label for="telefonoPaciente">Teléfono</label>
+<input id="telefonoPaciente" type="text">
 </div>
 
 <div class="full">
-<label>Correo Electrónico</label>
-<input type="email">
+<label for="correoPaciente">Correo Electrónico</label>
+<input id="correoPaciente" type="email">
 </div>
 
 <div class="full">
-<label>Dirección</label>
-<input type="text">
+<label for="direccionPaciente">Dirección</label>
+<input id="direccionPaciente" type="text">
 </div>
-
 </div>
-
 </div>
 
 <div class="card">
-
 <h2>Exámenes de Laboratorio</h2>
 
 <div class="checkbox-grid">
-
-<label class="checkbox-item"><input type="checkbox"> Hemograma</label>
-<label class="checkbox-item"><input type="checkbox"> Perfil Bioquímico</label>
-<label class="checkbox-item"><input type="checkbox"> Perfil Lipídico</label>
-<label class="checkbox-item"><input type="checkbox"> Glicemia</label>
-<label class="checkbox-item"><input type="checkbox"> HbA1c</label>
-<label class="checkbox-item"><input type="checkbox"> Perfil Hepático</label>
-<label class="checkbox-item"><input type="checkbox"> Perfil Renal</label>
-<label class="checkbox-item"><input type="checkbox"> TSH</label>
-<label class="checkbox-item"><input type="checkbox"> T4 Libre</label>
-<label class="checkbox-item"><input type="checkbox"> Vitamina D</label>
-<label class="checkbox-item"><input type="checkbox"> Ferritina</label>
-<label class="checkbox-item"><input type="checkbox"> Vitamina B12</label>
-<label class="checkbox-item"><input type="checkbox"> Insulina</label>
-<label class="checkbox-item"><input type="checkbox"> PCR</label>
-<label class="checkbox-item"><input type="checkbox"> VHS</label>
-
+<label class="checkbox-item"><input type="checkbox" value="Hemograma" class="examen"> Hemograma</label>
+<label class="checkbox-item"><input type="checkbox" value="Perfil Bioquímico" class="examen"> Perfil Bioquímico</label>
+<label class="checkbox-item"><input type="checkbox" value="Perfil Lipídico" class="examen"> Perfil Lipídico</label>
+<label class="checkbox-item"><input type="checkbox" value="Glicemia" class="examen"> Glicemia</label>
+<label class="checkbox-item"><input type="checkbox" value="HbA1c" class="examen"> HbA1c</label>
+<label class="checkbox-item"><input type="checkbox" value="Perfil Hepático" class="examen"> Perfil Hepático</label>
+<label class="checkbox-item"><input type="checkbox" value="Perfil Renal" class="examen"> Perfil Renal</label>
+<label class="checkbox-item"><input type="checkbox" value="TSH" class="examen"> TSH</label>
+<label class="checkbox-item"><input type="checkbox" value="T4 Libre" class="examen"> T4 Libre</label>
+<label class="checkbox-item"><input type="checkbox" value="Vitamina D" class="examen"> Vitamina D</label>
+<label class="checkbox-item"><input type="checkbox" value="Ferritina" class="examen"> Ferritina</label>
+<label class="checkbox-item"><input type="checkbox" value="Vitamina B12" class="examen"> Vitamina B12</label>
+<label class="checkbox-item"><input type="checkbox" value="Insulina" class="examen"> Insulina</label>
+<label class="checkbox-item"><input type="checkbox" value="PCR" class="examen"> PCR</label>
+<label class="checkbox-item"><input type="checkbox" value="VHS" class="examen"> VHS</label>
 </div>
-
 </div>
 
 <div class="card">
-
 <h2>Radiografías</h2>
 
 <div class="checkbox-grid">
-
-<label class="checkbox-item"><input type="checkbox"> Tórax</label>
-<label class="checkbox-item"><input type="checkbox"> Columna Cervical</label>
-<label class="checkbox-item"><input type="checkbox"> Columna Lumbar</label>
-<label class="checkbox-item"><input type="checkbox"> Pelvis</label>
-<label class="checkbox-item"><input type="checkbox"> Hombro</label>
-<label class="checkbox-item"><input type="checkbox"> Rodilla</label>
-<label class="checkbox-item"><input type="checkbox"> Tobillo</label>
-<label class="checkbox-item"><input type="checkbox"> Pie</label>
-
+<label class="checkbox-item"><input type="checkbox" value="Radiografía de Tórax" class="examen"> Tórax</label>
+<label class="checkbox-item"><input type="checkbox" value="Radiografía Columna Cervical" class="examen"> Columna Cervical</label>
+<label class="checkbox-item"><input type="checkbox" value="Radiografía Columna Lumbar" class="examen"> Columna Lumbar</label>
+<label class="checkbox-item"><input type="checkbox" value="Radiografía de Pelvis" class="examen"> Pelvis</label>
+<label class="checkbox-item"><input type="checkbox" value="Radiografía de Hombro" class="examen"> Hombro</label>
+<label class="checkbox-item"><input type="checkbox" value="Radiografía de Rodilla" class="examen"> Rodilla</label>
+<label class="checkbox-item"><input type="checkbox" value="Radiografía de Tobillo" class="examen"> Tobillo</label>
+<label class="checkbox-item"><input type="checkbox" value="Radiografía de Pie" class="examen"> Pie</label>
 </div>
-
 </div>
 
 <div class="card">
-
 <h2>Otros Exámenes</h2>
 
-<label>Examen Solicitado</label>
-
-<input type="text">
+<label for="otroExamen">Examen Solicitado</label>
+<input id="otroExamen" type="text">
 
 <br><br>
 
-<label>Justificación Clínica</label>
-
-<textarea rows="5"></textarea>
-
+<label for="justificacionClinica">Justificación Clínica</label>
+<textarea id="justificacionClinica" rows="5"></textarea>
 </div>
 
 <div class="card">
-
 <h2>Observaciones Clínicas</h2>
-
-<textarea rows="7"></textarea>
-
+<textarea id="observaciones" rows="7"></textarea>
 </div>
 
-<button class="btn">
-
+<button id="btnEnviar" class="btn" type="submit">
 Enviar Solicitud al Médico Autorizador
-
 </button>
 
+</form>
+
 </div>
 
-</body>
+<script>
+const SUPABASE_URL = "https://goxkmtnmfessroveanje.supabase.co";
+const SUPABASE_ANON_KEY = "sb_publishable_w8xrtEanlJJAc5FYvk1X5A_fKu9vb5d";
 
+const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+const form = document.getElementById("solicitudForm");
+const mensaje = document.getElementById("mensaje");
+const btnEnviar = document.getElementById("btnEnviar");
+
+function mostrarMensaje(texto,tipo){
+mensaje.textContent = texto;
+mensaje.className = "message " + tipo;
+window.scrollTo({top:0,behavior:"smooth"});
+}
+
+function generarCodigo(){
+const fecha = new Date();
+const numero = Math.floor(100000 + Math.random() * 900000);
+return "DF-" + fecha.getFullYear() + "-" + numero;
+}
+
+async function obtenerProfesional(){
+const { data: sessionData, error: sessionError } = await supabaseClient.auth.getSession();
+
+if(sessionError || !sessionData.session){
+window.location.href = "login.html";
+return null;
+}
+
+const email = sessionData.session.user.email;
+
+const { data: profesional, error } = await supabaseClient
+.from("profesionales")
+.select("*")
+.eq("email", email)
+.single();
+
+if(error || !profesional){
+mostrarMensaje("No se encontró el profesional asociado a esta sesión.", "error");
+return null;
+}
+
+if(profesional.estado !== "aprobado"){
+await supabaseClient.auth.signOut();
+window.location.href = "login.html";
+return null;
+}
+
+return profesional;
+}
+
+form.addEventListener("submit", async function(event){
+event.preventDefault();
+
+btnEnviar.disabled = true;
+btnEnviar.textContent = "Enviando solicitud...";
+
+try{
+const profesional = await obtenerProfesional();
+
+if(!profesional){
+btnEnviar.disabled = false;
+btnEnviar.textContent = "Enviar Solicitud al Médico Autorizador";
+return;
+}
+
+if((profesional.ordenes_disponibles || 0) <= 0){
+mostrarMensaje("No tienes órdenes disponibles. Debes comprar órdenes antes de crear una solicitud.", "error");
+btnEnviar.disabled = false;
+btnEnviar.textContent = "Enviar Solicitud al Médico Autorizador";
+return;
+}
+
+const nombrePaciente = document.getElementById("nombrePaciente").value.trim();
+const rutPaciente = document.getElementById("rutPaciente").value.trim();
+const correoPaciente = document.getElementById("correoPaciente").value.trim().toLowerCase();
+const otroExamen = document.getElementById("otroExamen").value.trim();
+const justificacionClinica = document.getElementById("justificacionClinica").value.trim();
+const observaciones = document.getElementById("observaciones").value.trim();
+
+const examenesSeleccionados = Array.from(document.querySelectorAll(".examen:checked")).map(e => e.value);
+
+if(otroExamen){
+examenesSeleccionados.push(otroExamen);
+}
+
+if(examenesSeleccionados.length === 0){
+mostrarMensaje("Debes seleccionar o escribir al menos un examen.", "error");
+btnEnviar.disabled = false;
+btnEnviar.textContent = "Enviar Solicitud al Médico Autorizador";
+return;
+}
+
+const textoExamenes = examenesSeleccionados.join(", ");
+
+const motivoFinal = [
+"Exámenes solicitados: " + textoExamenes,
+justificacionClinica ? "Justificación clínica: " + justificacionClinica : "",
+observaciones ? "Observaciones: " + observaciones : ""
+].filter(Boolean).join("\n\n");
+
+const { error: ordenError } = await supabaseClient
+.from("ordenes")
+.insert([
+{
+codigo: generarCodigo(),
+profesional_id: profesional.id,
+tipo_orden: textoExamenes,
+motivo: motivoFinal,
+estado: "pendiente",
+nombre_paciente: nombrePaciente,
+rut_paciente: rutPaciente,
+correo_paciente: correoPaciente,
+observaciones: observaciones
+}
+]);
+
+if(ordenError){
+throw ordenError;
+}
+
+const nuevasOrdenes = (profesional.ordenes_disponibles || 0) - 1;
+
+const { error: updateError } = await supabaseClient
+.from("profesionales")
+.update({ ordenes_disponibles: nuevasOrdenes })
+.eq("id", profesional.id);
+
+if(updateError){
+throw updateError;
+}
+
+mostrarMensaje("Solicitud enviada correctamente al médico autorizador. Se descontó 1 orden disponible.", "success");
+form.reset();
+
+setTimeout(function(){
+window.location.href = "mis-solicitudes.html";
+}, 1500);
+
+}catch(error){
+console.error(error);
+mostrarMensaje("Error al enviar la solicitud: " + error.message, "error");
+}
+
+btnEnviar.disabled = false;
+btnEnviar.textContent = "Enviar Solicitud al Médico Autorizador";
+});
+</script>
+
+</body>
 </html>
