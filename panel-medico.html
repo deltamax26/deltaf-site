@@ -498,7 +498,27 @@ errorUpdate = error;
 if(errorUpdate){
 throw errorUpdate;
 }
+try {
 
+await fetch(
+"https://goxkmtnmfessroveanje.supabase.co/functions/v1/resend-email",
+{
+method:"POST",
+headers:{
+"Content-Type":"application/json"
+},
+body:JSON.stringify({
+email: ordenActual.correo_paciente,
+nombre: ordenActual.nombre_paciente,
+codigo: ordenActual._codigo,
+pdfUrl: ordenActual.pdf_url || "https://deltaf.site"
+})
+}
+);
+
+}catch(error){
+console.log("Error enviando correo", error);
+}
 mostrarMensaje("Se registró la solicitud de modificación.", "success");
 detalleCard.style.display = "none";
 ordenSeleccionada = null;
