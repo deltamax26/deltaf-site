@@ -531,7 +531,7 @@ mostrarMensaje("Error al solicitar modificación: " + error.message, "error");
 }
 let pendientesAnteriores = 0;
 
-{
+async function aprobarConPDF(){
 
 if(!ordenSeleccionada){
 mostrarMensaje("Primero selecciona una solicitud.", "error");
@@ -618,7 +618,6 @@ mostrarMensaje(
 }
 
 }
-
 (async function iniciarPanelMedico(){
 
 const permitido = await verificarPermisosMedico();
