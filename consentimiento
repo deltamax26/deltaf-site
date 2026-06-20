@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<title>Consentimiento de Datos de Salud | DeltaF</title>
+<style>
+body{
+font-family:Arial,sans-serif;
+max-width:1000px;
+margin:auto;
+padding:40px;
+line-height:1.7;
+}
+</style>
+</head>
+<body>
+
+<h1>Consentimiento para Tratamiento de Datos de Salud</h1>
+
+<p>Al utilizar DeltaF, el usuario autoriza expresamente el tratamiento de los datos personales y antecedentes de salud proporcionados para la gestión de solicitudes de exámenes médicos.</p>
+
+<p>Esta autorización comprende la recopilación, almacenamiento, procesamiento y transmisión de información necesaria para la evaluación médica y emisión de órdenes correspondientes.</p>
+
+<p>Los datos serán utilizados únicamente para fines relacionados con la gestión sanitaria solicitada por el usuario.</p>
+
+<p>El usuario podrá revocar este consentimiento mediante solicitud escrita, sin perjuicio de las obligaciones legales de conservación de registros que resulten aplicables.</p>
+
+<p>La utilización de la plataforma implica la aceptación íntegra de este consentimiento.</p>
+
+</body>
+</html>
