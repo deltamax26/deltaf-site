@@ -30,6 +30,7 @@ tr:hover td{background:#f8fafc;}
 .pendiente{background:#fef3c7;color:#92400e;}
 .aprobada{background:#dcfce7;color:#166534;}
 .rechazada{background:#fee2e2;color:#991b1b;}
+.modificacion{background:#ffedd5;color:#9a3412;}
 .origen{padding:7px 11px;border-radius:8px;font-weight:700;display:inline-block;}
 .origen-profesional{background:#dbeafe;color:#1e40af;}
 .origen-paciente{background:#f3e8ff;color:#6b21a8;}
@@ -183,6 +184,13 @@ if(!fechaISO) return "-";
 return new Date(fechaISO).toLocaleDateString("es-CL");
 }
 
+function limpiarTexto(valor){
+if(!valor) return "-";
+return String(valor)
+.replace(/</g,"&lt;")
+.replace(/>/g,"&gt;");
+}
+
 async function verificarPermisosMedico(){
 const { data: sessionData, error: sessionError } = await supabaseClient.auth.getSession();
 
@@ -279,7 +287,7 @@ ocultarMensaje();
 
 function actualizarEstadisticas(){
 document.getElementById("totalPendientes").textContent =
-solicitudesCombinadas.filter(o => o.estado === "pendiente").length;
+solicitudesCombinadas.filter(o => (o.estado || "pendiente") === "pendiente").length;
 
 document.getElementById("totalAprobadas").textContent =
 solicitudesCombinadas.filter(o => o.estado === "aprobada").length;
@@ -301,15 +309,16 @@ const fila = document.createElement("tr");
 
 const claseOrigen = item._origen === "paciente" ? "origen-paciente" : "origen-profesional";
 const textoOrigen = item._origen === "paciente" ? "Paciente directo" : "Profesional";
+const estado = item.estado || "pendiente";
 
 fila.innerHTML = `
-<td>${item._codigo || "-"}</td>
+<td>${limpiarTexto(item._codigo || "-")}</td>
 <td><span class="origen ${claseOrigen}">${textoOrigen}</span></td>
-<td>${item.nombre_paciente || "-"}</td>
-<td>${item.rut_paciente || "-"}</td>
-<td>${item._examenes || "-"}</td>
+<td>${limpiarTexto(item.nombre_paciente || "-")}</td>
+<td>${limpiarTexto(item.rut_paciente || "-")}</td>
+<td>${limpiarTexto(item._examenes || "-")}</td>
 <td>${formatearFecha(item.created_at)}</td>
-<td><span class="status ${item.estado || "pendiente"}">${item.estado || "pendiente"}</span></td>
+<td><span class="status ${estado}">${estado}</span></td>
 `;
 
 fila.addEventListener("click", function(){
@@ -354,7 +363,12 @@ detalleCard.style.display = "block";
 window.scrollTo({top:detalleCard.offsetTop - 20,behavior:"smooth"});
 }
 
-async function enviarCorreoAprobacion(ordenActual){
+async function enviarCorreo(to, subject, html){
+if(!to){
+console.log("No hay correo de destino.");
+return { success:false, error:"Sin destinatario" };
+}
+
 try{
 const response = await fetch(FUNCTION_EMAIL_URL,{
 method:"POST",
@@ -362,26 +376,96 @@ headers:{
 "Content-Type":"application/json"
 },
 body:JSON.stringify({
-tipo:"Orden médica aprobada",
-email:ordenActual.correo_paciente || "",
-nombre:ordenActual.nombre_paciente || "",
-rut:ordenActual.rut_paciente || "",
-telefono:ordenActual.telefono_paciente || "",
-correo:ordenActual.correo_paciente || "",
-examenes:ordenActual._examenes || "",
-comprobante:ordenActual.comprobante || "",
-codigo:ordenActual._codigo || "",
-pdfUrl:ordenActual.pdf_url || "https://deltaf.site"
+to:to,
+subject:subject,
+html:html
 })
 });
 
 const data = await response.json().catch(() => ({}));
 
-console.log("Respuesta correo:", response.status, data);
+console.log("Correo DeltaF:", response.status, data);
+
+return {
+success: response.ok,
+status: response.status,
+data: data
+};
 
 }catch(error){
-console.log("Correo no enviado", error);
+console.log("Error enviando correo:", error);
+return { success:false, error:error };
 }
+}
+
+function crearHtmlAprobacion(ordenActual, observaciones){
+return `
+<div style="font-family:Arial,sans-serif;color:#1e293b;line-height:1.5;">
+<h2 style="color:#2563eb;">Solicitud aprobada - DeltaF</h2>
+
+<p>Estimado/a, la solicitud de exámenes fue revisada y aprobada por el médico autorizador.</p>
+
+<h3>Datos de la solicitud</h3>
+<p><strong>Código:</strong> ${limpiarTexto(ordenActual._codigo || "-")}</p>
+<p><strong>Paciente:</strong> ${limpiarTexto(ordenActual.nombre_paciente || "-")}</p>
+<p><strong>RUT:</strong> ${limpiarTexto(ordenActual.rut_paciente || "-")}</p>
+<p><strong>Exámenes:</strong> ${limpiarTexto(ordenActual._examenes || "-")}</p>
+
+<h3>Observaciones médicas</h3>
+<p>${limpiarTexto(observaciones || "Sin observaciones adicionales.")}</p>
+
+<p>Puede revisar el estado de la solicitud en DeltaF.</p>
+
+<hr>
+<p style="font-size:12px;color:#64748b;">DeltaF - Plataforma de solicitudes de exámenes.</p>
+</div>
+`;
+}
+
+function crearHtmlRechazo(ordenActual, observaciones){
+return `
+<div style="font-family:Arial,sans-serif;color:#1e293b;line-height:1.5;">
+<h2 style="color:#dc2626;">Solicitud rechazada - DeltaF</h2>
+
+<p>Estimado/a, la solicitud de exámenes fue revisada por el médico autorizador y ha sido rechazada.</p>
+
+<h3>Datos de la solicitud</h3>
+<p><strong>Código:</strong> ${limpiarTexto(ordenActual._codigo || "-")}</p>
+<p><strong>Paciente:</strong> ${limpiarTexto(ordenActual.nombre_paciente || "-")}</p>
+<p><strong>RUT:</strong> ${limpiarTexto(ordenActual.rut_paciente || "-")}</p>
+<p><strong>Exámenes:</strong> ${limpiarTexto(ordenActual._examenes || "-")}</p>
+
+<h3>Motivo / observaciones</h3>
+<p>${limpiarTexto(observaciones || "Sin observaciones registradas.")}</p>
+
+<hr>
+<p style="font-size:12px;color:#64748b;">DeltaF - Plataforma de solicitudes de exámenes.</p>
+</div>
+`;
+}
+
+function crearHtmlModificacion(ordenActual, observaciones){
+return `
+<div style="font-family:Arial,sans-serif;color:#1e293b;line-height:1.5;">
+<h2 style="color:#f59e0b;">Solicitud requiere modificación - DeltaF</h2>
+
+<p>Estimado/a, el médico autorizador revisó la solicitud y requiere modificaciones antes de aprobarla.</p>
+
+<h3>Datos de la solicitud</h3>
+<p><strong>Código:</strong> ${limpiarTexto(ordenActual._codigo || "-")}</p>
+<p><strong>Paciente:</strong> ${limpiarTexto(ordenActual.nombre_paciente || "-")}</p>
+<p><strong>RUT:</strong> ${limpiarTexto(ordenActual.rut_paciente || "-")}</p>
+<p><strong>Exámenes:</strong> ${limpiarTexto(ordenActual._examenes || "-")}</p>
+
+<h3>Solicitud médica</h3>
+<p>${limpiarTexto(observaciones || "-")}</p>
+
+<p>Por favor revise la solicitud en DeltaF y realice las correcciones necesarias.</p>
+
+<hr>
+<p style="font-size:12px;color:#64748b;">DeltaF - Plataforma de solicitudes de exámenes.</p>
+</div>
+`;
 }
 
 async function aprobarConPDF(){
@@ -403,7 +487,8 @@ if(ordenActual._origen === "paciente"){
 const { error } = await supabaseClient
 .from("solicitudes_pacientes")
 .update({
-estado:"aprobada"
+estado:"aprobada",
+observaciones:observaciones
 })
 .eq("id", ordenId);
 
@@ -424,9 +509,13 @@ if(errorUpdate){
 throw errorUpdate;
 }
 
-await enviarCorreoAprobacion(ordenActual);
+await enviarCorreo(
+ordenActual.correo_paciente || "",
+"Solicitud aprobada DeltaF - " + (ordenActual._codigo || ""),
+crearHtmlAprobacion(ordenActual, observaciones)
+);
 
-mostrarMensaje("Solicitud aprobada correctamente. Se intentó enviar el correo automático.", "success");
+mostrarMensaje("Solicitud aprobada correctamente. Se envió correo automático al paciente/profesional.", "success");
 
 detalleCard.style.display = "none";
 ordenSeleccionada = null;
@@ -450,13 +539,16 @@ const ordenId = ordenActual.id;
 const observaciones = document.getElementById("observacionesMedicas").value.trim();
 
 try{
+mostrarMensaje("Actualizando solicitud...", "loading");
+
 let errorUpdate = null;
 
 if(ordenActual._origen === "paciente"){
 const { error } = await supabaseClient
 .from("solicitudes_pacientes")
 .update({
-estado:nuevoEstado
+estado:nuevoEstado,
+observaciones:observaciones
 })
 .eq("id", ordenId);
 
@@ -475,6 +567,14 @@ errorUpdate = error;
 
 if(errorUpdate){
 throw errorUpdate;
+}
+
+if(nuevoEstado === "rechazada"){
+await enviarCorreo(
+ordenActual.correo_paciente || "",
+"Solicitud rechazada DeltaF - " + (ordenActual._codigo || ""),
+crearHtmlRechazo(ordenActual, observaciones)
+);
 }
 
 mostrarMensaje("Solicitud actualizada como " + nuevoEstado + ".", "success");
@@ -504,20 +604,22 @@ return;
 }
 
 try{
+mostrarMensaje("Registrando solicitud de modificación...", "loading");
+
 let errorUpdate = null;
+const texto = "Solicitud de modificación médica: " + observaciones;
 
 if(ordenActual._origen === "paciente"){
 const { error } = await supabaseClient
 .from("solicitudes_pacientes")
 .update({
-estado:"pendiente"
+estado:"pendiente",
+observaciones:texto
 })
 .eq("id", ordenId);
 
 errorUpdate = error;
 }else{
-const texto = "Solicitud de modificación médica: " + observaciones;
-
 const { error } = await supabaseClient
 .from("ordenes")
 .update({
@@ -533,7 +635,13 @@ if(errorUpdate){
 throw errorUpdate;
 }
 
-mostrarMensaje("Se registró la solicitud de modificación.", "success");
+await enviarCorreo(
+ordenActual.correo_paciente || "",
+"Solicitud requiere modificación DeltaF - " + (ordenActual._codigo || ""),
+crearHtmlModificacion(ordenActual, observaciones)
+);
+
+mostrarMensaje("Se registró la solicitud de modificación y se envió correo automático.", "success");
 detalleCard.style.display = "none";
 ordenSeleccionada = null;
 await cargarOrdenes();
@@ -554,13 +662,13 @@ return;
 await cargarOrdenes();
 
 pendientesAnteriores =
-solicitudesCombinadas.filter(o => o.estado === "pendiente").length;
+solicitudesCombinadas.filter(o => (o.estado || "pendiente") === "pendiente").length;
 
 setInterval(async () => {
 await cargarOrdenes();
 
 const pendientesActuales =
-solicitudesCombinadas.filter(o => o.estado === "pendiente").length;
+solicitudesCombinadas.filter(o => (o.estado || "pendiente") === "pendiente").length;
 
 if(pendientesActuales > pendientesAnteriores){
 try{
