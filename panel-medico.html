@@ -532,54 +532,120 @@ mostrarMensaje("Error al solicitar modificación: " + error.message, "error");
 
 let pendientesAnteriores = 0;
 
-(async function iniciarPanelMedico(){
+async function aprobarConPDF(){
 
-const permitido = await verificarPermisosMedico();
-
-if(!permitido){
+if(!ordenSeleccionada){
+mostrarMensaje("Primero selecciona una solicitud.","error");
 return;
 }
 
-await cargarOrdenes();
+const ordenActual = {...ordenSeleccionada};
 
-pendientesAnteriores =
-solicitudesCombinadas.filter(
-o => o.estado === "pendiente"
-).length;
+const ordenId = ordenActual.id;
 
-setInterval(async () => {
-
-await cargarOrdenes();
-
-const pendientesActuales =
-solicitudesCombinadas.filter(
-o => o.estado === "pendiente"
-).length;
-
-if(pendientesActuales > pendientesAnteriores){
+const observaciones =
+document.getElementById(
+"observacionesMedicas"
+).value.trim();
 
 try{
 
-const audio = new Audio(
-"https://actions.google.com/sounds/v1/alarms/beep_short.ogg"
+mostrarMensaje(
+"Aprobando solicitud...",
+"loading"
 );
 
-audio.play();
+let errorUpdate = null;
 
-alert(
-"🔔 NUEVA SOLICITUD DELTAF\n\n" +
-"Solicitudes pendientes: " +
-pendientesActuales
+if(ordenActual._origen === "paciente"){
+
+const { error } = await supabaseClient
+.from("solicitudes_pacientes")
+.update({
+estado:"aprobada"
+})
+.eq("id",ordenId);
+
+errorUpdate = error;
+
+}else{
+
+const { error } = await supabaseClient
+.from("ordenes")
+.update({
+estado:"aprobada",
+observaciones:observaciones
+})
+.eq("id",ordenId);
+
+errorUpdate = error;
+
+}
+
+if(errorUpdate){
+throw errorUpdate;
+}
+
+try{
+
+await fetch(
+"https://goxkmtnmfessroveanje.supabase.co/functions/v1/resend-email",
+{
+method:"POST",
+headers:{
+"Content-Type":"application/json"
+},
+body:JSON.stringify({
+
+email:
+ordenActual.correo_paciente,
+
+nombre:
+ordenActual.nombre_paciente,
+
+codigo:
+ordenActual._codigo,
+
+pdfUrl:
+ordenActual.pdf_url ||
+"https://deltaf.site"
+
+})
+}
 );
+
+console.log("Correo enviado");
 
 }catch(error){
-console.log(error);
-}
+
+console.log(
+"Error enviando correo",
+error
+);
 
 }
 
-pendientesAnteriores = pendientesActuales;
+mostrarMensaje(
+"Solicitud aprobada correctamente.",
+"success"
+);
 
-},30000);
+detalleCard.style.display = "none";
 
-})();
+ordenSeleccionada = null;
+
+await cargarOrdenes();
+
+}catch(error){
+
+console.error(error);
+
+mostrarMensaje(
+"Error al aprobar solicitud: "
++ error.message,
+"error"
+);
+
+}
+
+}
