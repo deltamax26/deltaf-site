@@ -402,20 +402,15 @@ function crearHtmlAprobacion(ordenActual, observaciones){
 return `
 <div style="font-family:Arial,sans-serif;color:#1e293b;line-height:1.5;">
 <h2 style="color:#2563eb;">Solicitud aprobada - DeltaF</h2>
-
 <p>Estimado/a, la solicitud de exámenes fue revisada y aprobada por el médico autorizador.</p>
-
 <h3>Datos de la solicitud</h3>
 <p><strong>Código:</strong> ${limpiarTexto(ordenActual._codigo || "-")}</p>
 <p><strong>Paciente:</strong> ${limpiarTexto(ordenActual.nombre_paciente || "-")}</p>
 <p><strong>RUT:</strong> ${limpiarTexto(ordenActual.rut_paciente || "-")}</p>
 <p><strong>Exámenes:</strong> ${limpiarTexto(ordenActual._examenes || "-")}</p>
-
 <h3>Observaciones médicas</h3>
 <p>${limpiarTexto(observaciones || "Sin observaciones adicionales.")}</p>
-
 <p>Puede revisar el estado de la solicitud en DeltaF.</p>
-
 <hr>
 <p style="font-size:12px;color:#64748b;">DeltaF - Plataforma de solicitudes de exámenes.</p>
 </div>
@@ -426,18 +421,14 @@ function crearHtmlRechazo(ordenActual, observaciones){
 return `
 <div style="font-family:Arial,sans-serif;color:#1e293b;line-height:1.5;">
 <h2 style="color:#dc2626;">Solicitud rechazada - DeltaF</h2>
-
 <p>Estimado/a, la solicitud de exámenes fue revisada por el médico autorizador y ha sido rechazada.</p>
-
 <h3>Datos de la solicitud</h3>
 <p><strong>Código:</strong> ${limpiarTexto(ordenActual._codigo || "-")}</p>
 <p><strong>Paciente:</strong> ${limpiarTexto(ordenActual.nombre_paciente || "-")}</p>
 <p><strong>RUT:</strong> ${limpiarTexto(ordenActual.rut_paciente || "-")}</p>
 <p><strong>Exámenes:</strong> ${limpiarTexto(ordenActual._examenes || "-")}</p>
-
 <h3>Motivo / observaciones</h3>
 <p>${limpiarTexto(observaciones || "Sin observaciones registradas.")}</p>
-
 <hr>
 <p style="font-size:12px;color:#64748b;">DeltaF - Plataforma de solicitudes de exámenes.</p>
 </div>
@@ -448,20 +439,15 @@ function crearHtmlModificacion(ordenActual, observaciones){
 return `
 <div style="font-family:Arial,sans-serif;color:#1e293b;line-height:1.5;">
 <h2 style="color:#f59e0b;">Solicitud requiere modificación - DeltaF</h2>
-
 <p>Estimado/a, el médico autorizador revisó la solicitud y requiere modificaciones antes de aprobarla.</p>
-
 <h3>Datos de la solicitud</h3>
 <p><strong>Código:</strong> ${limpiarTexto(ordenActual._codigo || "-")}</p>
 <p><strong>Paciente:</strong> ${limpiarTexto(ordenActual.nombre_paciente || "-")}</p>
 <p><strong>RUT:</strong> ${limpiarTexto(ordenActual.rut_paciente || "-")}</p>
 <p><strong>Exámenes:</strong> ${limpiarTexto(ordenActual._examenes || "-")}</p>
-
 <h3>Solicitud médica</h3>
 <p>${limpiarTexto(observaciones || "-")}</p>
-
 <p>Por favor revise la solicitud en DeltaF y realice las correcciones necesarias.</p>
-
 <hr>
 <p style="font-size:12px;color:#64748b;">DeltaF - Plataforma de solicitudes de exámenes.</p>
 </div>
@@ -487,8 +473,7 @@ if(ordenActual._origen === "paciente"){
 const { error } = await supabaseClient
 .from("solicitudes_pacientes")
 .update({
-estado:"aprobada",
-observaciones:observaciones
+estado:"aprobada"
 })
 .eq("id", ordenId);
 
@@ -547,8 +532,7 @@ if(ordenActual._origen === "paciente"){
 const { error } = await supabaseClient
 .from("solicitudes_pacientes")
 .update({
-estado:nuevoEstado,
-observaciones:observaciones
+estado:nuevoEstado
 })
 .eq("id", ordenId);
 
@@ -613,8 +597,7 @@ if(ordenActual._origen === "paciente"){
 const { error } = await supabaseClient
 .from("solicitudes_pacientes")
 .update({
-estado:"pendiente",
-observaciones:texto
+estado:"pendiente"
 })
 .eq("id", ordenId);
 
