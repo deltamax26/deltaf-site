@@ -19,6 +19,9 @@ header h1{margin:0;font-size:24px;}
 .card p{margin:0;font-size:30px;font-weight:bold;color:#0284c7;}
 .section{background:white;padding:24px;border-radius:14px;box-shadow:0 4px 14px rgba(0,0,0,0.08);margin-bottom:30px;overflow-x:auto;}
 .section h2{margin-top:0;color:#0f172a;}
+.form-grid{display:grid;grid-template-columns:2fr 1fr 2fr auto;gap:15px;align-items:end;}
+label{font-weight:bold;display:block;margin-bottom:6px;}
+input,select{width:100%;padding:12px;border:1px solid #cbd5e1;border-radius:8px;}
 table{width:100%;border-collapse:collapse;min-width:1000px;}
 th,td{border-bottom:1px solid #e5e7eb;padding:12px;text-align:left;font-size:14px;vertical-align:top;}
 th{background:#e0f2fe;color:#075985;}
@@ -31,8 +34,11 @@ th{background:#e0f2fe;color:#075985;}
 .btn{border:none;padding:8px 12px;border-radius:8px;cursor:pointer;font-weight:bold;margin:3px;}
 .btn-approve{background:#16a34a;color:white;}
 .btn-reject{background:#dc2626;color:white;}
+.btn-orders{background:#7c3aed;color:white;}
 .btn-export{background:#16a34a;color:white;padding:12px 18px;margin-bottom:20px;}
 .btn-reload{background:#0284c7;color:white;padding:12px 18px;margin-bottom:20px;}
+.btn-main{background:#2563eb;color:white;padding:13px 18px;}
+@media(max-width:900px){.form-grid{grid-template-columns:1fr;}}
 </style>
 </head>
 
@@ -55,6 +61,33 @@ th{background:#e0f2fe;color:#075985;}
 <div class="card"><h3>Órdenes emitidas</h3><p id="ordenesEmitidas">0</p></div>
 <div class="card"><h3>Profesionales registrados</h3><p id="profesionalesRegistrados">0</p></div>
 <div class="card"><h3>Profesionales pendientes</h3><p id="profesionalesPendientes">0</p></div>
+</div>
+
+<div class="section">
+<h2>Asignar órdenes manualmente</h2>
+
+<div class="form-grid">
+<div>
+<label>Profesional</label>
+<select id="profesionalAsignar">
+<option value="">Cargando profesionales...</option>
+</select>
+</div>
+
+<div>
+<label>Cantidad</label>
+<input id="cantidadOrdenes" type="number" min="1" placeholder="Ej: 10">
+</div>
+
+<div>
+<label>Motivo</label>
+<input id="motivoOrdenes" type="text" placeholder="Ej: Pago manual, transferencia, compensación">
+</div>
+
+<div>
+<button class="btn btn-main" onclick="asignarOrdenesManual()">Asignar órdenes</button>
+</div>
+</div>
 </div>
 
 <div class="section">
@@ -126,7 +159,7 @@ function mostrarOk(texto){
 const div=document.getElementById("mensajeOk");
 div.style.display="block";
 div.innerText=texto;
-setTimeout(()=>{div.style.display="none";},2500);
+setTimeout(()=>{div.style.display="none";},3000);
 }
 
 function formatoPeso(valor){
@@ -161,11 +194,7 @@ document.getElementById("mensajeError").style.display="none";
 try{
 const {data: solicitudes, error: errorSolicitudes}=await supabaseClient
 .from("solicitudes")
-.select("*")
-const {data: profesionales, error: errorProfesionales}=await supabaseClient
-.from("profesionales")
-.select("*")
-.order("fecha_creacion",{ascending:false});
+.select("*");
 
 if(errorSolicitudes) throw errorSolicitudes;
 
@@ -212,11 +241,28 @@ document.getElementById("profesionalesPendientes").innerText=profesionalesPendie
 
 pintarTablaSolicitudes(solicitudesGlobal);
 pintarTablaProfesionales(profesionalesGlobal);
+cargarSelectProfesionales(profesionalesGlobal);
 
 }catch(error){
 console.error(error);
 mostrarError("Error al cargar el panel: " + error.message);
 }
+}
+
+function cargarSelectProfesionales(profesionales){
+const select=document.getElementById("profesionalAsignar");
+select.innerHTML=`<option value="">Selecciona un profesional</option>`;
+
+profesionales.forEach(p=>{
+const nombre=valorCampo(p,["nombre","nombre_completo","nombreCompleto","full_name"]);
+const email=valorCampo(p,["email","correo","correo_electronico"]);
+const ordenes=Number(p.ordenes_disponibles || 0);
+
+const option=document.createElement("option");
+option.value=p.id;
+option.textContent=`${nombre} - ${email} - ${ordenes} órdenes`;
+select.appendChild(option);
+});
 }
 
 function pintarTablaProfesionales(profesionales){
@@ -237,7 +283,7 @@ const email=valorCampo(p,["email","correo","correo_electronico"]);
 const profesion=valorCampo(p,["profesion","especialidad"]);
 const registro=valorCampo(p,["registro_sis","registroSIS","sis","registro_superintendencia"]);
 const telefono=valorCampo(p,["telefono","celular"]);
-const ordenes=valorCampo(p,["ordenes_disponibles","creditos","ordenes"]);
+const ordenes=Number(p.ordenes_disponibles || 0);
 
 const tr=document.createElement("tr");
 
@@ -249,11 +295,12 @@ tr.innerHTML=`
 <td>${profesion}</td>
 <td>${registro}</td>
 <td>${telefono}</td>
-<td>${ordenes}</td>
+<td><strong>${ordenes}</strong></td>
 <td><span class="badge ${estado}">${p.estado || "pendiente"}</span></td>
 <td>
 <button class="btn btn-approve" onclick="cambiarEstadoProfesional('${p.id}','aprobado')">Aprobar</button>
 <button class="btn btn-reject" onclick="cambiarEstadoProfesional('${p.id}','rechazado')">Rechazar</button>
+<button class="btn btn-orders" onclick="asignarOrdenesRapido('${p.id}')">+ Órdenes</button>
 </td>
 `;
 
@@ -289,9 +336,8 @@ tbody.appendChild(tr);
 });
 }
 
-async function cambiarEstadoProfesional(id, nuevoEstado){
-const confirmar = confirm("¿Seguro que deseas cambiar este profesional a estado: " + nuevoEstado + "?");
-
+async function cambiarEstadoProfesional(id,nuevoEstado){
+const confirmar=confirm("¿Seguro que deseas cambiar este profesional a estado: " + nuevoEstado + "?");
 if(!confirmar) return;
 
 try{
@@ -308,6 +354,114 @@ await cargarDashboard();
 }catch(error){
 console.error(error);
 mostrarError("Error al actualizar profesional: " + error.message);
+}
+}
+
+async function asignarOrdenesManual(){
+const profesionalId=document.getElementById("profesionalAsignar").value;
+const cantidad=Number(document.getElementById("cantidadOrdenes").value);
+const motivo=document.getElementById("motivoOrdenes").value.trim();
+
+if(!profesionalId){
+mostrarError("Debes seleccionar un profesional.");
+return;
+}
+
+if(!cantidad || cantidad <= 0){
+mostrarError("Debes ingresar una cantidad válida de órdenes.");
+return;
+}
+
+const profesional=profesionalesGlobal.find(p => String(p.id) === String(profesionalId));
+
+if(!profesional){
+mostrarError("No se encontró el profesional seleccionado.");
+return;
+}
+
+const saldoActual=Number(profesional.ordenes_disponibles || 0);
+const nuevoSaldo=saldoActual + cantidad;
+
+const confirmar=confirm(
+"Asignar " + cantidad + " órdenes a " + profesional.nombre + "?\n\n" +
+"Saldo actual: " + saldoActual + "\n" +
+"Nuevo saldo: " + nuevoSaldo + "\n\n" +
+"Motivo: " + (motivo || "Sin motivo")
+);
+
+if(!confirmar) return;
+
+try{
+const {error}=await supabaseClient
+.from("profesionales")
+.update({ordenes_disponibles:nuevoSaldo})
+.eq("id",profesionalId);
+
+if(error) throw error;
+
+mostrarOk("Órdenes asignadas correctamente. Nuevo saldo: " + nuevoSaldo);
+
+document.getElementById("cantidadOrdenes").value="";
+document.getElementById("motivoOrdenes").value="";
+document.getElementById("profesionalAsignar").value="";
+
+await cargarDashboard();
+
+}catch(error){
+console.error(error);
+mostrarError("Error al asignar órdenes: " + error.message);
+}
+}
+
+async function asignarOrdenesRapido(profesionalId){
+const profesional=profesionalesGlobal.find(p => String(p.id) === String(profesionalId));
+
+if(!profesional){
+mostrarError("No se encontró el profesional.");
+return;
+}
+
+const cantidadTexto=prompt("¿Cuántas órdenes deseas agregar a " + profesional.nombre + "?");
+
+if(cantidadTexto === null) return;
+
+const cantidad=Number(cantidadTexto);
+
+if(!cantidad || cantidad <= 0){
+mostrarError("Cantidad inválida.");
+return;
+}
+
+const motivo=prompt("Motivo de la asignación:", "Pago manual / Transbank caído") || "";
+
+const saldoActual=Number(profesional.ordenes_disponibles || 0);
+const nuevoSaldo=saldoActual + cantidad;
+
+const confirmar=confirm(
+"Confirmar asignación\n\n" +
+"Profesional: " + profesional.nombre + "\n" +
+"Cantidad: " + cantidad + "\n" +
+"Saldo actual: " + saldoActual + "\n" +
+"Nuevo saldo: " + nuevoSaldo + "\n" +
+"Motivo: " + motivo
+);
+
+if(!confirmar) return;
+
+try{
+const {error}=await supabaseClient
+.from("profesionales")
+.update({ordenes_disponibles:nuevoSaldo})
+.eq("id",profesionalId);
+
+if(error) throw error;
+
+mostrarOk("Órdenes asignadas correctamente. Nuevo saldo: " + nuevoSaldo);
+await cargarDashboard();
+
+}catch(error){
+console.error(error);
+mostrarError("Error al asignar órdenes: " + error.message);
 }
 }
 
