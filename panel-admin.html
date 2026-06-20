@@ -1,505 +1,370 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Panel Administrador | DeltaF</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Panel Administrador | DeltaF</title>
 
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
-<style>
-*{margin:0;padding:0;box-sizing:border-box;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;}
-body{background:#f8fafc;padding:30px;color:#1e293b;}
-.container{max-width:1600px;margin:auto;}
-.header{background:white;padding:25px;border-radius:20px;box-shadow:0 10px 25px rgba(0,0,0,.06);display:flex;justify-content:space-between;align-items:center;gap:20px;flex-wrap:wrap;margin-bottom:25px;}
-.header img{width:200px;}
-.header h1{color:#2563eb;}
-.header a{color:#2563eb;text-decoration:none;font-weight:700;}
-.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:20px;margin-bottom:25px;}
-.stat{background:white;padding:25px;border-radius:18px;box-shadow:0 10px 25px rgba(0,0,0,.06);}
-.stat h3{color:#64748b;margin-bottom:10px;}
-.number{font-size:2rem;font-weight:800;color:#2563eb;}
-.card{background:white;padding:25px;border-radius:20px;box-shadow:0 10px 25px rgba(0,0,0,.06);margin-bottom:25px;}
-.card h2{color:#2563eb;margin-bottom:20px;}
-table{width:100%;border-collapse:collapse;}
-th{background:#2563eb;color:white;padding:14px;text-align:left;}
-td{padding:14px;border-bottom:1px solid #e2e8f0;vertical-align:top;}
-.status{padding:7px 11px;border-radius:8px;font-weight:700;display:inline-block;text-transform:capitalize;}
-.pendiente{background:#fef3c7;color:#92400e;}
-.aprobado,.aprobada{background:#dcfce7;color:#166534;}
-.rechazado,.rechazada{background:#fee2e2;color:#991b1b;}
-.btn{border:none;border-radius:8px;padding:10px 13px;font-weight:700;cursor:pointer;margin:3px;}
-.btn-blue{background:#2563eb;color:white;}
-.btn-green{background:#16a34a;color:white;}
-.btn-red{background:#dc2626;color:white;}
-input,select{padding:10px;border:1px solid #cbd5e1;border-radius:8px;width:100%;}
-.message{padding:15px;border-radius:10px;margin-bottom:20px;font-weight:700;}
-.loading{background:white;color:#64748b;}
-.success{background:#dcfce7;color:#166534;border:1px solid #86efac;}
-.error{background:#fee2e2;color:#991b1b;border:1px solid #fca5a5;}
-.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:15px;margin-bottom:20px;}
-@media(max-width:900px){
-body{padding:15px;}
-table{display:block;overflow-x:auto;white-space:nowrap;}
-}
-</style>
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: #f4f8fb;
+      color: #1f2937;
+    }
+
+    header {
+      background: #0284c7;
+      color: white;
+      padding: 18px 30px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    header h1 {
+      margin: 0;
+      font-size: 24px;
+    }
+
+    .logout {
+      background: white;
+      color: #0284c7;
+      border: none;
+      padding: 10px 16px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: bold;
+    }
+
+    .container {
+      padding: 30px;
+      max-width: 1200px;
+      margin: auto;
+    }
+
+    .cards {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 20px;
+      margin-bottom: 30px;
+    }
+
+    .card {
+      background: white;
+      padding: 22px;
+      border-radius: 14px;
+      box-shadow: 0 4px 14px rgba(0,0,0,0.08);
+    }
+
+    .card h3 {
+      margin: 0 0 10px;
+      font-size: 16px;
+      color: #64748b;
+    }
+
+    .card p {
+      margin: 0;
+      font-size: 30px;
+      font-weight: bold;
+      color: #0284c7;
+    }
+
+    .section {
+      background: white;
+      padding: 24px;
+      border-radius: 14px;
+      box-shadow: 0 4px 14px rgba(0,0,0,0.08);
+      margin-bottom: 30px;
+      overflow-x: auto;
+    }
+
+    .section h2 {
+      margin-top: 0;
+      color: #0f172a;
+    }
+
+    button.export {
+      background: #16a34a;
+      color: white;
+      border: none;
+      padding: 12px 18px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: bold;
+      margin-bottom: 20px;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      min-width: 900px;
+    }
+
+    th, td {
+      border-bottom: 1px solid #e5e7eb;
+      padding: 12px;
+      text-align: left;
+      font-size: 14px;
+    }
+
+    th {
+      background: #e0f2fe;
+      color: #075985;
+    }
+
+    .badge {
+      padding: 6px 10px;
+      border-radius: 20px;
+      font-size: 12px;
+      font-weight: bold;
+    }
+
+    .pendiente {
+      background: #fef3c7;
+      color: #92400e;
+    }
+
+    .emitida {
+      background: #dcfce7;
+      color: #166534;
+    }
+
+    .rechazada {
+      background: #fee2e2;
+      color: #991b1b;
+    }
+
+    .aprobado {
+      background: #dbeafe;
+      color: #1d4ed8;
+    }
+
+    .error {
+      background: #fee2e2;
+      color: #991b1b;
+      padding: 12px;
+      border-radius: 8px;
+      display: none;
+      margin-bottom: 20px;
+    }
+  </style>
 </head>
 
 <body>
 
+<header>
+  <h1>Panel Administrador DeltaF</h1>
+  <button class="logout" onclick="cerrarSesion()">Cerrar sesión</button>
+</header>
+
 <div class="container">
 
-<div class="header">
-<div>
-<img src="./img/logo-deltaf.png" alt="DeltaF">
-</div>
-<div>
-<h1>Panel Administrador</h1>
-<a href="dashboard-profesional.html">← Volver al Dashboard</a>
-</div>
-</div>
+  <div id="mensajeError" class="error"></div>
 
-<div id="mensaje" class="message loading">Cargando panel administrador...</div>
+  <div class="cards">
+    <div class="card">
+      <h3>Total ventas del día</h3>
+      <p id="ventasDia">$0</p>
+    </div>
 
-<div class="stats">
-<div class="stat">
-<h3>Profesionales</h3>
-<div id="totalProfesionales" class="number">0</div>
-</div>
+    <div class="card">
+      <h3>Total ventas del mes</h3>
+      <p id="ventasMes">$0</p>
+    </div>
 
-<div class="stat">
-<h3>Profesionales Pendientes</h3>
-<div id="profesionalesPendientes" class="number">0</div>
-</div>
+    <div class="card">
+      <h3>Solicitudes pendientes</h3>
+      <p id="solicitudesPendientes">0</p>
+    </div>
 
-<div class="stat">
-<h3>Órdenes Pendientes</h3>
-<div id="ordenesPendientes" class="number">0</div>
-</div>
+    <div class="card">
+      <h3>Órdenes emitidas</h3>
+      <p id="ordenesEmitidas">0</p>
+    </div>
 
-<div class="stat">
-<h3>Compras Pendientes</h3>
-<div id="comprasPendientes" class="number">0</div>
-</div>
-</div>
+    <div class="card">
+      <h3>Profesionales registrados</h3>
+      <p id="profesionalesRegistrados">0</p>
+    </div>
+  </div>
 
-<div class="card">
-<h2>Solicitudes de Compra de Órdenes</h2>
+  <div class="section">
+    <h2>Resumen administrativo</h2>
+    <button class="export" onclick="exportarExcel()">Exportar Excel</button>
 
-<table>
-<thead>
-<tr>
-<th>ID</th>
-<th>Fecha</th>
-<th>Profesional</th>
-<th>Plan</th>
-<th>Órdenes</th>
-<th>Monto</th>
-<th>Comprobante</th>
-<th>Estado</th>
-<th>Acciones</th>
-</tr>
-</thead>
-<tbody id="tablaCompras"></tbody>
-</table>
-</div>
-
-<div class="card">
-<h2>Profesionales Registrados</h2>
-
-<div class="grid">
-<input id="buscarProfesional" type="text" placeholder="Buscar por nombre, correo, RUT o profesión">
-<select id="filtroEstadoProfesional">
-<option value="">Todos los estados</option>
-<option value="pendiente">Pendiente</option>
-<option value="aprobado">Aprobado</option>
-<option value="rechazado">Rechazado</option>
-</select>
-</div>
-
-<table>
-<thead>
-<tr>
-<th>ID</th>
-<th>Nombre</th>
-<th>Correo</th>
-<th>RUT</th>
-<th>Profesión</th>
-<th>Registro SIS</th>
-<th>Órdenes</th>
-<th>Estado</th>
-<th>Acciones</th>
-</tr>
-</thead>
-<tbody id="tablaProfesionales"></tbody>
-</table>
-</div>
-
-<div class="card">
-<h2>Órdenes / Solicitudes</h2>
-
-<table>
-<thead>
-<tr>
-<th>Código</th>
-<th>Paciente</th>
-<th>RUT</th>
-<th>Profesional ID</th>
-<th>Exámenes</th>
-<th>Estado</th>
-<th>Fecha</th>
-</tr>
-</thead>
-<tbody id="tablaOrdenes"></tbody>
-</table>
-</div>
+    <table id="tablaSolicitudes">
+      <thead>
+        <tr>
+          <th>Fecha</th>
+          <th>Paciente</th>
+          <th>RUT</th>
+          <th>Profesional</th>
+          <th>Exámenes</th>
+          <th>Monto</th>
+          <th>Estado</th>
+          <th>Código Transbank</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td colspan="8">Cargando datos...</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
 
 </div>
 
 <script>
-const SUPABASE_URL = "https://goxkmtnmfessroveanje.supabase.co";
-const SUPABASE_ANON_KEY = "sb_publishable_w8xrtEanlJJAc5FYvk1X5A_fKu9vb5d";
-
-const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-
-const mensaje = document.getElementById("mensaje");
-const tablaProfesionales = document.getElementById("tablaProfesionales");
-const tablaOrdenes = document.getElementById("tablaOrdenes");
-const tablaCompras = document.getElementById("tablaCompras");
-const buscarProfesional = document.getElementById("buscarProfesional");
-const filtroEstadoProfesional = document.getElementById("filtroEstadoProfesional");
-
-let profesionales = [];
-let ordenes = [];
-let compras = [];
-
-function mostrarMensaje(texto,tipo){
-mensaje.textContent = texto;
-mensaje.className = "message " + tipo;
-mensaje.style.display = "block";
-}
-
-function ocultarMensaje(){
-mensaje.style.display = "none";
-}
-
-function formatearFecha(fechaISO){
-if(!fechaISO) return "-";
-return new Date(fechaISO).toLocaleDateString("es-CL");
-}
-
-function formatearMonto(monto){
-return "$" + Number(monto || 0).toLocaleString("es-CL");
-}
-
-async function verificarSesion(){
-const { data, error } = await supabaseClient.auth.getSession();
-
-if(error || !data.session){
-window.location.href = "login.html";
-return false;
-}
-
-const email = data.session.user.email;
-
-const { data: usuario, error: usuarioError } = await supabaseClient
-.from("usuarios")
-.select("*")
-.eq("email", email)
-.limit(1);
-
-if(usuarioError || !usuario || usuario.length === 0){
-alert("Acceso denegado. Usuario sin rol autorizado.");
-window.location.href = "dashboard-profesional.html";
-return false;
-}
-
-if(usuario[0].rol !== "superadmin"){
-alert("Acceso denegado. Solo administradores pueden ingresar.");
-window.location.href = "dashboard-profesional.html";
-return false;
-}
-
-return true;
-}
-
-async function cargarDatos(){
-const sesionOk = await verificarSesion();
-if(!sesionOk) return;
-
-const { data: profesionalesData, error: profesionalesError } = await supabaseClient
-.from("profesionales")
-.select("*")
-.order("fecha_creacion", { ascending:false });
-
-if(profesionalesError){
-mostrarMensaje("Error al cargar profesionales: " + profesionalesError.message, "error");
-return;
-}
-
-const { data: ordenesData, error: ordenesError } = await supabaseClient
-.from("ordenes")
-.select("*")
-.order("created_at", { ascending:false });
-
-if(ordenesError){
-mostrarMensaje("Error al cargar órdenes: " + ordenesError.message, "error");
-return;
-}
-
-const { data: comprasData, error: comprasError } = await supabaseClient
-.from("compras_ordenes")
-.select("*")
-.order("created_at", { ascending:false });
-
-if(comprasError){
-mostrarMensaje("Error al cargar compras: " + comprasError.message, "error");
-return;
-}
-
-profesionales = profesionalesData || [];
-ordenes = ordenesData || [];
-compras = comprasData || [];
-
-actualizarEstadisticas();
-renderizarCompras();
-renderizarProfesionales();
-renderizarOrdenes();
-ocultarMensaje();
-}
-
-function actualizarEstadisticas(){
-document.getElementById("totalProfesionales").textContent = profesionales.length;
-document.getElementById("profesionalesPendientes").textContent = profesionales.filter(p => p.estado === "pendiente").length;
-document.getElementById("ordenesPendientes").textContent = ordenes.filter(o => o.estado === "pendiente").length;
-document.getElementById("comprasPendientes").textContent = compras.filter(c => c.estado === "pendiente").length;
-}
-
-function renderizarCompras(){
-tablaCompras.innerHTML = "";
-
-if(compras.length === 0){
-tablaCompras.innerHTML = `<tr><td colspan="9">No hay solicitudes de compra registradas.</td></tr>`;
-return;
-}
-
-compras.forEach(c => {
-const fila = document.createElement("tr");
-
-fila.innerHTML = `
-<td>${c.id}</td>
-<td>${formatearFecha(c.created_at)}</td>
-<td>${c.profesional_email || "-"}</td>
-<td>${c.plan || "-"}</td>
-<td>${c.cantidad_ordenes || 0}</td>
-<td>${formatearMonto(c.monto)}</td>
-<td>${c.comprobante || "-"}</td>
-<td><span class="status ${c.estado || "pendiente"}">${c.estado || "pendiente"}</span></td>
-<td>
-${c.estado === "pendiente" ? `
-<button class="btn btn-green" onclick="aprobarCompra(${c.id})">Aprobar</button>
-<button class="btn btn-red" onclick="rechazarCompra(${c.id})">Rechazar</button>
-` : "-"}
-</td>
-`;
-
-tablaCompras.appendChild(fila);
-});
-}
-
-function filtrarProfesionales(){
-const texto = buscarProfesional.value.trim().toLowerCase();
-const estado = filtroEstadoProfesional.value;
-
-return profesionales.filter(p => {
-const coincideTexto = !texto ||
-(p.nombre || "").toLowerCase().includes(texto) ||
-(p.email || "").toLowerCase().includes(texto) ||
-(p.rut || "").toLowerCase().includes(texto) ||
-(p.profesion || "").toLowerCase().includes(texto);
-
-const coincideEstado = !estado || p.estado === estado;
-
-return coincideTexto && coincideEstado;
-});
-}
-
-function renderizarProfesionales(){
-const lista = filtrarProfesionales();
-tablaProfesionales.innerHTML = "";
-
-if(lista.length === 0){
-tablaProfesionales.innerHTML = `<tr><td colspan="9">No hay profesionales para mostrar.</td></tr>`;
-return;
-}
-
-lista.forEach(p => {
-const fila = document.createElement("tr");
-
-fila.innerHTML = `
-<td>${p.id}</td>
-<td>${p.nombre || "-"}</td>
-<td>${p.email || "-"}</td>
-<td>${p.rut || "-"}</td>
-<td>${p.profesion || "-"}</td>
-<td>${p.registro_sis || "-"}</td>
-<td>
-<input type="number" min="0" value="${p.ordenes_disponibles || 0}" id="ordenes-${p.id}">
-</td>
-<td><span class="status ${p.estado || "pendiente"}">${p.estado || "pendiente"}</span></td>
-<td>
-<button class="btn btn-green" onclick="cambiarEstadoProfesional(${p.id}, 'aprobado')">Aprobar</button>
-<button class="btn btn-red" onclick="cambiarEstadoProfesional(${p.id}, 'rechazado')">Rechazar</button>
-<button class="btn btn-blue" onclick="actualizarOrdenes(${p.id})">Guardar Órdenes</button>
-</td>
-`;
-
-tablaProfesionales.appendChild(fila);
-});
-}
-
-function renderizarOrdenes(){
-tablaOrdenes.innerHTML = "";
-
-if(ordenes.length === 0){
-tablaOrdenes.innerHTML = `<tr><td colspan="7">No hay órdenes registradas.</td></tr>`;
-return;
-}
-
-ordenes.forEach(o => {
-const fila = document.createElement("tr");
-
-fila.innerHTML = `
-<td>${o.codigo || "-"}</td>
-<td>${o.nombre_paciente || "-"}</td>
-<td>${o.rut_paciente || "-"}</td>
-<td>${o.profesional_id || "-"}</td>
-<td>${o.tipo_orden || "-"}</td>
-<td><span class="status ${o.estado || "pendiente"}">${o.estado || "pendiente"}</span></td>
-<td>${formatearFecha(o.created_at)}</td>
-`;
-
-tablaOrdenes.appendChild(fila);
-});
-}
-
-async function cambiarEstadoProfesional(id, estado){
-const { error } = await supabaseClient
-.from("profesionales")
-.update({ estado: estado })
-.eq("id", id);
-
-if(error){
-mostrarMensaje("Error al cambiar estado: " + error.message, "error");
-return;
-}
-
-mostrarMensaje("Estado del profesional actualizado.", "success");
-await cargarDatos();
-}
-
-async function actualizarOrdenes(id){
-const input = document.getElementById("ordenes-" + id);
-const cantidad = parseInt(input.value, 10);
-
-if(isNaN(cantidad) || cantidad < 0){
-mostrarMensaje("La cantidad de órdenes no es válida.", "error");
-return;
-}
-
-const { error } = await supabaseClient
-.from("profesionales")
-.update({ ordenes_disponibles: cantidad })
-.eq("id", id);
-
-if(error){
-mostrarMensaje("Error al actualizar órdenes: " + error.message, "error");
-return;
-}
-
-mostrarMensaje("Órdenes disponibles actualizadas.", "success");
-await cargarDatos();
-}
-
-async function aprobarCompra(compraId){
-const compra = compras.find(c => c.id === compraId);
-
-if(!compra){
-mostrarMensaje("No se encontró la compra.", "error");
-return;
-}
-
-if(compra.estado !== "pendiente"){
-mostrarMensaje("Esta compra ya fue procesada.", "error");
-return;
-}
-
-const profesional = profesionales.find(p => p.id === compra.profesional_id);
-
-if(!profesional){
-mostrarMensaje("No se encontró el profesional asociado.", "error");
-return;
-}
-
-const saldoActual = profesional.ordenes_disponibles || 0;
-const nuevasOrdenes = saldoActual + (compra.cantidad_ordenes || 0);
-
-const confirmar = confirm(
-"¿Aprobar esta compra y cargar " +
-(compra.cantidad_ordenes || 0) +
-" órdenes a " +
-(profesional.email || compra.profesional_email) +
-"?"
-);
-
-if(!confirmar) return;
-
-const { error: updateProfesionalError } = await supabaseClient
-.from("profesionales")
-.update({ ordenes_disponibles: nuevasOrdenes })
-.eq("id", profesional.id);
-
-if(updateProfesionalError){
-mostrarMensaje("Error al cargar órdenes: " + updateProfesionalError.message, "error");
-return;
-}
-
-const { error: updateCompraError } = await supabaseClient
-.from("compras_ordenes")
-.update({ estado: "aprobada" })
-.eq("id", compraId);
-
-if(updateCompraError){
-mostrarMensaje("Órdenes cargadas, pero error al actualizar compra: " + updateCompraError.message, "error");
-return;
-}
-
-mostrarMensaje("Compra aprobada. Se cargaron las órdenes al profesional.", "success");
-await cargarDatos();
-}
-
-async function rechazarCompra(compraId){
-const confirmar = confirm("¿Rechazar esta solicitud de compra?");
-if(!confirmar) return;
-
-const { error } = await supabaseClient
-.from("compras_ordenes")
-.update({ estado: "rechazada" })
-.eq("id", compraId);
-
-if(error){
-mostrarMensaje("Error al rechazar compra: " + error.message, "error");
-return;
-}
-
-mostrarMensaje("Compra rechazada.", "success");
-await cargarDatos();
-}
-
-buscarProfesional.addEventListener("input", renderizarProfesionales);
-filtroEstadoProfesional.addEventListener("change", renderizarProfesionales);
-
-cargarDatos();
+  const SUPABASE_URL = "https://goxkmtnmfessroveanje.supabase.co";
+  const SUPABASE_KEY = "PEGA_AQUI_TU_ANON_KEY";
+
+  const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+  let solicitudesGlobal = [];
+
+  function mostrarError(texto) {
+    const div = document.getElementById("mensajeError");
+    div.style.display = "block";
+    div.innerText = texto;
+  }
+
+  function formatoPeso(valor) {
+    return new Intl.NumberFormat("es-CL", {
+      style: "currency",
+      currency: "CLP",
+      maximumFractionDigits: 0
+    }).format(valor || 0);
+  }
+
+  function fechaHoyChile() {
+    return new Date().toISOString().split("T")[0];
+  }
+
+  function esMismoMes(fecha) {
+    const hoy = new Date();
+    const f = new Date(fecha);
+    return hoy.getMonth() === f.getMonth() && hoy.getFullYear() === f.getFullYear();
+  }
+
+  async function cargarDashboard() {
+    try {
+      const { data: solicitudes, error: errorSolicitudes } = await supabaseClient
+        .from("solicitudes")
+        .select("*")
+        .order("created_at", { ascending: false });
+
+      if (errorSolicitudes) throw errorSolicitudes;
+
+      const { data: profesionales, error: errorProfesionales } = await supabaseClient
+        .from("profesionales")
+        .select("*");
+
+      if (errorProfesionales) throw errorProfesionales;
+
+      solicitudesGlobal = solicitudes || [];
+
+      let hoy = fechaHoyChile();
+
+      let ventasDia = 0;
+      let ventasMes = 0;
+      let pendientes = 0;
+      let emitidas = 0;
+
+      solicitudesGlobal.forEach(s => {
+        const fecha = s.created_at ? s.created_at.split("T")[0] : "";
+
+        const monto = Number(s.monto || s.valor || 0);
+
+        if (fecha === hoy) ventasDia += monto;
+        if (s.created_at && esMismoMes(s.created_at)) ventasMes += monto;
+
+        if ((s.estado || "").toLowerCase() === "pendiente") pendientes++;
+        if ((s.estado || "").toLowerCase() === "emitida") emitidas++;
+      });
+
+      document.getElementById("ventasDia").innerText = formatoPeso(ventasDia);
+      document.getElementById("ventasMes").innerText = formatoPeso(ventasMes);
+      document.getElementById("solicitudesPendientes").innerText = pendientes;
+      document.getElementById("ordenesEmitidas").innerText = emitidas;
+      document.getElementById("profesionalesRegistrados").innerText = profesionales ? profesionales.length : 0;
+
+      pintarTabla(solicitudesGlobal);
+
+    } catch (error) {
+      console.error(error);
+      mostrarError("Error al cargar el panel: " + error.message);
+    }
+  }
+
+  function pintarTabla(solicitudes) {
+    const tbody = document.querySelector("#tablaSolicitudes tbody");
+    tbody.innerHTML = "";
+
+    if (!solicitudes || solicitudes.length === 0) {
+      tbody.innerHTML = `<tr><td colspan="8">No hay solicitudes registradas.</td></tr>`;
+      return;
+    }
+
+    solicitudes.forEach(s => {
+      const estado = (s.estado || "pendiente").toLowerCase();
+
+      const tr = document.createElement("tr");
+
+      tr.innerHTML = `
+        <td>${s.created_at ? new Date(s.created_at).toLocaleDateString("es-CL") : "-"}</td>
+        <td>${s.paciente_nombre || s.nombre_paciente || "-"}</td>
+        <td>${s.paciente_rut || s.rut_paciente || "-"}</td>
+        <td>${s.profesional_nombre || s.nombre_profesional || "-"}</td>
+        <td>${s.examenes || s.examen_solicitado || "-"}</td>
+        <td>${formatoPeso(Number(s.monto || s.valor || 0))}</td>
+        <td><span class="badge ${estado}">${s.estado || "Pendiente"}</span></td>
+        <td>${s.codigo_transbank || s.codigo_pago || "-"}</td>
+      `;
+
+      tbody.appendChild(tr);
+    });
+  }
+
+  function exportarExcel() {
+    if (!solicitudesGlobal || solicitudesGlobal.length === 0) {
+      alert("No hay datos para exportar.");
+      return;
+    }
+
+    let csv = "Fecha,Paciente,RUT,Profesional,Examenes,Monto,Estado,Codigo Transbank\n";
+
+    solicitudesGlobal.forEach(s => {
+      csv += `"${s.created_at ? new Date(s.created_at).toLocaleDateString("es-CL") : "-"}",`;
+      csv += `"${s.paciente_nombre || s.nombre_paciente || "-"}",`;
+      csv += `"${s.paciente_rut || s.rut_paciente || "-"}",`;
+      csv += `"${s.profesional_nombre || s.nombre_profesional || "-"}",`;
+      csv += `"${s.examenes || s.examen_solicitado || "-"}",`;
+      csv += `"${s.monto || s.valor || 0}",`;
+      csv += `"${s.estado || "Pendiente"}",`;
+      csv += `"${s.codigo_transbank || s.codigo_pago || "-"}"\n`;
+    });
+
+    const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
+    const url = URL.createObjectURL(blob);
+
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = "reporte_admin_deltaf.csv";
+    link.click();
+
+    URL.revokeObjectURL(url);
+  }
+
+  async function cerrarSesion() {
+    await supabaseClient.auth.signOut();
+    window.location.href = "login.html";
+  }
+
+  cargarDashboard();
 </script>
 
 </body>
