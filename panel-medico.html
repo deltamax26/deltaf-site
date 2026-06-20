@@ -159,6 +159,13 @@ const SUPABASE_ANON_KEY = "sb_publishable_w8xrtEanlJJAc5FYvk1X5A_fKu9vb5d";
 const FUNCTION_EMAIL_URL = "https://goxkmtnmfessroveanje.supabase.co/functions/v1/resend-email";
 const STORAGE_BUCKET = "ordenes";
 
+const MEDICO_NOMBRE = "Dra. Carolina Domínguez";
+const MEDICO_RUT = "RUT Médico: pendiente";
+const MEDICO_REGISTRO = "Registro SIS: 544925";
+const MEDICO_ESPECIALIDAD = "Médico autorizador";
+const LOGO_URL = "./img/logo-deltaf.png";
+const FIRMA_URL = "./img/firma-medico.png";
+
 const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
 let ordenes = [];
@@ -200,6 +207,29 @@ return String(valor).replace(/[\r\n]+/g," ").trim();
 
 function obtenerBase64DeDataUri(dataUri){
 return dataUri.split(",")[1];
+}
+
+async function cargarImagenBase64(url){
+return new Promise((resolve) => {
+const img = new Image();
+img.crossOrigin = "anonymous";
+img.onload = function(){
+try{
+const canvas = document.createElement("canvas");
+canvas.width = img.width;
+canvas.height = img.height;
+const ctx = canvas.getContext("2d");
+ctx.drawImage(img,0,0);
+resolve(canvas.toDataURL("image/png"));
+}catch(error){
+resolve(null);
+}
+};
+img.onerror = function(){
+resolve(null);
+};
+img.src = url + "?v=" + Date.now();
+});
 }
 
 async function verificarPermisosMedico(){
@@ -410,9 +440,12 @@ return { success:false, error:error };
 }
 }
 
-function generarPdfOrdenBase64(ordenActual, observaciones){
+async function generarPdfOrdenBase64(ordenActual, observaciones){
 const { jsPDF } = window.jspdf;
-const doc = new jsPDF();
+const doc = new jsPDF("p","mm","a4");
+
+const logoBase64 = await cargarImagenBase64(LOGO_URL);
+const firmaBase64 = await cargarImagenBase64(FIRMA_URL);
 
 const codigo = ordenActual._codigo || "ORDEN-DELTAF";
 const paciente = limpiarPdf(ordenActual.nombre_paciente || "-");
@@ -422,84 +455,146 @@ const fecha = new Date().toLocaleDateString("es-CL");
 const examenes = limpiarPdf(ordenActual._examenes || "-");
 const motivo = limpiarPdf(ordenActual.motivo || "-");
 const obs = limpiarPdf(observaciones || "Sin observaciones.");
+const folio = codigo + "-" + Date.now();
 
-doc.setFont("helvetica", "bold");
+doc.setDrawColor(37,99,235);
+doc.setFillColor(37,99,235);
+doc.rect(0,0,210,28,"F");
+
+if(logoBase64){
+doc.addImage(logoBase64,"PNG",15,6,42,16);
+}else{
+doc.setTextColor(255,255,255);
+doc.setFont("helvetica","bold");
 doc.setFontSize(20);
-doc.text("DELTAF", 20, 20);
-
-doc.setFontSize(16);
-doc.text("ORDEN MÉDICA DE EXÁMENES", 20, 35);
-
-doc.setFont("helvetica", "normal");
-doc.setFontSize(10);
-doc.text("Documento emitido electrónicamente por DeltaF.", 20, 43);
-
-doc.line(20, 48, 190, 48);
-
-doc.setFontSize(12);
-doc.setFont("helvetica", "bold");
-doc.text("Datos de la orden", 20, 60);
-
-doc.setFont("helvetica", "normal");
-doc.text("Código: " + codigo, 20, 70);
-doc.text("Fecha de emisión: " + fecha, 20, 78);
-doc.text("Estado: Aprobada", 20, 86);
-
-doc.setFont("helvetica", "bold");
-doc.text("Datos del paciente", 20, 102);
-
-doc.setFont("helvetica", "normal");
-doc.text("Nombre: " + paciente, 20, 112);
-doc.text("RUT: " + rut, 20, 120);
-doc.text("Correo: " + correo, 20, 128);
-
-doc.setFont("helvetica", "bold");
-doc.text("Exámenes solicitados", 20, 145);
-
-doc.setFont("helvetica", "normal");
-let y = 155;
-const examenesLineas = doc.splitTextToSize(examenes, 165);
-doc.text(examenesLineas, 20, y);
-y += examenesLineas.length * 7 + 8;
-
-doc.setFont("helvetica", "bold");
-doc.text("Motivo / justificación clínica", 20, y);
-y += 10;
-
-doc.setFont("helvetica", "normal");
-const motivoLineas = doc.splitTextToSize(motivo, 165);
-doc.text(motivoLineas, 20, y);
-y += motivoLineas.length * 7 + 8;
-
-if(y > 245){
-doc.addPage();
-y = 25;
+doc.text("DELTAF",15,18);
 }
 
-doc.setFont("helvetica", "bold");
-doc.text("Observaciones médicas", 20, y);
-y += 10;
-
-doc.setFont("helvetica", "normal");
-const obsLineas = doc.splitTextToSize(obs, 165);
-doc.text(obsLineas, 20, y);
-y += obsLineas.length * 7 + 12;
-
-if(y > 250){
-doc.addPage();
-y = 25;
-}
-
-doc.line(20, y, 100, y);
-y += 7;
-doc.setFont("helvetica", "bold");
-doc.text("Médico autorizador", 20, y);
-y += 7;
-doc.setFont("helvetica", "normal");
-doc.text("DeltaF - Validación médica digital", 20, y);
-
+doc.setTextColor(255,255,255);
+doc.setFont("helvetica","bold");
+doc.setFontSize(15);
+doc.text("ORDEN MÉDICA DE EXÁMENES",75,14);
 doc.setFontSize(9);
-doc.text("Esta orden debe ser interpretada dentro del contexto clínico correspondiente.", 20, 285);
+doc.text("Validación médica digital",75,21);
+
+doc.setTextColor(30,41,59);
+doc.setDrawColor(203,213,225);
+doc.setFillColor(248,250,252);
+doc.roundedRect(15,36,180,30,3,3,"FD");
+
+doc.setFont("helvetica","bold");
+doc.setFontSize(11);
+doc.text("Datos de emisión",20,45);
+
+doc.setFont("helvetica","normal");
+doc.setFontSize(10);
+doc.text("Folio: " + folio,20,53);
+doc.text("Fecha de emisión: " + fecha,20,60);
+doc.text("Estado: APROBADA",125,53);
+doc.text("Origen: " + (ordenActual._origen === "paciente" ? "Paciente directo" : "Profesional"),125,60);
+
+doc.setFillColor(239,246,255);
+doc.roundedRect(15,74,180,36,3,3,"F");
+
+doc.setTextColor(37,99,235);
+doc.setFont("helvetica","bold");
+doc.setFontSize(12);
+doc.text("Datos del paciente",20,84);
+
+doc.setTextColor(30,41,59);
+doc.setFont("helvetica","normal");
+doc.setFontSize(10);
+doc.text("Nombre: " + paciente,20,93);
+doc.text("RUT: " + rut,20,101);
+doc.text("Correo: " + correo,100,101);
+
+doc.setTextColor(37,99,235);
+doc.setFont("helvetica","bold");
+doc.setFontSize(12);
+doc.text("Exámenes solicitados",20,124);
+
+doc.setTextColor(30,41,59);
+doc.setFont("helvetica","normal");
+doc.setFontSize(10);
+
+let y = 133;
+const examenesLineas = doc.splitTextToSize(examenes,170);
+doc.text(examenesLineas,20,y);
+y += examenesLineas.length * 6 + 8;
+
+doc.setTextColor(37,99,235);
+doc.setFont("helvetica","bold");
+doc.setFontSize(12);
+doc.text("Motivo / justificación clínica",20,y);
+y += 9;
+
+doc.setTextColor(30,41,59);
+doc.setFont("helvetica","normal");
+doc.setFontSize(10);
+const motivoLineas = doc.splitTextToSize(motivo,170);
+doc.text(motivoLineas,20,y);
+y += motivoLineas.length * 6 + 8;
+
+if(y > 215){
+doc.addPage();
+y = 25;
+}
+
+doc.setTextColor(37,99,235);
+doc.setFont("helvetica","bold");
+doc.setFontSize(12);
+doc.text("Observaciones médicas",20,y);
+y += 9;
+
+doc.setTextColor(30,41,59);
+doc.setFont("helvetica","normal");
+doc.setFontSize(10);
+const obsLineas = doc.splitTextToSize(obs,170);
+doc.text(obsLineas,20,y);
+y += obsLineas.length * 6 + 14;
+
+if(y > 220){
+doc.addPage();
+y = 25;
+}
+
+doc.setDrawColor(203,213,225);
+doc.setFillColor(248,250,252);
+doc.roundedRect(15,y,180,45,3,3,"FD");
+
+doc.setTextColor(37,99,235);
+doc.setFont("helvetica","bold");
+doc.setFontSize(12);
+doc.text("Médico autorizador",20,y+10);
+
+doc.setTextColor(30,41,59);
+doc.setFont("helvetica","bold");
+doc.setFontSize(11);
+doc.text(MEDICO_NOMBRE,20,y+20);
+
+doc.setFont("helvetica","normal");
+doc.setFontSize(10);
+doc.text(MEDICO_ESPECIALIDAD,20,y+27);
+doc.text(MEDICO_RUT,20,y+34);
+doc.text(MEDICO_REGISTRO,20,y+41);
+
+if(firmaBase64){
+doc.addImage(firmaBase64,"PNG",130,y+8,45,22);
+doc.setDrawColor(100,116,139);
+doc.line(125,y+34,185,y+34);
+doc.setFontSize(9);
+doc.text("Firma médica autorizadora",132,y+40);
+}else{
+doc.setDrawColor(100,116,139);
+doc.line(125,y+30,185,y+30);
+doc.setFontSize(9);
+doc.text("Firma médica autorizadora",132,y+37);
+}
+
+doc.setFontSize(8);
+doc.setTextColor(100,116,139);
+doc.text("Código de verificación: " + folio,20,278);
+doc.text("Documento emitido electrónicamente por DeltaF. Validación sujeta a revisión médica.",20,284);
 
 const dataUri = doc.output("datauristring");
 const base64 = obtenerBase64DeDataUri(dataUri);
@@ -513,7 +608,7 @@ filename: codigo + "-" + Date.now() + ".pdf"
 }
 
 async function subirPdfStorage(pdfBlob, filename){
-const { data, error } = await supabaseClient.storage
+const { error } = await supabaseClient.storage
 .from(STORAGE_BUCKET)
 .upload(filename, pdfBlob, {
 contentType:"application/pdf",
@@ -529,34 +624,6 @@ const { data: publicData } = supabaseClient.storage
 .getPublicUrl(filename);
 
 return publicData.publicUrl;
-}
-
-async function guardarPdfUrl(ordenActual, pdfUrl){
-if(!pdfUrl) return;
-
-if(ordenActual._origen === "paciente"){
-const { error } = await supabaseClient
-.from("solicitudes_pacientes")
-.update({
-pdf_url:pdfUrl
-})
-.eq("id", ordenActual.id);
-
-if(error){
-console.log("No se pudo guardar pdf_url en solicitudes_pacientes:", error.message);
-}
-}else{
-const { error } = await supabaseClient
-.from("ordenes")
-.update({
-pdf_url:pdfUrl
-})
-.eq("id", ordenActual.id);
-
-if(error){
-console.log("No se pudo guardar pdf_url en ordenes:", error.message);
-}
-}
 }
 
 function crearHtmlAprobacion(ordenActual, observaciones, pdfUrl){
@@ -631,9 +698,9 @@ const ordenId = ordenActual.id;
 const observaciones = document.getElementById("observacionesMedicas").value.trim();
 
 try{
-mostrarMensaje("Generando PDF y aprobando solicitud...", "loading");
+mostrarMensaje("Generando PDF profesional y aprobando solicitud...", "loading");
 
-const pdf = generarPdfOrdenBase64(ordenActual, observaciones);
+const pdf = await generarPdfOrdenBase64(ordenActual, observaciones);
 const pdfUrl = await subirPdfStorage(pdf.blob, pdf.filename);
 
 let errorUpdate = null;
@@ -677,7 +744,7 @@ content: pdf.base64
 ]
 );
 
-mostrarMensaje("Solicitud aprobada correctamente. Se generó PDF, se guardó y se envió adjunto al paciente.", "success");
+mostrarMensaje("Solicitud aprobada correctamente. Se generó PDF profesional, se guardó y se envió adjunto al paciente.", "success");
 
 detalleCard.style.display = "none";
 ordenSeleccionada = null;
