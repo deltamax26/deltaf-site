@@ -532,6 +532,70 @@ mostrarMensaje("Error al solicitar modificación: " + error.message, "error");
 
 let pendientesAnteriores = 0;
 
+async function aprobarConPDF(){
+if(!ordenSeleccionada){
+mostrarMensaje("Primero selecciona una solicitud.", "error");
+return;
+}
+
+const ordenActual = {...ordenSeleccionada};
+const ordenId = ordenActual.id;
+const observaciones = document.getElementById("observacionesMedicas").value.trim();
+
+try{
+mostrarMensaje("Aprobando solicitud...", "loading");
+
+let errorUpdate = null;
+
+if(ordenActual._origen === "paciente"){
+const { error } = await supabaseClient
+.from("solicitudes_pacientes")
+.update({ estado:"aprobada" })
+.eq("id", ordenId);
+
+errorUpdate = error;
+}else{
+const { error } = await supabaseClient
+.from("ordenes")
+.update({
+estado:"aprobada",
+observaciones:observaciones
+})
+.eq("id", ordenId);
+
+errorUpdate = error;
+}
+
+if(errorUpdate){
+throw errorUpdate;
+}
+
+try{
+await fetch("https://goxkmtnmfessroveanje.supabase.co/functions/v1/resend-email",{
+method:"POST",
+headers:{ "Content-Type":"application/json" },
+body:JSON.stringify({
+email: ordenActual.correo_paciente,
+nombre: ordenActual.nombre_paciente,
+codigo: ordenActual._codigo,
+pdfUrl: ordenActual.pdf_url || "https://deltaf.site"
+})
+});
+}catch(error){
+console.log("Error enviando correo", error);
+}
+
+mostrarMensaje("Solicitud aprobada correctamente.", "success");
+detalleCard.style.display = "none";
+ordenSeleccionada = null;
+await cargarOrdenes();
+
+}catch(error){
+console.error(error);
+mostrarMensaje("Error al aprobar solicitud: " + error.message, "error");
+}
+}
+
 let pendientesAnteriores = 0;
 
 (async function iniciarPanelMedico(){
@@ -555,7 +619,6 @@ const pendientesActuales =
 solicitudesCombinadas.filter(o => o.estado === "pendiente").length;
 
 if(pendientesActuales > pendientesAnteriores){
-
 try{
 const audio = new Audio("https://actions.google.com/sounds/v1/alarms/beep_short.ogg");
 audio.play();
@@ -564,11 +627,9 @@ alert(
 "🔔 NUEVA SOLICITUD DELTAF\n\n" +
 "Solicitudes pendientes: " + pendientesActuales
 );
-
 }catch(error){
 console.log(error);
 }
-
 }
 
 pendientesAnteriores = pendientesActuales;
@@ -576,3 +637,7 @@ pendientesAnteriores = pendientesActuales;
 },30000);
 
 })();
+</script>
+
+</body>
+</html>
