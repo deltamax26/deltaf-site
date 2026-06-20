@@ -39,6 +39,12 @@ textarea{resize:vertical;}
 .error{display:block;background:#fee2e2;color:#991b1b;border:1px solid #fca5a5;}
 .notice{margin-top:25px;background:#eff6ff;border-left:5px solid #2563eb;padding:20px;border-radius:12px;color:#334155;line-height:1.6;}
 .footer{background:#0f172a;color:#cbd5e1;text-align:center;padding:30px;margin-top:50px;}
+.exam-box{background:#f8fafc;border:1px solid #e2e8f0;border-radius:16px;padding:20px;margin-bottom:20px;}
+.exam-box h3{color:#2563eb;margin-bottom:15px;}
+.checkbox-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:12px;}
+.checkbox-item{background:white;border:1px solid #dbeafe;padding:12px;border-radius:12px;font-weight:600;color:#1e40af;cursor:pointer;}
+.checkbox-item input{width:auto;margin-right:8px;}
+.checkbox-item:hover{background:#eff6ff;}
 @media(max-width:768px){
 .hero h1{font-size:2rem;}
 .price{font-size:2.4rem;}
@@ -120,8 +126,34 @@ Pagar $4.990 en Transbank
 <label>Teléfono</label>
 <input id="telefonoPaciente" type="text" required>
 
-<label>Exámenes solicitados</label>
-<textarea id="examenesSolicitados" rows="5" placeholder="Ej: Hemograma, perfil bioquímico, vitamina D..." required></textarea>
+<div class="exam-box">
+<h3>Selecciona exámenes sugeridos</h3>
+
+<div class="checkbox-grid">
+<label class="checkbox-item"><input type="checkbox" value="Hemograma" class="examen"> Hemograma</label>
+<label class="checkbox-item"><input type="checkbox" value="Perfil Bioquímico" class="examen"> Perfil Bioquímico</label>
+<label class="checkbox-item"><input type="checkbox" value="Perfil Lipídico" class="examen"> Perfil Lipídico</label>
+<label class="checkbox-item"><input type="checkbox" value="Glicemia" class="examen"> Glicemia</label>
+<label class="checkbox-item"><input type="checkbox" value="HbA1c" class="examen"> HbA1c</label>
+<label class="checkbox-item"><input type="checkbox" value="Perfil Hepático" class="examen"> Perfil Hepático</label>
+<label class="checkbox-item"><input type="checkbox" value="Perfil Renal" class="examen"> Perfil Renal</label>
+<label class="checkbox-item"><input type="checkbox" value="TSH" class="examen"> TSH</label>
+<label class="checkbox-item"><input type="checkbox" value="T4 Libre" class="examen"> T4 Libre</label>
+<label class="checkbox-item"><input type="checkbox" value="Vitamina D" class="examen"> Vitamina D</label>
+<label class="checkbox-item"><input type="checkbox" value="Vitamina B12" class="examen"> Vitamina B12</label>
+<label class="checkbox-item"><input type="checkbox" value="Ferritina" class="examen"> Ferritina</label>
+<label class="checkbox-item"><input type="checkbox" value="Insulina" class="examen"> Insulina</label>
+<label class="checkbox-item"><input type="checkbox" value="PCR" class="examen"> PCR</label>
+<label class="checkbox-item"><input type="checkbox" value="VHS" class="examen"> VHS</label>
+<label class="checkbox-item"><input type="checkbox" value="Radiografía de Tórax" class="examen"> Radiografía de Tórax</label>
+<label class="checkbox-item"><input type="checkbox" value="Radiografía Columna Cervical" class="examen"> RX Columna Cervical</label>
+<label class="checkbox-item"><input type="checkbox" value="Radiografía Columna Lumbar" class="examen"> RX Columna Lumbar</label>
+<label class="checkbox-item"><input type="checkbox" value="Radiografía de Rodilla" class="examen"> RX Rodilla</label>
+</div>
+</div>
+
+<label>Otros exámenes solicitados</label>
+<textarea id="examenesSolicitados" rows="5" placeholder="Ej: ecografía abdominal, perfil hormonal, examen específico, etc."></textarea>
 
 <label>Motivo de la solicitud / antecedentes relevantes</label>
 <textarea id="motivo" rows="5" placeholder="Ej: control preventivo, seguimiento, síntomas, indicación profesional, etc."></textarea>
@@ -150,6 +182,7 @@ DeltaF · Profesional y Seguro
 <script>
 const SUPABASE_URL = "https://goxkmtnmfessroveanje.supabase.co";
 const SUPABASE_ANON_KEY = "sb_publishable_w8xrtEanlJJAc5FYvk1X5A_fKu9vb5d";
+const FUNCTION_EMAIL_URL = "https://goxkmtnmfessroveanje.supabase.co/functions/v1/resend-email";
 
 const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
@@ -163,6 +196,105 @@ mensaje.className = "message " + tipo;
 window.scrollTo({top:0,behavior:"smooth"});
 }
 
+function limpiarHtml(valor){
+if(!valor) return "-";
+return String(valor)
+.replace(/</g,"&lt;")
+.replace(/>/g,"&gt;");
+}
+
+function obtenerExamenesSeleccionados(){
+const seleccionados = Array.from(document.querySelectorAll(".examen:checked")).map(e => e.value);
+const otros = document.getElementById("examenesSolicitados").value.trim();
+
+if(otros){
+seleccionados.push(otros);
+}
+
+return seleccionados.join(", ");
+}
+
+async function enviarCorreoAdmin(datos){
+try{
+const response = await fetch(FUNCTION_EMAIL_URL,{
+method:"POST",
+headers:{
+"Content-Type":"application/json"
+},
+body:JSON.stringify({
+to:"contacto@deltaf.site",
+subject:"Nueva solicitud de paciente DeltaF",
+html:`
+<div style="font-family:Arial,sans-serif;color:#1e293b;line-height:1.5;">
+<h2 style="color:#2563eb;">Nueva solicitud de paciente</h2>
+
+<p>Se ha recibido una nueva solicitud de exámenes desde el formulario de pacientes DeltaF.</p>
+
+<h3>Datos del paciente</h3>
+<p><strong>Nombre:</strong> ${limpiarHtml(datos.nombrePaciente)}</p>
+<p><strong>RUT:</strong> ${limpiarHtml(datos.rutPaciente)}</p>
+<p><strong>Correo:</strong> ${limpiarHtml(datos.correoPaciente)}</p>
+<p><strong>Teléfono:</strong> ${limpiarHtml(datos.telefonoPaciente)}</p>
+
+<h3>Exámenes solicitados</h3>
+<p>${limpiarHtml(datos.examenesSolicitados)}</p>
+
+<h3>Motivo / antecedentes</h3>
+<p>${limpiarHtml(datos.motivo || "Sin antecedentes registrados.")}</p>
+
+<h3>Pago</h3>
+<p><strong>Comprobante:</strong> ${limpiarHtml(datos.comprobante)}</p>
+<p><strong>Monto:</strong> $4.990</p>
+
+<p>Revisar esta solicitud en el panel médico DeltaF.</p>
+
+<hr>
+<p style="font-size:12px;color:#64748b;">DeltaF - Notificación automática</p>
+</div>
+`
+})
+});
+
+const data = await response.json().catch(() => ({}));
+console.log("Correo admin:", response.status, data);
+
+}catch(error){
+console.log("No se pudo enviar correo al admin:", error);
+}
+}
+
+async function enviarCorreoConfirmacionPaciente(datos){
+try{
+await fetch(FUNCTION_EMAIL_URL,{
+method:"POST",
+headers:{
+"Content-Type":"application/json"
+},
+body:JSON.stringify({
+to:datos.correoPaciente,
+subject:"Solicitud recibida DeltaF",
+html:`
+<div style="font-family:Arial,sans-serif;color:#1e293b;line-height:1.5;">
+<h2 style="color:#2563eb;">Solicitud recibida</h2>
+<p>Hola ${limpiarHtml(datos.nombrePaciente)}, recibimos tu solicitud de exámenes.</p>
+<p>El médico autorizador revisará los antecedentes y, si corresponde, recibirás la orden médica en PDF en este mismo correo.</p>
+
+<h3>Exámenes solicitados</h3>
+<p>${limpiarHtml(datos.examenesSolicitados)}</p>
+
+<p><strong>Estado actual:</strong> Pendiente de revisión médica.</p>
+
+<hr>
+<p style="font-size:12px;color:#64748b;">DeltaF - Plataforma de solicitudes de exámenes.</p>
+</div>
+`
+})
+});
+}catch(error){
+console.log("No se pudo enviar confirmación al paciente:", error);
+}
+}
+
 form.addEventListener("submit", async function(event){
 event.preventDefault();
 
@@ -173,9 +305,16 @@ const nombrePaciente = document.getElementById("nombrePaciente").value.trim();
 const rutPaciente = document.getElementById("rutPaciente").value.trim();
 const correoPaciente = document.getElementById("correoPaciente").value.trim().toLowerCase();
 const telefonoPaciente = document.getElementById("telefonoPaciente").value.trim();
-const examenesSolicitados = document.getElementById("examenesSolicitados").value.trim();
+const examenesSolicitados = obtenerExamenesSeleccionados();
 const motivo = document.getElementById("motivo").value.trim();
 const comprobante = document.getElementById("comprobante").value.trim();
+
+if(!examenesSolicitados){
+mostrarMensaje("Debes seleccionar o escribir al menos un examen.", "error");
+btnEnviar.disabled = false;
+btnEnviar.textContent = "Enviar solicitud para revisión médica";
+return;
+}
 
 try{
 
@@ -199,7 +338,21 @@ if(error){
 throw error;
 }
 
+const datosSolicitud = {
+nombrePaciente,
+rutPaciente,
+correoPaciente,
+telefonoPaciente,
+examenesSolicitados,
+motivo,
+comprobante
+};
+
+await enviarCorreoAdmin(datosSolicitud);
+await enviarCorreoConfirmacionPaciente(datosSolicitud);
+
 mostrarMensaje("Solicitud enviada correctamente. DeltaF revisará el pago y la solicitud médica.", "success");
+
 form.reset();
 
 }catch(error){
