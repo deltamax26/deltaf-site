@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<title>Política de Privacidad | DeltaF</title>
+<style>
+body{
+font-family:Arial,sans-serif;
+max-width:1000px;
+margin:auto;
+padding:40px;
+line-height:1.7;
+}
+</style>
+</head>
+<body>
+
+<h1>Política de Privacidad</h1>
+
+<p>DeltaF es una plataforma tecnológica destinada a facilitar la gestión de solicitudes de exámenes médicos entre pacientes, profesionales de la salud y médicos autorizados.</p>
+
+<p>La información proporcionada por los usuarios será utilizada exclusivamente para la gestión de solicitudes, emisión de órdenes médicas, contacto con los usuarios y cumplimiento de obligaciones legales y sanitarias aplicables.</p>
+
+<h2>Datos recopilados</h2>
+
+<ul>
+<li>Nombre completo</li>
+<li>RUT o documento de identificación</li>
+<li>Correo electrónico</li>
+<li>Teléfono</li>
+<li>Información clínica proporcionada voluntariamente</li>
+<li>Solicitudes de exámenes</li>
+</ul>
+
+<h2>Protección de datos</h2>
+
+<p>DeltaF adopta medidas razonables de seguridad para proteger la información almacenada frente a accesos no autorizados, alteraciones o divulgaciones indebidas.</p>
+
+<h2>Compartición de información</h2>
+
+<p>Los datos podrán ser compartidos exclusivamente con médicos autorizados y laboratorios necesarios para la gestión de las solicitudes realizadas por el usuario.</p>
+
+<h2>Derechos del usuario</h2>
+
+<p>Los usuarios podrán solicitar la modificación, actualización o eliminación de sus datos personales conforme a la legislación chilena vigente.</p>
+
+<h2>Legislación aplicable</h2>
+
+<p>Esta política se rige por la Ley N° 19.628 sobre Protección de la Vida Privada y demás normativa chilena aplicable.</p>
+
+</body>
+</html>
