@@ -162,7 +162,10 @@ try{
 const {data: solicitudes, error: errorSolicitudes}=await supabaseClient
 .from("solicitudes")
 .select("*")
-.order("created_at",{ascending:false});
+const {data: profesionales, error: errorProfesionales}=await supabaseClient
+.from("profesionales")
+.select("*")
+.order("fecha_creacion",{ascending:false});
 
 if(errorSolicitudes) throw errorSolicitudes;
 
