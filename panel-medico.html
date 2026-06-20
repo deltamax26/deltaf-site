@@ -6,6 +6,7 @@
 <title>Panel Médico | DeltaF</title>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js"></script>
 
 <style>
 *{margin:0;padding:0;box-sizing:border-box;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;}
@@ -156,6 +157,7 @@ body{padding:15px;}
 const SUPABASE_URL = "https://goxkmtnmfessroveanje.supabase.co";
 const SUPABASE_ANON_KEY = "sb_publishable_w8xrtEanlJJAc5FYvk1X5A_fKu9vb5d";
 const FUNCTION_EMAIL_URL = "https://goxkmtnmfessroveanje.supabase.co/functions/v1/resend-email";
+const STORAGE_BUCKET = "ordenes";
 
 const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
@@ -189,6 +191,15 @@ if(!valor) return "-";
 return String(valor)
 .replace(/</g,"&lt;")
 .replace(/>/g,"&gt;");
+}
+
+function limpiarPdf(valor){
+if(!valor) return "-";
+return String(valor).replace(/[\r\n]+/g," ").trim();
+}
+
+function obtenerBase64DeDataUri(dataUri){
+return dataUri.split(",")[1];
 }
 
 async function verificarPermisosMedico(){
@@ -363,7 +374,7 @@ detalleCard.style.display = "block";
 window.scrollTo({top:detalleCard.offsetTop - 20,behavior:"smooth"});
 }
 
-async function enviarCorreo(to, subject, html){
+async function enviarCorreo(to, subject, html, attachments = []){
 if(!to){
 console.log("No hay correo de destino.");
 return { success:false, error:"Sin destinatario" };
@@ -378,7 +389,8 @@ headers:{
 body:JSON.stringify({
 to:to,
 subject:subject,
-html:html
+html:html,
+attachments:attachments
 })
 });
 
@@ -398,19 +410,173 @@ return { success:false, error:error };
 }
 }
 
-function crearHtmlAprobacion(ordenActual, observaciones){
+function generarPdfOrdenBase64(ordenActual, observaciones){
+const { jsPDF } = window.jspdf;
+const doc = new jsPDF();
+
+const codigo = ordenActual._codigo || "ORDEN-DELTAF";
+const paciente = limpiarPdf(ordenActual.nombre_paciente || "-");
+const rut = limpiarPdf(ordenActual.rut_paciente || "-");
+const correo = limpiarPdf(ordenActual.correo_paciente || "-");
+const fecha = new Date().toLocaleDateString("es-CL");
+const examenes = limpiarPdf(ordenActual._examenes || "-");
+const motivo = limpiarPdf(ordenActual.motivo || "-");
+const obs = limpiarPdf(observaciones || "Sin observaciones.");
+
+doc.setFont("helvetica", "bold");
+doc.setFontSize(20);
+doc.text("DELTAF", 20, 20);
+
+doc.setFontSize(16);
+doc.text("ORDEN MÉDICA DE EXÁMENES", 20, 35);
+
+doc.setFont("helvetica", "normal");
+doc.setFontSize(10);
+doc.text("Documento emitido electrónicamente por DeltaF.", 20, 43);
+
+doc.line(20, 48, 190, 48);
+
+doc.setFontSize(12);
+doc.setFont("helvetica", "bold");
+doc.text("Datos de la orden", 20, 60);
+
+doc.setFont("helvetica", "normal");
+doc.text("Código: " + codigo, 20, 70);
+doc.text("Fecha de emisión: " + fecha, 20, 78);
+doc.text("Estado: Aprobada", 20, 86);
+
+doc.setFont("helvetica", "bold");
+doc.text("Datos del paciente", 20, 102);
+
+doc.setFont("helvetica", "normal");
+doc.text("Nombre: " + paciente, 20, 112);
+doc.text("RUT: " + rut, 20, 120);
+doc.text("Correo: " + correo, 20, 128);
+
+doc.setFont("helvetica", "bold");
+doc.text("Exámenes solicitados", 20, 145);
+
+doc.setFont("helvetica", "normal");
+let y = 155;
+const examenesLineas = doc.splitTextToSize(examenes, 165);
+doc.text(examenesLineas, 20, y);
+y += examenesLineas.length * 7 + 8;
+
+doc.setFont("helvetica", "bold");
+doc.text("Motivo / justificación clínica", 20, y);
+y += 10;
+
+doc.setFont("helvetica", "normal");
+const motivoLineas = doc.splitTextToSize(motivo, 165);
+doc.text(motivoLineas, 20, y);
+y += motivoLineas.length * 7 + 8;
+
+if(y > 245){
+doc.addPage();
+y = 25;
+}
+
+doc.setFont("helvetica", "bold");
+doc.text("Observaciones médicas", 20, y);
+y += 10;
+
+doc.setFont("helvetica", "normal");
+const obsLineas = doc.splitTextToSize(obs, 165);
+doc.text(obsLineas, 20, y);
+y += obsLineas.length * 7 + 12;
+
+if(y > 250){
+doc.addPage();
+y = 25;
+}
+
+doc.line(20, y, 100, y);
+y += 7;
+doc.setFont("helvetica", "bold");
+doc.text("Médico autorizador", 20, y);
+y += 7;
+doc.setFont("helvetica", "normal");
+doc.text("DeltaF - Validación médica digital", 20, y);
+
+doc.setFontSize(9);
+doc.text("Esta orden debe ser interpretada dentro del contexto clínico correspondiente.", 20, 285);
+
+const dataUri = doc.output("datauristring");
+const base64 = obtenerBase64DeDataUri(dataUri);
+const blob = doc.output("blob");
+
+return {
+base64: base64,
+blob: blob,
+filename: codigo + "-" + Date.now() + ".pdf"
+};
+}
+
+async function subirPdfStorage(pdfBlob, filename){
+const { data, error } = await supabaseClient.storage
+.from(STORAGE_BUCKET)
+.upload(filename, pdfBlob, {
+contentType:"application/pdf",
+upsert:true
+});
+
+if(error){
+throw error;
+}
+
+const { data: publicData } = supabaseClient.storage
+.from(STORAGE_BUCKET)
+.getPublicUrl(filename);
+
+return publicData.publicUrl;
+}
+
+async function guardarPdfUrl(ordenActual, pdfUrl){
+if(!pdfUrl) return;
+
+if(ordenActual._origen === "paciente"){
+const { error } = await supabaseClient
+.from("solicitudes_pacientes")
+.update({
+pdf_url:pdfUrl
+})
+.eq("id", ordenActual.id);
+
+if(error){
+console.log("No se pudo guardar pdf_url en solicitudes_pacientes:", error.message);
+}
+}else{
+const { error } = await supabaseClient
+.from("ordenes")
+.update({
+pdf_url:pdfUrl
+})
+.eq("id", ordenActual.id);
+
+if(error){
+console.log("No se pudo guardar pdf_url en ordenes:", error.message);
+}
+}
+}
+
+function crearHtmlAprobacion(ordenActual, observaciones, pdfUrl){
 return `
 <div style="font-family:Arial,sans-serif;color:#1e293b;line-height:1.5;">
 <h2 style="color:#2563eb;">Solicitud aprobada - DeltaF</h2>
 <p>Estimado/a, la solicitud de exámenes fue revisada y aprobada por el médico autorizador.</p>
+
 <h3>Datos de la solicitud</h3>
 <p><strong>Código:</strong> ${limpiarTexto(ordenActual._codigo || "-")}</p>
 <p><strong>Paciente:</strong> ${limpiarTexto(ordenActual.nombre_paciente || "-")}</p>
 <p><strong>RUT:</strong> ${limpiarTexto(ordenActual.rut_paciente || "-")}</p>
 <p><strong>Exámenes:</strong> ${limpiarTexto(ordenActual._examenes || "-")}</p>
+
 <h3>Observaciones médicas</h3>
 <p>${limpiarTexto(observaciones || "Sin observaciones adicionales.")}</p>
-<p>Puede revisar el estado de la solicitud en DeltaF.</p>
+
+<p><strong>Orden médica en PDF:</strong> se adjunta a este correo.</p>
+<p>También puedes verla aquí: <a href="${pdfUrl}" target="_blank">Descargar orden médica</a></p>
+
 <hr>
 <p style="font-size:12px;color:#64748b;">DeltaF - Plataforma de solicitudes de exámenes.</p>
 </div>
@@ -465,7 +631,10 @@ const ordenId = ordenActual.id;
 const observaciones = document.getElementById("observacionesMedicas").value.trim();
 
 try{
-mostrarMensaje("Aprobando solicitud...", "loading");
+mostrarMensaje("Generando PDF y aprobando solicitud...", "loading");
+
+const pdf = generarPdfOrdenBase64(ordenActual, observaciones);
+const pdfUrl = await subirPdfStorage(pdf.blob, pdf.filename);
 
 let errorUpdate = null;
 
@@ -473,7 +642,8 @@ if(ordenActual._origen === "paciente"){
 const { error } = await supabaseClient
 .from("solicitudes_pacientes")
 .update({
-estado:"aprobada"
+estado:"aprobada",
+pdf_url:pdfUrl
 })
 .eq("id", ordenId);
 
@@ -483,7 +653,8 @@ const { error } = await supabaseClient
 .from("ordenes")
 .update({
 estado:"aprobada",
-observaciones:observaciones
+observaciones:observaciones,
+pdf_url:pdfUrl
 })
 .eq("id", ordenId);
 
@@ -496,11 +667,17 @@ throw errorUpdate;
 
 await enviarCorreo(
 ordenActual.correo_paciente || "",
-"Solicitud aprobada DeltaF - " + (ordenActual._codigo || ""),
-crearHtmlAprobacion(ordenActual, observaciones)
+"Orden médica aprobada DeltaF - " + (ordenActual._codigo || ""),
+crearHtmlAprobacion(ordenActual, observaciones, pdfUrl),
+[
+{
+filename: pdf.filename,
+content: pdf.base64
+}
+]
 );
 
-mostrarMensaje("Solicitud aprobada correctamente. Se envió correo automático al paciente/profesional.", "success");
+mostrarMensaje("Solicitud aprobada correctamente. Se generó PDF, se guardó y se envió adjunto al paciente.", "success");
 
 detalleCard.style.display = "none";
 ordenSeleccionada = null;
