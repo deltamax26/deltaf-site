@@ -16,13 +16,17 @@ body{background:#f8fafc;padding:30px;color:#1e293b;}
 .header h1{color:#2563eb;}
 .card{background:white;padding:30px;border-radius:20px;box-shadow:0 10px 25px rgba(0,0,0,.06);margin-bottom:25px;}
 .card h2{color:#2563eb;margin-bottom:20px;}
+.card h3{color:#0f172a;margin:20px 0 12px;font-size:1.05rem;}
 .grid{display:grid;grid-template-columns:1fr 1fr;gap:20px;}
 .full{grid-column:1/-1;}
 label{display:block;font-weight:600;margin-bottom:8px;}
 input,textarea,select{width:100%;padding:14px;border:1px solid #cbd5e1;border-radius:10px;}
 .checkbox-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:12px;}
-.checkbox-item{background:#f8fafc;padding:12px;border-radius:10px;border:1px solid #e2e8f0;}
+.checkbox-item{background:#f8fafc;padding:12px;border-radius:10px;border:1px solid #e2e8f0;font-weight:500;}
 .checkbox-item input{width:auto;margin-right:8px;}
+details{background:#f8fafc;border:1px solid #e2e8f0;border-radius:14px;padding:15px;margin-bottom:14px;}
+summary{font-weight:800;color:#2563eb;cursor:pointer;font-size:1.05rem;}
+.search-box{margin-bottom:20px;}
 .btn{width:100%;background:#2563eb;color:white;padding:18px;border:none;border-radius:12px;font-size:1rem;font-weight:bold;cursor:pointer;}
 .btn:hover{background:#1d4ed8;}
 .btn:disabled{background:#94a3b8;cursor:not-allowed;}
@@ -33,7 +37,7 @@ input,textarea,select{width:100%;padding:14px;border:1px solid #cbd5e1;border-ra
 .saldo-box{background:#eff6ff;border-left:5px solid #2563eb;padding:18px;border-radius:12px;margin-bottom:25px;font-weight:700;color:#1e40af;}
 .top-links{margin-top:15px;}
 .top-links a{color:#2563eb;text-decoration:none;font-weight:700;}
-@media(max-width:768px){.grid{grid-template-columns:1fr;}body{padding:15px;}}
+@media(max-width:768px){.grid{grid-template-columns:1fr;}body{padding:15px;}.header img{width:180px;}}
 </style>
 </head>
 
@@ -96,23 +100,247 @@ Verificando órdenes disponibles...
 <div class="card">
 <h2>Exámenes de Laboratorio</h2>
 
-<div class="checkbox-grid">
-<label class="checkbox-item"><input type="checkbox" value="Hemograma" class="examen"> Hemograma</label>
-<label class="checkbox-item"><input type="checkbox" value="Perfil Bioquímico" class="examen"> Perfil Bioquímico</label>
-<label class="checkbox-item"><input type="checkbox" value="Perfil Lipídico" class="examen"> Perfil Lipídico</label>
-<label class="checkbox-item"><input type="checkbox" value="Glicemia" class="examen"> Glicemia</label>
-<label class="checkbox-item"><input type="checkbox" value="HbA1c" class="examen"> HbA1c</label>
-<label class="checkbox-item"><input type="checkbox" value="Perfil Hepático" class="examen"> Perfil Hepático</label>
-<label class="checkbox-item"><input type="checkbox" value="Perfil Renal" class="examen"> Perfil Renal</label>
-<label class="checkbox-item"><input type="checkbox" value="TSH" class="examen"> TSH</label>
-<label class="checkbox-item"><input type="checkbox" value="T4 Libre" class="examen"> T4 Libre</label>
-<label class="checkbox-item"><input type="checkbox" value="Vitamina D" class="examen"> Vitamina D</label>
-<label class="checkbox-item"><input type="checkbox" value="Ferritina" class="examen"> Ferritina</label>
-<label class="checkbox-item"><input type="checkbox" value="Vitamina B12" class="examen"> Vitamina B12</label>
-<label class="checkbox-item"><input type="checkbox" value="Insulina" class="examen"> Insulina</label>
-<label class="checkbox-item"><input type="checkbox" value="PCR" class="examen"> PCR</label>
-<label class="checkbox-item"><input type="checkbox" value="VHS" class="examen"> VHS</label>
+<div class="search-box">
+<label for="buscarExamen">Buscar examen</label>
+<input id="buscarExamen" type="text" placeholder="Ejemplo: TSH, insulina, hemograma, vitamina D...">
 </div>
+
+<details open>
+<summary>Bioquímicos</summary>
+<div class="checkbox-grid">
+<label class="checkbox-item"><input type="checkbox" value="Ácido úrico" class="examen"> Ácido úrico</label>
+<label class="checkbox-item"><input type="checkbox" value="Albúmina" class="examen"> Albúmina</label>
+<label class="checkbox-item"><input type="checkbox" value="Amilasa" class="examen"> Amilasa</label>
+<label class="checkbox-item"><input type="checkbox" value="ApoA - ApoB" class="examen"> ApoA - ApoB</label>
+<label class="checkbox-item"><input type="checkbox" value="Bilirrubina total y directa" class="examen"> Bilirrubina total y directa</label>
+<label class="checkbox-item"><input type="checkbox" value="Calcio" class="examen"> Calcio</label>
+<label class="checkbox-item"><input type="checkbox" value="Calcio iónico" class="examen"> Calcio iónico</label>
+<label class="checkbox-item"><input type="checkbox" value="CK-MB" class="examen"> CK-MB</label>
+<label class="checkbox-item"><input type="checkbox" value="CK Total" class="examen"> CK Total</label>
+<label class="checkbox-item"><input type="checkbox" value="Colesterol HDL" class="examen"> Colesterol HDL</label>
+<label class="checkbox-item"><input type="checkbox" value="Creatinina" class="examen"> Creatinina</label>
+<label class="checkbox-item"><input type="checkbox" value="Curva de Insulina" class="examen"> Curva de Insulina</label>
+<label class="checkbox-item"><input type="checkbox" value="Curva de Tolerancia a la Glucosa" class="examen"> Curva de Tolerancia a la Glucosa</label>
+<label class="checkbox-item"><input type="checkbox" value="Drogas terapéuticas" class="examen"> Drogas terapéuticas</label>
+<label class="checkbox-item"><input type="checkbox" value="Electrolitos plasmáticos" class="examen"> Electrolitos plasmáticos</label>
+<label class="checkbox-item"><input type="checkbox" value="Fosfatasas alcalinas" class="examen"> Fosfatasas alcalinas</label>
+<label class="checkbox-item"><input type="checkbox" value="Fósforo" class="examen"> Fósforo</label>
+<label class="checkbox-item"><input type="checkbox" value="GGT" class="examen"> GGT</label>
+<label class="checkbox-item"><input type="checkbox" value="Glicemia" class="examen"> Glicemia</label>
+<label class="checkbox-item"><input type="checkbox" value="Glicemia post prandial" class="examen"> Glicemia post prandial</label>
+<label class="checkbox-item"><input type="checkbox" value="GPT/GOT" class="examen"> GPT/GOT</label>
+<label class="checkbox-item"><input type="checkbox" value="Hemoglobina glicosilada" class="examen"> Hemoglobina glicosilada</label>
+<label class="checkbox-item"><input type="checkbox" value="Insulina basal" class="examen"> Insulina basal</label>
+<label class="checkbox-item"><input type="checkbox" value="Insulina post carga glucosa" class="examen"> Insulina post carga glucosa</label>
+<label class="checkbox-item"><input type="checkbox" value="Lipasa" class="examen"> Lipasa</label>
+<label class="checkbox-item"><input type="checkbox" value="Litio" class="examen"> Litio</label>
+<label class="checkbox-item"><input type="checkbox" value="Magnesio" class="examen"> Magnesio</label>
+<label class="checkbox-item"><input type="checkbox" value="Perfil Bioquímico" class="examen"> Perfil Bioquímico</label>
+<label class="checkbox-item"><input type="checkbox" value="Perfil Hepático" class="examen"> Perfil Hepático</label>
+<label class="checkbox-item"><input type="checkbox" value="Perfil Lipídico" class="examen"> Perfil Lipídico</label>
+<label class="checkbox-item"><input type="checkbox" value="Perfil Renal" class="examen"> Perfil Renal</label>
+<label class="checkbox-item"><input type="checkbox" value="Proteínas totales" class="examen"> Proteínas totales</label>
+<label class="checkbox-item"><input type="checkbox" value="Uremia" class="examen"> Uremia</label>
+</div>
+</details>
+
+<details>
+<summary>Perfil Tiroideo</summary>
+<div class="checkbox-grid">
+<label class="checkbox-item"><input type="checkbox" value="TSH" class="examen"> TSH</label>
+<label class="checkbox-item"><input type="checkbox" value="T3" class="examen"> T3</label>
+<label class="checkbox-item"><input type="checkbox" value="T4" class="examen"> T4</label>
+<label class="checkbox-item"><input type="checkbox" value="T4 Libre" class="examen"> T4 Libre</label>
+<label class="checkbox-item"><input type="checkbox" value="Tiroglobulina" class="examen"> Tiroglobulina</label>
+<label class="checkbox-item"><input type="checkbox" value="Anticuerpos antitiroideos" class="examen"> Anticuerpos antitiroideos</label>
+<label class="checkbox-item"><input type="checkbox" value="Anticuerpos antirreceptores TSH" class="examen"> Anticuerpos antirreceptores TSH</label>
+</div>
+</details>
+
+<details>
+<summary>Hormonales</summary>
+<div class="checkbox-grid">
+<label class="checkbox-item"><input type="checkbox" value="17OH Progesterona" class="examen"> 17OH Progesterona</label>
+<label class="checkbox-item"><input type="checkbox" value="ACTH" class="examen"> ACTH</label>
+<label class="checkbox-item"><input type="checkbox" value="Aldosterona" class="examen"> Aldosterona</label>
+<label class="checkbox-item"><input type="checkbox" value="Cortisol" class="examen"> Cortisol</label>
+<label class="checkbox-item"><input type="checkbox" value="Cortisol AM-PM" class="examen"> Cortisol AM-PM</label>
+<label class="checkbox-item"><input type="checkbox" value="Cortisol libre urinario" class="examen"> Cortisol libre urinario</label>
+<label class="checkbox-item"><input type="checkbox" value="DHEA-SO4" class="examen"> DHEA-SO4</label>
+<label class="checkbox-item"><input type="checkbox" value="Estradiol" class="examen"> Estradiol</label>
+<label class="checkbox-item"><input type="checkbox" value="FSH" class="examen"> FSH</label>
+<label class="checkbox-item"><input type="checkbox" value="HCG Beta" class="examen"> HCG Beta</label>
+<label class="checkbox-item"><input type="checkbox" value="HGH" class="examen"> HGH</label>
+<label class="checkbox-item"><input type="checkbox" value="IGF-1" class="examen"> IGF-1</label>
+<label class="checkbox-item"><input type="checkbox" value="IGF BP3" class="examen"> IGF BP3</label>
+<label class="checkbox-item"><input type="checkbox" value="Insulina" class="examen"> Insulina</label>
+<label class="checkbox-item"><input type="checkbox" value="LH" class="examen"> LH</label>
+<label class="checkbox-item"><input type="checkbox" value="Progesterona" class="examen"> Progesterona</label>
+<label class="checkbox-item"><input type="checkbox" value="Prolactina" class="examen"> Prolactina</label>
+<label class="checkbox-item"><input type="checkbox" value="PTH intacta" class="examen"> PTH intacta</label>
+<label class="checkbox-item"><input type="checkbox" value="Renina" class="examen"> Renina</label>
+</div>
+</details>
+
+<details>
+<summary>Perfil Androgénico</summary>
+<div class="checkbox-grid">
+<label class="checkbox-item"><input type="checkbox" value="Androstenediona" class="examen"> Androstenediona</label>
+<label class="checkbox-item"><input type="checkbox" value="FAI" class="examen"> FAI</label>
+<label class="checkbox-item"><input type="checkbox" value="SHBG" class="examen"> SHBG</label>
+<label class="checkbox-item"><input type="checkbox" value="Testosterona libre" class="examen"> Testosterona libre</label>
+<label class="checkbox-item"><input type="checkbox" value="Testosterona total" class="examen"> Testosterona total</label>
+</div>
+</details>
+
+<details>
+<summary>Hematológicos</summary>
+<div class="checkbox-grid">
+<label class="checkbox-item"><input type="checkbox" value="Ácido fólico" class="examen"> Ácido fólico</label>
+<label class="checkbox-item"><input type="checkbox" value="Ferremia - TIBC" class="examen"> Ferremia - TIBC</label>
+<label class="checkbox-item"><input type="checkbox" value="Ferritina" class="examen"> Ferritina</label>
+<label class="checkbox-item"><input type="checkbox" value="Fierro sérico" class="examen"> Fierro sérico</label>
+<label class="checkbox-item"><input type="checkbox" value="Grupo sanguíneo ABO y RH" class="examen"> Grupo sanguíneo ABO y RH</label>
+<label class="checkbox-item"><input type="checkbox" value="Hematocrito" class="examen"> Hematocrito</label>
+<label class="checkbox-item"><input type="checkbox" value="Hemoglobina" class="examen"> Hemoglobina</label>
+<label class="checkbox-item"><input type="checkbox" value="Hemograma / VHS" class="examen"> Hemograma / VHS</label>
+<label class="checkbox-item"><input type="checkbox" value="Protrombina / INR" class="examen"> Protrombina / INR</label>
+<label class="checkbox-item"><input type="checkbox" value="Recuento de eosinófilos" class="examen"> Recuento de eosinófilos</label>
+<label class="checkbox-item"><input type="checkbox" value="Recuento de leucocitos" class="examen"> Recuento de leucocitos</label>
+<label class="checkbox-item"><input type="checkbox" value="Recuento de plaquetas" class="examen"> Recuento de plaquetas</label>
+<label class="checkbox-item"><input type="checkbox" value="Recuento de reticulocitos" class="examen"> Recuento de reticulocitos</label>
+<label class="checkbox-item"><input type="checkbox" value="Test de Coombs directo" class="examen"> Test de Coombs directo</label>
+<label class="checkbox-item"><input type="checkbox" value="Test de Coombs indirecto" class="examen"> Test de Coombs indirecto</label>
+<label class="checkbox-item"><input type="checkbox" value="Tiempo de coagulación" class="examen"> Tiempo de coagulación</label>
+<label class="checkbox-item"><input type="checkbox" value="Tiempo de sangría" class="examen"> Tiempo de sangría</label>
+<label class="checkbox-item"><input type="checkbox" value="Tiempo de sangría Ivy" class="examen"> Tiempo de sangría Ivy</label>
+<label class="checkbox-item"><input type="checkbox" value="TTPK" class="examen"> TTPK</label>
+<label class="checkbox-item"><input type="checkbox" value="Vitamina B12" class="examen"> Vitamina B12</label>
+<label class="checkbox-item"><input type="checkbox" value="Vitamina D" class="examen"> Vitamina D</label>
+</div>
+</details>
+
+<details>
+<summary>Orina</summary>
+<div class="checkbox-grid">
+<label class="checkbox-item"><input type="checkbox" value="Albuminuria" class="examen"> Albuminuria</label>
+<label class="checkbox-item"><input type="checkbox" value="Calciuria" class="examen"> Calciuria</label>
+<label class="checkbox-item"><input type="checkbox" value="Citratos y oxalatos" class="examen"> Citratos y oxalatos</label>
+<label class="checkbox-item"><input type="checkbox" value="Clearance de creatinina" class="examen"> Clearance de creatinina</label>
+<label class="checkbox-item"><input type="checkbox" value="Creatininuria" class="examen"> Creatininuria</label>
+<label class="checkbox-item"><input type="checkbox" value="Electrolitos urinarios" class="examen"> Electrolitos urinarios</label>
+<label class="checkbox-item"><input type="checkbox" value="Fosfaturia" class="examen"> Fosfaturia</label>
+<label class="checkbox-item"><input type="checkbox" value="Glucosuria" class="examen"> Glucosuria</label>
+<label class="checkbox-item"><input type="checkbox" value="Magnesuria" class="examen"> Magnesuria</label>
+<label class="checkbox-item"><input type="checkbox" value="Microalbuminuria" class="examen"> Microalbuminuria</label>
+<label class="checkbox-item"><input type="checkbox" value="Orina completa / sedimento" class="examen"> Orina completa / sedimento</label>
+<label class="checkbox-item"><input type="checkbox" value="Proteinuria" class="examen"> Proteinuria</label>
+<label class="checkbox-item"><input type="checkbox" value="Sedimento urinario" class="examen"> Sedimento urinario</label>
+<label class="checkbox-item"><input type="checkbox" value="Urocultivo + antibiograma" class="examen"> Urocultivo + antibiograma</label>
+</div>
+</details>
+
+<details>
+<summary>Inmunológicos</summary>
+<div class="checkbox-grid">
+<label class="checkbox-item"><input type="checkbox" value="Anticuerpos antitransglutaminasa" class="examen"> Anticuerpos antitransglutaminasa</label>
+<label class="checkbox-item"><input type="checkbox" value="ANA" class="examen"> ANA</label>
+<label class="checkbox-item"><input type="checkbox" value="ENA" class="examen"> ENA</label>
+<label class="checkbox-item"><input type="checkbox" value="Complemento C3-C4" class="examen"> Complemento C3-C4</label>
+<label class="checkbox-item"><input type="checkbox" value="Complemento CH-50" class="examen"> Complemento CH-50</label>
+<label class="checkbox-item"><input type="checkbox" value="Electroforesis de proteínas" class="examen"> Electroforesis de proteínas</label>
+<label class="checkbox-item"><input type="checkbox" value="Factor reumatoideo" class="examen"> Factor reumatoideo</label>
+<label class="checkbox-item"><input type="checkbox" value="Factor reumatoideo Waaler Rose" class="examen"> Factor reumatoideo Waaler Rose</label>
+<label class="checkbox-item"><input type="checkbox" value="Homocisteína" class="examen"> Homocisteína</label>
+<label class="checkbox-item"><input type="checkbox" value="IgA, IgG, IgM" class="examen"> IgA, IgG, IgM</label>
+<label class="checkbox-item"><input type="checkbox" value="IgA secretora" class="examen"> IgA secretora</label>
+<label class="checkbox-item"><input type="checkbox" value="IgE específica" class="examen"> IgE específica</label>
+<label class="checkbox-item"><input type="checkbox" value="IgE total" class="examen"> IgE total</label>
+<label class="checkbox-item"><input type="checkbox" value="PCR" class="examen"> PCR</label>
+<label class="checkbox-item"><input type="checkbox" value="Proteína C ultrasensible" class="examen"> Proteína C ultrasensible</label>
+</div>
+</details>
+
+<details>
+<summary>Serológicos</summary>
+<div class="checkbox-grid">
+<label class="checkbox-item"><input type="checkbox" value="Anticuerpos antiendomisio IgA" class="examen"> Anticuerpos antiendomisio IgA</label>
+<label class="checkbox-item"><input type="checkbox" value="Antigliadinas IgA-IgG" class="examen"> Antigliadinas IgA-IgG</label>
+<label class="checkbox-item"><input type="checkbox" value="ASLO" class="examen"> ASLO</label>
+<label class="checkbox-item"><input type="checkbox" value="Bordetella IgG-IgM" class="examen"> Bordetella IgG-IgM</label>
+<label class="checkbox-item"><input type="checkbox" value="Cardiolipinas IgG-IgM" class="examen"> Cardiolipinas IgG-IgM</label>
+<label class="checkbox-item"><input type="checkbox" value="Chagas" class="examen"> Chagas</label>
+<label class="checkbox-item"><input type="checkbox" value="Citomegalovirus IgG-IgM" class="examen"> Citomegalovirus IgG-IgM</label>
+<label class="checkbox-item"><input type="checkbox" value="Clamidias IgG-IgM" class="examen"> Clamidias IgG-IgM</label>
+<label class="checkbox-item"><input type="checkbox" value="Epstein Barr IgG-IgM" class="examen"> Epstein Barr IgG-IgM</label>
+<label class="checkbox-item"><input type="checkbox" value="Hepatitis A IgM" class="examen"> Hepatitis A IgM</label>
+<label class="checkbox-item"><input type="checkbox" value="Hepatitis B HBsAg" class="examen"> Hepatitis B HBsAg</label>
+<label class="checkbox-item"><input type="checkbox" value="Hepatitis B Anti Core total" class="examen"> Hepatitis B Anti Core total</label>
+<label class="checkbox-item"><input type="checkbox" value="Hepatitis C" class="examen"> Hepatitis C</label>
+<label class="checkbox-item"><input type="checkbox" value="Herpes simple 1 y 2 IgG" class="examen"> Herpes simple 1 y 2 IgG</label>
+<label class="checkbox-item"><input type="checkbox" value="Herpes simple 1 y 2 IgM" class="examen"> Herpes simple 1 y 2 IgM</label>
+<label class="checkbox-item"><input type="checkbox" value="HIV" class="examen"> HIV</label>
+<label class="checkbox-item"><input type="checkbox" value="HTLV-1" class="examen"> HTLV-1</label>
+<label class="checkbox-item"><input type="checkbox" value="Monotest" class="examen"> Monotest</label>
+<label class="checkbox-item"><input type="checkbox" value="Mycoplasma pneumoniae IgG-IgM" class="examen"> Mycoplasma pneumoniae IgG-IgM</label>
+<label class="checkbox-item"><input type="checkbox" value="Péptido C" class="examen"> Péptido C</label>
+<label class="checkbox-item"><input type="checkbox" value="RPR" class="examen"> RPR</label>
+<label class="checkbox-item"><input type="checkbox" value="Rubéola IgG-IgM" class="examen"> Rubéola IgG-IgM</label>
+<label class="checkbox-item"><input type="checkbox" value="Sarampión IgG-IgM" class="examen"> Sarampión IgG-IgM</label>
+<label class="checkbox-item"><input type="checkbox" value="Toxoplasmosis IgG-IgM" class="examen"> Toxoplasmosis IgG-IgM</label>
+<label class="checkbox-item"><input type="checkbox" value="VDRL" class="examen"> VDRL</label>
+</div>
+</details>
+
+<details>
+<summary>Deposiciones</summary>
+<div class="checkbox-grid">
+<label class="checkbox-item"><input type="checkbox" value="Adenovirus" class="examen"> Adenovirus</label>
+<label class="checkbox-item"><input type="checkbox" value="Clostridium difficile" class="examen"> Clostridium difficile</label>
+<label class="checkbox-item"><input type="checkbox" value="Coprocultivo" class="examen"> Coprocultivo</label>
+<label class="checkbox-item"><input type="checkbox" value="Coproparasitológico seriado" class="examen"> Coproparasitológico seriado</label>
+<label class="checkbox-item"><input type="checkbox" value="Fehling" class="examen"> Fehling</label>
+<label class="checkbox-item"><input type="checkbox" value="Helicobacter pylori deposiciones" class="examen"> Helicobacter pylori</label>
+<label class="checkbox-item"><input type="checkbox" value="Hemoglobina humana deposiciones" class="examen"> Hemoglobina humana deposiciones</label>
+<label class="checkbox-item"><input type="checkbox" value="Hemorragias ocultas" class="examen"> Hemorragias ocultas</label>
+<label class="checkbox-item"><input type="checkbox" value="Leucocitos fecales" class="examen"> Leucocitos fecales</label>
+<label class="checkbox-item"><input type="checkbox" value="pH deposiciones" class="examen"> pH deposiciones</label>
+<label class="checkbox-item"><input type="checkbox" value="Rotavirus" class="examen"> Rotavirus</label>
+<label class="checkbox-item"><input type="checkbox" value="Test de Graham" class="examen"> Test de Graham</label>
+</div>
+</details>
+
+<details>
+<summary>Marcadores Tumorales</summary>
+<div class="checkbox-grid">
+<label class="checkbox-item"><input type="checkbox" value="AFP" class="examen"> AFP</label>
+<label class="checkbox-item"><input type="checkbox" value="B2 Microglobulina" class="examen"> B2 Microglobulina</label>
+<label class="checkbox-item"><input type="checkbox" value="CA 15-3" class="examen"> CA 15-3</label>
+<label class="checkbox-item"><input type="checkbox" value="CA 19-9" class="examen"> CA 19-9</label>
+<label class="checkbox-item"><input type="checkbox" value="CA 125" class="examen"> CA 125</label>
+<label class="checkbox-item"><input type="checkbox" value="CEA" class="examen"> CEA</label>
+<label class="checkbox-item"><input type="checkbox" value="Ferritina marcador tumoral" class="examen"> Ferritina</label>
+<label class="checkbox-item"><input type="checkbox" value="HCG marcador tumoral" class="examen"> HCG</label>
+<label class="checkbox-item"><input type="checkbox" value="PSA total" class="examen"> PSA total</label>
+<label class="checkbox-item"><input type="checkbox" value="PSA libre" class="examen"> PSA libre</label>
+<label class="checkbox-item"><input type="checkbox" value="PSA total y libre" class="examen"> PSA total y libre</label>
+</div>
+</details>
+
+<details>
+<summary>Microbiológicos</summary>
+<div class="checkbox-grid">
+<label class="checkbox-item"><input type="checkbox" value="Chlamidias" class="examen"> Chlamidias</label>
+<label class="checkbox-item"><input type="checkbox" value="Cultivo corriente" class="examen"> Cultivo corriente</label>
+<label class="checkbox-item"><input type="checkbox" value="Cultivo gonococo" class="examen"> Cultivo gonococo</label>
+<label class="checkbox-item"><input type="checkbox" value="Cultivo hongos" class="examen"> Cultivo hongos</label>
+<label class="checkbox-item"><input type="checkbox" value="Cultivo vaginal" class="examen"> Cultivo vaginal</label>
+<label class="checkbox-item"><input type="checkbox" value="Gram" class="examen"> Gram</label>
+<label class="checkbox-item"><input type="checkbox" value="Mycoplasma/Ureaplasma" class="examen"> Mycoplasma/Ureaplasma</label>
+<label class="checkbox-item"><input type="checkbox" value="Estreptococo B" class="examen"> Estreptococo B</label>
+</div>
+</details>
+
 </div>
 
 <div class="card">
@@ -131,10 +359,10 @@ Verificando órdenes disponibles...
 </div>
 
 <div class="card">
-<h2>Otros Exámenes</h2>
+<h2>Otros Exámenes Manuales</h2>
 
-<label for="otroExamen">Examen Solicitado</label>
-<input id="otroExamen" type="text">
+<label for="otroExamen">Escribe aquí cualquier examen que no aparezca en la lista</label>
+<textarea id="otroExamen" rows="4" placeholder="Ejemplo: Zonulina, DAO, MTHFR, perfil de ácidos orgánicos, etc."></textarea>
 
 <br><br>
 
@@ -165,6 +393,7 @@ const form = document.getElementById("solicitudForm");
 const mensaje = document.getElementById("mensaje");
 const btnEnviar = document.getElementById("btnEnviar");
 const saldoBox = document.getElementById("saldoBox");
+const buscarExamen = document.getElementById("buscarExamen");
 
 let profesionalActual = null;
 
@@ -179,6 +408,26 @@ const fecha = new Date();
 const numero = Math.floor(100000 + Math.random() * 900000);
 return "DF-" + fecha.getFullYear() + "-" + numero;
 }
+
+function normalizarTexto(texto){
+return texto.toLowerCase()
+.normalize("NFD")
+.replace(/[\u0300-\u036f]/g, "");
+}
+
+buscarExamen.addEventListener("input", function(){
+const termino = normalizarTexto(buscarExamen.value.trim());
+const items = document.querySelectorAll(".checkbox-item");
+
+items.forEach(function(item){
+const texto = normalizarTexto(item.textContent);
+if(!termino || texto.includes(termino)){
+item.style.display = "block";
+}else{
+item.style.display = "none";
+}
+});
+});
 
 async function obtenerProfesional(){
 const { data: sessionData, error: sessionError } = await supabaseClient.auth.getSession();
@@ -268,7 +517,7 @@ const observaciones = document.getElementById("observaciones").value.trim();
 const examenesSeleccionados = Array.from(document.querySelectorAll(".examen:checked")).map(e => e.value);
 
 if(otroExamen){
-examenesSeleccionados.push(otroExamen);
+examenesSeleccionados.push("Otros exámenes manuales: " + otroExamen);
 }
 
 if(examenesSeleccionados.length === 0){
