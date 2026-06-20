@@ -25,7 +25,7 @@ th{background:#e0f2fe;color:#075985;}
 .badge{padding:6px 10px;border-radius:20px;font-size:12px;font-weight:bold;display:inline-block;}
 .pendiente{background:#fef3c7;color:#92400e;}
 .emitida,.aprobado{background:#dcfce7;color:#166534;}
-.rechazada{background:#fee2e2;color:#991b1b;}
+.rechazado,.rechazada{background:#fee2e2;color:#991b1b;}
 .error{background:#fee2e2;color:#991b1b;padding:12px;border-radius:8px;display:none;margin-bottom:20px;}
 .success{background:#dcfce7;color:#166534;padding:12px;border-radius:8px;display:none;margin-bottom:20px;}
 .btn{border:none;padding:8px 12px;border-radius:8px;cursor:pointer;font-weight:bold;margin:3px;}
@@ -66,17 +66,18 @@ th{background:#e0f2fe;color:#075985;}
 <tr>
 <th>Fecha</th>
 <th>Nombre</th>
+<th>RUT</th>
 <th>Email</th>
 <th>Profesión</th>
 <th>Registro SIS</th>
 <th>Teléfono</th>
-<th>Órdenes disponibles</th>
+<th>Órdenes</th>
 <th>Estado</th>
 <th>Acciones</th>
 </tr>
 </thead>
 <tbody>
-<tr><td colspan="9">Cargando profesionales...</td></tr>
+<tr><td colspan="10">Cargando profesionales...</td></tr>
 </tbody>
 </table>
 </div>
@@ -149,6 +150,11 @@ if(obj && obj[c] !== undefined && obj[c] !== null && obj[c] !== "") return obj[c
 return "-";
 }
 
+function fechaCampo(obj){
+const fecha = obj.fecha_creacion || obj.created_at || obj.fecha || null;
+return fecha ? new Date(fecha).toLocaleDateString("es-CL") : "-";
+}
+
 async function cargarDashboard(){
 document.getElementById("mensajeError").style.display="none";
 
@@ -163,7 +169,7 @@ if(errorSolicitudes) throw errorSolicitudes;
 const {data: profesionales, error: errorProfesionales}=await supabaseClient
 .from("profesionales")
 .select("*")
-.order("created_at",{ascending:false});
+.order("fecha_creacion",{ascending:false});
 
 if(errorProfesionales) throw errorProfesionales;
 
@@ -215,7 +221,7 @@ const tbody=document.querySelector("#tablaProfesionales tbody");
 tbody.innerHTML="";
 
 if(!profesionales || profesionales.length===0){
-tbody.innerHTML=`<tr><td colspan="9">No hay profesionales registrados.</td></tr>`;
+tbody.innerHTML=`<tr><td colspan="10">No hay profesionales registrados.</td></tr>`;
 return;
 }
 
@@ -223,17 +229,19 @@ profesionales.forEach(p=>{
 const estado=(p.estado || "pendiente").toLowerCase();
 
 const nombre=valorCampo(p,["nombre","nombre_completo","nombreCompleto","full_name"]);
+const rut=valorCampo(p,["rut","run"]);
 const email=valorCampo(p,["email","correo","correo_electronico"]);
-const profesion=valorCampo(p,["profesion","profesión","especialidad"]);
+const profesion=valorCampo(p,["profesion","especialidad"]);
 const registro=valorCampo(p,["registro_sis","registroSIS","sis","registro_superintendencia"]);
-const telefono=valorCampo(p,["telefono","teléfono","celular"]);
+const telefono=valorCampo(p,["telefono","celular"]);
 const ordenes=valorCampo(p,["ordenes_disponibles","creditos","ordenes"]);
 
 const tr=document.createElement("tr");
 
 tr.innerHTML=`
-<td>${p.created_at ? new Date(p.created_at).toLocaleDateString("es-CL") : "-"}</td>
+<td>${fechaCampo(p)}</td>
 <td>${nombre}</td>
+<td>${rut}</td>
 <td>${email}</td>
 <td>${profesion}</td>
 <td>${registro}</td>
