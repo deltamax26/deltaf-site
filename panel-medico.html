@@ -154,6 +154,7 @@ body{padding:15px;}
 <script>
 const SUPABASE_URL = "https://goxkmtnmfessroveanje.supabase.co";
 const SUPABASE_ANON_KEY = "sb_publishable_w8xrtEanlJJAc5FYvk1X5A_fKu9vb5d";
+const FUNCTION_EMAIL_URL = "https://goxkmtnmfessroveanje.supabase.co/functions/v1/resend-email";
 
 const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
@@ -161,6 +162,7 @@ let ordenes = [];
 let solicitudesPacientes = [];
 let solicitudesCombinadas = [];
 let ordenSeleccionada = null;
+let pendientesAnteriores = 0;
 
 const mensaje = document.getElementById("mensaje");
 const tablaOrdenes = document.getElementById("tablaOrdenes");
@@ -352,6 +354,36 @@ detalleCard.style.display = "block";
 window.scrollTo({top:detalleCard.offsetTop - 20,behavior:"smooth"});
 }
 
+async function enviarCorreoAprobacion(ordenActual){
+try{
+const response = await fetch(FUNCTION_EMAIL_URL,{
+method:"POST",
+headers:{
+"Content-Type":"application/json"
+},
+body:JSON.stringify({
+tipo:"Orden médica aprobada",
+email:ordenActual.correo_paciente || "",
+nombre:ordenActual.nombre_paciente || "",
+rut:ordenActual.rut_paciente || "",
+telefono:ordenActual.telefono_paciente || "",
+correo:ordenActual.correo_paciente || "",
+examenes:ordenActual._examenes || "",
+comprobante:ordenActual.comprobante || "",
+codigo:ordenActual._codigo || "",
+pdfUrl:ordenActual.pdf_url || "https://deltaf.site"
+})
+});
+
+const data = await response.json().catch(() => ({}));
+
+console.log("Respuesta correo:", response.status, data);
+
+}catch(error){
+console.log("Correo no enviado", error);
+}
+}
+
 async function aprobarConPDF(){
 if(!ordenSeleccionada){
 mostrarMensaje("Primero selecciona una solicitud.", "error");
@@ -371,7 +403,7 @@ if(ordenActual._origen === "paciente"){
 const { error } = await supabaseClient
 .from("solicitudes_pacientes")
 .update({
-estado: "aprobada"
+estado:"aprobada"
 })
 .eq("id", ordenId);
 
@@ -380,8 +412,8 @@ errorUpdate = error;
 const { error } = await supabaseClient
 .from("ordenes")
 .update({
-estado: "aprobada",
-observaciones: observaciones
+estado:"aprobada",
+observaciones:observaciones
 })
 .eq("id", ordenId);
 
@@ -392,7 +424,9 @@ if(errorUpdate){
 throw errorUpdate;
 }
 
-mostrarMensaje("Solicitud aprobada correctamente.", "success");
+await enviarCorreoAprobacion(ordenActual);
+
+mostrarMensaje("Solicitud aprobada correctamente. Se intentó enviar el correo automático.", "success");
 
 detalleCard.style.display = "none";
 ordenSeleccionada = null;
@@ -422,7 +456,7 @@ if(ordenActual._origen === "paciente"){
 const { error } = await supabaseClient
 .from("solicitudes_pacientes")
 .update({
-estado: nuevoEstado
+estado:nuevoEstado
 })
 .eq("id", ordenId);
 
@@ -431,8 +465,8 @@ errorUpdate = error;
 const { error } = await supabaseClient
 .from("ordenes")
 .update({
-estado: nuevoEstado,
-observaciones: observaciones
+estado:nuevoEstado,
+observaciones:observaciones
 })
 .eq("id", ordenId);
 
@@ -476,7 +510,7 @@ if(ordenActual._origen === "paciente"){
 const { error } = await supabaseClient
 .from("solicitudes_pacientes")
 .update({
-estado: "pendiente"
+estado:"pendiente"
 })
 .eq("id", ordenId);
 
@@ -487,8 +521,8 @@ const texto = "Solicitud de modificación médica: " + observaciones;
 const { error } = await supabaseClient
 .from("ordenes")
 .update({
-estado: "pendiente",
-observaciones: texto
+estado:"pendiente",
+observaciones:texto
 })
 .eq("id", ordenId);
 
@@ -498,27 +532,7 @@ errorUpdate = error;
 if(errorUpdate){
 throw errorUpdate;
 }
-try {
 
-await fetch(
-"https://goxkmtnmfessroveanje.supabase.co/functions/v1/resend-email",
-{
-method:"POST",
-headers:{
-"Content-Type":"application/json"
-},
-body:JSON.stringify({
-email: ordenActual.correo_paciente,
-nombre: ordenActual.nombre_paciente,
-codigo: ordenActual._codigo,
-pdfUrl: ordenActual.pdf_url || "https://deltaf.site"
-})
-}
-);
-
-}catch(error){
-console.log("Error enviando correo", error);
-}
 mostrarMensaje("Se registró la solicitud de modificación.", "success");
 detalleCard.style.display = "none";
 ordenSeleccionada = null;
@@ -529,97 +543,8 @@ console.error(error);
 mostrarMensaje("Error al solicitar modificación: " + error.message, "error");
 }
 }
-let pendientesAnteriores = 0;
 
-async function aprobarConPDF(){
-
-if(!ordenSeleccionada){
-mostrarMensaje("Primero selecciona una solicitud.", "error");
-return;
-}
-
-const ordenActual = {...ordenSeleccionada};
-const ordenId = ordenActual.id;
-const observaciones = document.getElementById("observacionesMedicas").value.trim();
-
-try{
-
-mostrarMensaje("Aprobando solicitud...", "loading");
-
-let errorUpdate = null;
-
-if(ordenActual._origen === "paciente"){
-
-const { error } = await supabaseClient
-.from("solicitudes_pacientes")
-.update({
-estado:"aprobada"
-})
-.eq("id", ordenId);
-
-errorUpdate = error;
-
-}else{
-
-const { error } = await supabaseClient
-.from("ordenes")
-.update({
-estado:"aprobada",
-observaciones:observaciones
-})
-.eq("id", ordenId);
-
-errorUpdate = error;
-
-}
-
-if(errorUpdate){
-throw errorUpdate;
-}
-
-try{
-
-await fetch(
-"https://goxkmtnmfessroveanje.supabase.co/functions/v1/resend-email",
-{
-method:"POST",
-headers:{
-"Content-Type":"application/json"
-},
-body:JSON.stringify({
-email: ordenActual.correo_paciente,
-nombre: ordenActual.nombre_paciente,
-codigo: ordenActual._codigo,
-pdfUrl: ordenActual.pdf_url || "https://deltaf.site"
-})
-}
-);
-
-}catch(error){
-console.log("Correo no enviado", error);
-}
-
-mostrarMensaje("Solicitud aprobada correctamente.", "success");
-
-detalleCard.style.display = "none";
-ordenSeleccionada = null;
-
-await cargarOrdenes();
-
-}catch(error){
-
-console.error(error);
-
-mostrarMensaje(
-"Error al aprobar solicitud: " + error.message,
-"error"
-);
-
-}
-
-}
 (async function iniciarPanelMedico(){
-
 const permitido = await verificarPermisosMedico();
 
 if(!permitido){
@@ -629,39 +554,26 @@ return;
 await cargarOrdenes();
 
 pendientesAnteriores =
-solicitudesCombinadas.filter(
-o => o.estado === "pendiente"
-).length;
+solicitudesCombinadas.filter(o => o.estado === "pendiente").length;
 
-setInterval(async()=>{
-
+setInterval(async () => {
 await cargarOrdenes();
 
 const pendientesActuales =
-solicitudesCombinadas.filter(
-o => o.estado === "pendiente"
-).length;
+solicitudesCombinadas.filter(o => o.estado === "pendiente").length;
 
 if(pendientesActuales > pendientesAnteriores){
-
 try{
-
-const audio = new Audio(
-"https://actions.google.com/sounds/v1/alarms/beep_short.ogg"
-);
-
+const audio = new Audio("https://actions.google.com/sounds/v1/alarms/beep_short.ogg");
 audio.play();
 
 alert(
 "🔔 NUEVA SOLICITUD DELTAF\n\n" +
-"Solicitudes pendientes: " +
-pendientesActuales
+"Solicitudes pendientes: " + pendientesActuales
 );
-
 }catch(error){
 console.log(error);
 }
-
 }
 
 pendientesAnteriores = pendientesActuales;
@@ -669,3 +581,7 @@ pendientesAnteriores = pendientesActuales;
 },30000);
 
 })();
+</script>
+
+</body>
+</html>
