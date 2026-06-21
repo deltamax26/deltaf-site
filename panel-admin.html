@@ -12,7 +12,7 @@ body{margin:0;font-family:Arial,sans-serif;background:#f4f8fb;color:#1f2937;}
 header{background:#0284c7;color:white;padding:18px 30px;display:flex;justify-content:space-between;align-items:center;}
 header h1{margin:0;font-size:24px;}
 .logout{background:white;color:#0284c7;border:none;padding:10px 16px;border-radius:8px;cursor:pointer;font-weight:bold;}
-.container{padding:30px;max-width:1300px;margin:auto;}
+.container{padding:30px;max-width:1400px;margin:auto;}
 .cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:20px;margin-bottom:30px;}
 .card{background:white;padding:22px;border-radius:14px;box-shadow:0 4px 14px rgba(0,0,0,0.08);}
 .card h3{margin:0 0 10px;font-size:16px;color:#64748b;}
@@ -22,12 +22,12 @@ header h1{margin:0;font-size:24px;}
 .form-grid{display:grid;grid-template-columns:2fr 1fr 2fr auto;gap:15px;align-items:end;}
 label{font-weight:bold;display:block;margin-bottom:6px;}
 input,select{width:100%;padding:12px;border:1px solid #cbd5e1;border-radius:8px;}
-table{width:100%;border-collapse:collapse;min-width:1000px;}
+table{width:100%;border-collapse:collapse;min-width:1100px;}
 th,td{border-bottom:1px solid #e5e7eb;padding:12px;text-align:left;font-size:14px;vertical-align:top;}
 th{background:#e0f2fe;color:#075985;}
 .badge{padding:6px 10px;border-radius:20px;font-size:12px;font-weight:bold;display:inline-block;}
 .pendiente{background:#fef3c7;color:#92400e;}
-.emitida,.aprobado{background:#dcfce7;color:#166534;}
+.emitida,.aprobado,.aprobada{background:#dcfce7;color:#166534;}
 .rechazado,.rechazada{background:#fee2e2;color:#991b1b;}
 .error{background:#fee2e2;color:#991b1b;padding:12px;border-radius:8px;display:none;margin-bottom:20px;}
 .success{background:#dcfce7;color:#166534;padding:12px;border-radius:8px;display:none;margin-bottom:20px;}
@@ -57,7 +57,8 @@ th{background:#e0f2fe;color:#075985;}
 <div class="cards">
 <div class="card"><h3>Total ventas del día</h3><p id="ventasDia">$0</p></div>
 <div class="card"><h3>Total ventas del mes</h3><p id="ventasMes">$0</p></div>
-<div class="card"><h3>Solicitudes pendientes</h3><p id="solicitudesPendientes">0</p></div>
+<div class="card"><h3>Solicitudes profesionales pendientes</h3><p id="solicitudesPendientes">0</p></div>
+<div class="card"><h3>Solicitudes pacientes pendientes</h3><p id="pacientesPendientes">0</p></div>
 <div class="card"><h3>Órdenes emitidas</h3><p id="ordenesEmitidas">0</p></div>
 <div class="card"><h3>Profesionales registrados</h3><p id="profesionalesRegistrados">0</p></div>
 <div class="card"><h3>Profesionales pendientes</h3><p id="profesionalesPendientes">0</p></div>
@@ -91,6 +92,33 @@ th{background:#e0f2fe;color:#075985;}
 </div>
 
 <div class="section">
+<h2>Solicitudes de pacientes directos</h2>
+<button class="btn btn-reload" onclick="cargarDashboard()">Actualizar</button>
+<button class="btn btn-export" onclick="exportarPacientesExcel()">Exportar pacientes Excel</button>
+
+<table id="tablaPacientes">
+<thead>
+<tr>
+<th>Fecha</th>
+<th>Paciente</th>
+<th>RUT</th>
+<th>Correo</th>
+<th>Teléfono</th>
+<th>Exámenes</th>
+<th>Motivo</th>
+<th>Código Transbank</th>
+<th>Monto</th>
+<th>Estado</th>
+<th>Acciones</th>
+</tr>
+</thead>
+<tbody>
+<tr><td colspan="11">Cargando solicitudes de pacientes...</td></tr>
+</tbody>
+</table>
+</div>
+
+<div class="section">
 <h2>Profesionales inscritos</h2>
 <button class="btn btn-reload" onclick="cargarDashboard()">Actualizar</button>
 
@@ -116,8 +144,8 @@ th{background:#e0f2fe;color:#075985;}
 </div>
 
 <div class="section">
-<h2>Resumen administrativo</h2>
-<button class="btn btn-export" onclick="exportarExcel()">Exportar Excel</button>
+<h2>Resumen administrativo profesionales</h2>
+<button class="btn btn-export" onclick="exportarExcel()">Exportar profesionales Excel</button>
 
 <table id="tablaSolicitudes">
 <thead>
@@ -148,17 +176,20 @@ const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
 let solicitudesGlobal = [];
 let profesionalesGlobal = [];
+let solicitudesPacientesGlobal = [];
 
 function mostrarError(texto){
 const div=document.getElementById("mensajeError");
 div.style.display="block";
 div.innerText=texto;
+window.scrollTo({top:0,behavior:"smooth"});
 }
 
 function mostrarOk(texto){
 const div=document.getElementById("mensajeOk");
 div.style.display="block";
 div.innerText=texto;
+window.scrollTo({top:0,behavior:"smooth"});
 setTimeout(()=>{div.style.display="none";},3000);
 }
 
@@ -188,6 +219,11 @@ const fecha = obj.fecha_creacion || obj.created_at || obj.fecha || null;
 return fecha ? new Date(fecha).toLocaleDateString("es-CL") : "-";
 }
 
+function limpiarCSV(valor){
+if(valor === null || valor === undefined) return "";
+return String(valor).replace(/"/g,'""').replace(/\n/g," ").replace(/\r/g," ");
+}
+
 async function cargarDashboard(){
 document.getElementById("mensajeError").style.display="none";
 
@@ -198,6 +234,13 @@ const {data: solicitudes, error: errorSolicitudes}=await supabaseClient
 
 if(errorSolicitudes) throw errorSolicitudes;
 
+const {data: pacientes, error: errorPacientes}=await supabaseClient
+.from("solicitudes_pacientes")
+.select("*")
+.order("created_at",{ascending:false});
+
+if(errorPacientes) throw errorPacientes;
+
 const {data: profesionales, error: errorProfesionales}=await supabaseClient
 .from("profesionales")
 .select("*")
@@ -206,12 +249,14 @@ const {data: profesionales, error: errorProfesionales}=await supabaseClient
 if(errorProfesionales) throw errorProfesionales;
 
 solicitudesGlobal=solicitudes||[];
+solicitudesPacientesGlobal=pacientes||[];
 profesionalesGlobal=profesionales||[];
 
 let hoy=fechaHoyChile();
 let ventasDia=0;
 let ventasMes=0;
 let pendientes=0;
+let pacientesPendientes=0;
 let emitidas=0;
 let profesionalesPendientes=0;
 
@@ -224,7 +269,19 @@ if(s.created_at && esMismoMes(s.created_at)) ventasMes += monto;
 
 const estado=(s.estado || "").toLowerCase();
 if(estado==="pendiente") pendientes++;
-if(estado==="emitida" || estado==="aprobada") emitidas++;
+if(estado==="emitida" || estado==="aprobada" || estado==="aprobado") emitidas++;
+});
+
+solicitudesPacientesGlobal.forEach(s=>{
+const fecha=s.created_at ? s.created_at.split("T")[0] : "";
+const monto=Number(s.monto || 0);
+
+if(fecha===hoy) ventasDia += monto;
+if(s.created_at && esMismoMes(s.created_at)) ventasMes += monto;
+
+const estado=(s.estado || "").toLowerCase();
+if(estado==="pendiente") pacientesPendientes++;
+if(estado==="emitida" || estado==="aprobada" || estado==="aprobado") emitidas++;
 });
 
 profesionalesGlobal.forEach(p=>{
@@ -235,10 +292,12 @@ if(estado==="pendiente") profesionalesPendientes++;
 document.getElementById("ventasDia").innerText=formatoPeso(ventasDia);
 document.getElementById("ventasMes").innerText=formatoPeso(ventasMes);
 document.getElementById("solicitudesPendientes").innerText=pendientes;
+document.getElementById("pacientesPendientes").innerText=pacientesPendientes;
 document.getElementById("ordenesEmitidas").innerText=emitidas;
 document.getElementById("profesionalesRegistrados").innerText=profesionalesGlobal.length;
 document.getElementById("profesionalesPendientes").innerText=profesionalesPendientes;
 
+pintarTablaPacientes(solicitudesPacientesGlobal);
 pintarTablaSolicitudes(solicitudesGlobal);
 pintarTablaProfesionales(profesionalesGlobal);
 cargarSelectProfesionales(profesionalesGlobal);
@@ -262,6 +321,40 @@ const option=document.createElement("option");
 option.value=p.id;
 option.textContent=`${nombre} - ${email} - ${ordenes} órdenes`;
 select.appendChild(option);
+});
+}
+
+function pintarTablaPacientes(solicitudes){
+const tbody=document.querySelector("#tablaPacientes tbody");
+tbody.innerHTML="";
+
+if(!solicitudes || solicitudes.length===0){
+tbody.innerHTML=`<tr><td colspan="11">No hay solicitudes de pacientes.</td></tr>`;
+return;
+}
+
+solicitudes.forEach(s=>{
+const estado=(s.estado || "pendiente").toLowerCase();
+const tr=document.createElement("tr");
+
+tr.innerHTML=`
+<td>${s.created_at ? new Date(s.created_at).toLocaleDateString("es-CL") : "-"}</td>
+<td>${s.nombre_paciente || "-"}</td>
+<td>${s.rut_paciente || "-"}</td>
+<td>${s.correo_paciente || "-"}</td>
+<td>${s.telefono_paciente || "-"}</td>
+<td>${s.examenes_solicitados || "-"}</td>
+<td>${s.motivo || "-"}</td>
+<td>${s.comprobante || "-"}</td>
+<td>${formatoPeso(Number(s.monto || 0))}</td>
+<td><span class="badge ${estado}">${s.estado || "pendiente"}</span></td>
+<td>
+<button class="btn btn-approve" onclick="cambiarEstadoPaciente('${s.id}','aprobada')">Aprobar</button>
+<button class="btn btn-reject" onclick="cambiarEstadoPaciente('${s.id}','rechazada')">Rechazar</button>
+</td>
+`;
+
+tbody.appendChild(tr);
 });
 }
 
@@ -334,6 +427,27 @@ tr.innerHTML=`
 
 tbody.appendChild(tr);
 });
+}
+
+async function cambiarEstadoPaciente(id,nuevoEstado){
+const confirmar=confirm("¿Seguro que deseas cambiar esta solicitud de paciente a estado: " + nuevoEstado + "?");
+if(!confirmar) return;
+
+try{
+const {error}=await supabaseClient
+.from("solicitudes_pacientes")
+.update({estado:nuevoEstado})
+.eq("id",id);
+
+if(error) throw error;
+
+mostrarOk("Solicitud de paciente actualizada correctamente.");
+await cargarDashboard();
+
+}catch(error){
+console.error(error);
+mostrarError("Error al actualizar solicitud de paciente: " + error.message);
+}
 }
 
 async function cambiarEstadoProfesional(id,nuevoEstado){
@@ -465,6 +579,30 @@ mostrarError("Error al asignar órdenes: " + error.message);
 }
 }
 
+function exportarPacientesExcel(){
+if(!solicitudesPacientesGlobal || solicitudesPacientesGlobal.length===0){
+alert("No hay solicitudes de pacientes para exportar.");
+return;
+}
+
+let csv="Fecha,Paciente,RUT,Correo,Telefono,Examenes,Motivo,Codigo Transbank,Monto,Estado\n";
+
+solicitudesPacientesGlobal.forEach(s=>{
+csv += `"${limpiarCSV(s.created_at ? new Date(s.created_at).toLocaleDateString("es-CL") : "-")}",`;
+csv += `"${limpiarCSV(s.nombre_paciente || "-")}",`;
+csv += `"${limpiarCSV(s.rut_paciente || "-")}",`;
+csv += `"${limpiarCSV(s.correo_paciente || "-")}",`;
+csv += `"${limpiarCSV(s.telefono_paciente || "-")}",`;
+csv += `"${limpiarCSV(s.examenes_solicitados || "-")}",`;
+csv += `"${limpiarCSV(s.motivo || "-")}",`;
+csv += `"${limpiarCSV(s.comprobante || "-")}",`;
+csv += `"${limpiarCSV(s.monto || 0)}",`;
+csv += `"${limpiarCSV(s.estado || "pendiente")}"\n`;
+});
+
+descargarCSV(csv,"solicitudes_pacientes_deltaf.csv");
+}
+
 function exportarExcel(){
 if(!solicitudesGlobal || solicitudesGlobal.length===0){
 alert("No hay datos para exportar.");
@@ -474,21 +612,25 @@ return;
 let csv="Fecha,Paciente,RUT,Profesional,Examenes,Monto,Estado,Codigo Transbank\n";
 
 solicitudesGlobal.forEach(s=>{
-csv += `"${s.created_at ? new Date(s.created_at).toLocaleDateString("es-CL") : "-"}",`;
-csv += `"${s.paciente_nombre || s.nombre_paciente || "-"}",`;
-csv += `"${s.paciente_rut || s.rut_paciente || "-"}",`;
-csv += `"${s.profesional_nombre || s.nombre_profesional || "-"}",`;
-csv += `"${s.examenes || s.examen_solicitado || "-"}",`;
-csv += `"${s.monto || s.valor || 0}",`;
-csv += `"${s.estado || "Pendiente"}",`;
-csv += `"${s.codigo_transbank || s.codigo_pago || "-"}"\n`;
+csv += `"${limpiarCSV(s.created_at ? new Date(s.created_at).toLocaleDateString("es-CL") : "-")}",`;
+csv += `"${limpiarCSV(s.paciente_nombre || s.nombre_paciente || "-")}",`;
+csv += `"${limpiarCSV(s.paciente_rut || s.rut_paciente || "-")}",`;
+csv += `"${limpiarCSV(s.profesional_nombre || s.nombre_profesional || "-")}",`;
+csv += `"${limpiarCSV(s.examenes || s.examen_solicitado || "-")}",`;
+csv += `"${limpiarCSV(s.monto || s.valor || 0)}",`;
+csv += `"${limpiarCSV(s.estado || "Pendiente")}",`;
+csv += `"${limpiarCSV(s.codigo_transbank || s.codigo_pago || "-")}"\n`;
 });
 
-const blob=new Blob([csv],{type:"text/csv;charset=utf-8;"});
+descargarCSV(csv,"solicitudes_profesionales_deltaf.csv");
+}
+
+function descargarCSV(csv,nombreArchivo){
+const blob=new Blob(["\uFEFF"+csv],{type:"text/csv;charset=utf-8;"});
 const url=URL.createObjectURL(blob);
 const link=document.createElement("a");
 link.href=url;
-link.download="reporte_admin_deltaf.csv";
+link.download=nombreArchivo;
 link.click();
 URL.revokeObjectURL(url);
 }
