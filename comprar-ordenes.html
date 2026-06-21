@@ -140,6 +140,7 @@ La carga de órdenes queda pendiente de revisión administrativa. Una vez valida
 <script>
 const SUPABASE_URL = "https://goxkmtnmfessroveanje.supabase.co";
 const SUPABASE_ANON_KEY = "sb_publishable_w8xrtEanlJJAc5FYvk1X5A_fKu9vb5d";
+const FUNCTION_EMAIL_URL = "https://goxkmtnmfessroveanje.supabase.co/functions/v1/resend-email";
 
 const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
@@ -156,6 +157,11 @@ function mostrarMensaje(texto,tipo){
 mensaje.textContent = texto;
 mensaje.className = "message " + tipo;
 window.scrollTo({top:0,behavior:"smooth"});
+}
+
+function limpiarHtml(valor){
+if(!valor) return "-";
+return String(valor).replace(/</g,"&lt;").replace(/>/g,"&gt;");
 }
 
 async function obtenerProfesional(){
@@ -207,6 +213,80 @@ paymentBox.style.display = "block";
 paymentBox.scrollIntoView({behavior:"smooth"});
 }
 
+async function enviarCorreoAdminCompra(datos){
+try{
+await fetch(FUNCTION_EMAIL_URL,{
+method:"POST",
+headers:{"Content-Type":"application/json"},
+body:JSON.stringify({
+to:"figueroabernalm@gmail.com",
+subject:"Nueva compra de órdenes DeltaF",
+html:`
+<div style="font-family:Arial,sans-serif;color:#1e293b;line-height:1.5;">
+<h2 style="color:#2563eb;">Nueva compra de órdenes</h2>
+<p>Un profesional registró una compra de órdenes en DeltaF.</p>
+
+<h3>Profesional</h3>
+<p><strong>Nombre:</strong> ${limpiarHtml(datos.nombreProfesional)}</p>
+<p><strong>Email:</strong> ${limpiarHtml(datos.emailProfesional)}</p>
+<p><strong>RUT:</strong> ${limpiarHtml(datos.rutProfesional)}</p>
+<p><strong>Profesión:</strong> ${limpiarHtml(datos.profesionProfesional)}</p>
+
+<h3>Compra</h3>
+<p><strong>Plan:</strong> ${limpiarHtml(datos.plan)}</p>
+<p><strong>Órdenes:</strong> ${limpiarHtml(datos.cantidad)}</p>
+<p><strong>Monto:</strong> $${Number(datos.monto || 0).toLocaleString("es-CL")}</p>
+<p><strong>Comprobante:</strong> ${limpiarHtml(datos.comprobante)}</p>
+
+<p><strong>Estado:</strong> Pendiente de revisión administrativa.</p>
+
+<hr>
+<p style="font-size:12px;color:#64748b;">
+Debes ingresar al panel administrador DeltaF para aprobar o rechazar la compra.
+</p>
+</div>
+`
+})
+});
+}catch(error){
+console.log("No se pudo enviar correo al admin:", error);
+}
+}
+
+async function enviarCorreoProfesionalCompra(datos){
+try{
+await fetch(FUNCTION_EMAIL_URL,{
+method:"POST",
+headers:{"Content-Type":"application/json"},
+body:JSON.stringify({
+to:datos.emailProfesional,
+subject:"Compra de órdenes registrada DeltaF",
+html:`
+<div style="font-family:Arial,sans-serif;color:#1e293b;line-height:1.5;">
+<h2 style="color:#2563eb;">Solicitud de carga recibida</h2>
+<p>Hola ${limpiarHtml(datos.nombreProfesional)}, recibimos tu solicitud de carga de órdenes.</p>
+
+<h3>Detalle</h3>
+<p><strong>Plan:</strong> ${limpiarHtml(datos.plan)}</p>
+<p><strong>Órdenes:</strong> ${limpiarHtml(datos.cantidad)}</p>
+<p><strong>Monto:</strong> $${Number(datos.monto || 0).toLocaleString("es-CL")}</p>
+<p><strong>Comprobante registrado:</strong> ${limpiarHtml(datos.comprobante)}</p>
+
+<p>Tu compra quedó pendiente de revisión administrativa. Una vez validado el pago, las órdenes serán abonadas a tu cuenta profesional.</p>
+
+<hr>
+<p style="font-size:12px;color:#64748b;">
+DeltaF - Plataforma de solicitudes de exámenes.
+</p>
+</div>
+`
+})
+});
+}catch(error){
+console.log("No se pudo enviar correo al profesional:", error);
+}
+}
+
 compraForm.addEventListener("submit", async function(event){
 event.preventDefault();
 
@@ -252,6 +332,20 @@ estado: "pendiente"
 if(error){
 throw error;
 }
+
+const datosCorreo = {
+nombreProfesional: profesionalActual.nombre,
+emailProfesional: profesionalActual.email,
+rutProfesional: profesionalActual.rut,
+profesionProfesional: profesionalActual.profesion,
+plan: planActual.nombre,
+cantidad: planActual.cantidad,
+monto: planActual.monto,
+comprobante: comprobanteFinal
+};
+
+await enviarCorreoAdminCompra(datosCorreo);
+await enviarCorreoProfesionalCompra(datosCorreo);
 
 mostrarMensaje("Solicitud registrada correctamente. DeltaF revisará el pago y cargará tus órdenes.", "success");
 
