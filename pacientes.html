@@ -49,6 +49,9 @@ summary{font-weight:900;color:#2563eb;cursor:pointer;font-size:1.05rem;}
 .checkbox-item input{width:auto;margin-right:8px;margin-bottom:0;}
 .checkbox-item:hover{background:#eff6ff;}
 .codigo-ayuda{font-size:13px;color:#64748b;margin-top:-10px;margin-bottom:18px;line-height:1.5;}
+.alerta-pago{background:#fff7ed;border-left:5px solid #f97316;padding:18px;border-radius:12px;margin:20px 0;font-weight:600;color:#9a3412;line-height:1.6;}
+.separador{margin:30px 0;border:none;border-top:1px solid #e2e8f0;}
+.titulo-bloque{margin-bottom:20px;color:#2563eb;}
 .legal-box{margin:20px 0;padding:15px;background:#f8fafc;border-radius:10px;border:1px solid #e2e8f0;}
 .legal-box label{font-size:14px;line-height:1.6;font-weight:600;color:#334155;}
 .legal-box input{width:auto;margin-right:8px;margin-bottom:0;}
@@ -79,7 +82,8 @@ summary{font-weight:900;color:#2563eb;cursor:pointer;font-size:1.05rem;}
 <h3>¿Cómo funciona?</h3>
 <ul>
 <li>Pagas el valor promocional.</li>
-<li>Registras tus datos y exámenes solicitados.</li>
+<li>Guarda el código de autorización Transbank.</li>
+<li>Registra tus datos y exámenes solicitados.</li>
 <li>El médico revisa la solicitud.</li>
 <li>Si corresponde, se emite la orden en PDF.</li>
 </ul>
@@ -99,7 +103,7 @@ summary{font-weight:900;color:#2563eb;cursor:pointer;font-size:1.05rem;}
 <div class="form-card">
 
 <h2>Solicitar Orden</h2>
-<p class="subtitle">Primero realiza el pago en Transbank y luego registra tus datos junto al código de autorización.</p>
+<p class="subtitle">Primero realiza el pago en Transbank. Luego ingresa el código de autorización para habilitar el envío de tu solicitud.</p>
 
 <div id="mensaje" class="message"></div>
 
@@ -107,7 +111,31 @@ summary{font-weight:900;color:#2563eb;cursor:pointer;font-size:1.05rem;}
 Pagar $4.990 en Transbank
 </a>
 
+<div class="alerta-pago">
+⚠️ IMPORTANTE: Antes de cerrar Transbank, guarda o captura el código de autorización de tu pago.
+<br><br>
+Sin este código no podrás enviar tu solicitud para revisión médica.
+</div>
+
 <form id="pacienteForm">
+
+<label>Código de autorización Transbank *</label>
+<input
+id="comprobante"
+type="text"
+required
+minlength="6"
+maxlength="20"
+placeholder="Ej: 123456"
+oninput="validarCodigoTransbank()">
+
+<p class="codigo-ayuda">
+Ingresa el código de autorización entregado por Transbank. El botón de envío se habilitará únicamente después de ingresarlo.
+</p>
+
+<hr class="separador">
+
+<h3 class="titulo-bloque">Datos del paciente</h3>
 
 <label>Nombre completo</label>
 <input id="nombrePaciente" type="text" required>
@@ -339,20 +367,6 @@ Pagar $4.990 en Transbank
 
 <label>Motivo de la solicitud / antecedentes relevantes</label>
 <textarea id="motivo" rows="5" placeholder="Ej: control preventivo, seguimiento, síntomas, indicación profesional, etc."></textarea>
-
-<label>Código de autorización Transbank *</label>
-<input
-id="comprobante"
-type="text"
-required
-minlength="6"
-maxlength="20"
-placeholder="Ej: 123456"
-oninput="validarCodigoTransbank()">
-
-<p class="codigo-ayuda">
-Ingrese el código de autorización entregado por Transbank al finalizar el pago. El botón de envío se habilitará solo cuando ingreses el código.
-</p>
 
 <div class="legal-box">
 <label>
