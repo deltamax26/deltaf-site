@@ -386,6 +386,7 @@ Enviar Solicitud al Médico Autorizador
 <script>
 const SUPABASE_URL = "https://goxkmtnmfessroveanje.supabase.co";
 const SUPABASE_ANON_KEY = "sb_publishable_w8xrtEanlJJAc5FYvk1X5A_fKu9vb5d";
+const FUNCTION_EMAIL_URL = "https://goxkmtnmfessroveanje.supabase.co/functions/v1/resend-email";
 
 const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
@@ -401,6 +402,57 @@ function mostrarMensaje(texto,tipo){
 mensaje.textContent = texto;
 mensaje.className = "message " + tipo;
 window.scrollTo({top:0,behavior:"smooth"});
+}
+
+function limpiarHtml(valor){
+if(!valor) return "-";
+return String(valor).replace(/</g,"&lt;").replace(/>/g,"&gt;");
+}
+
+async function enviarCorreoAdminSolicitudProfesional(datos){
+try{
+await fetch(FUNCTION_EMAIL_URL,{
+method:"POST",
+headers:{"Content-Type":"application/json"},
+body:JSON.stringify({
+to:"figueroabernalm@gmail.com",
+subject:"Nueva solicitud profesional DeltaF",
+html:`
+<div style="font-family:Arial,sans-serif;color:#1e293b;line-height:1.5;">
+<h2 style="color:#2563eb;">Nueva solicitud profesional DeltaF</h2>
+<p>Un profesional ha enviado una nueva solicitud de orden médica para revisión.</p>
+
+<h3>Datos del profesional</h3>
+<p><strong>Nombre:</strong> ${limpiarHtml(datos.nombreProfesional)}</p>
+<p><strong>Email:</strong> ${limpiarHtml(datos.emailProfesional)}</p>
+<p><strong>Profesión:</strong> ${limpiarHtml(datos.profesionProfesional)}</p>
+<p><strong>Registro SIS:</strong> ${limpiarHtml(datos.registroSis)}</p>
+
+<h3>Datos del paciente</h3>
+<p><strong>Nombre:</strong> ${limpiarHtml(datos.nombrePaciente)}</p>
+<p><strong>RUT:</strong> ${limpiarHtml(datos.rutPaciente)}</p>
+<p><strong>Correo:</strong> ${limpiarHtml(datos.correoPaciente)}</p>
+<p><strong>Teléfono:</strong> ${limpiarHtml(datos.telefonoPaciente)}</p>
+
+<h3>Exámenes solicitados</h3>
+<p>${limpiarHtml(datos.examenes)}</p>
+
+<h3>Justificación / antecedentes</h3>
+<p>${limpiarHtml(datos.motivo).replaceAll("\\n","<br>")}</p>
+
+<p><strong>Estado:</strong> Pendiente de revisión médica.</p>
+
+<hr>
+<p style="font-size:12px;color:#64748b;">
+Revisar esta solicitud en el panel médico o panel administrador DeltaF.
+</p>
+</div>
+`
+})
+});
+}catch(error){
+console.log("No se pudo enviar correo al admin:", error);
+}
 }
 
 function generarCodigo(){
@@ -557,6 +609,19 @@ observaciones: observaciones
 if(ordenError){
 throw ordenError;
 }
+
+await enviarCorreoAdminSolicitudProfesional({
+nombreProfesional: profesional.nombre,
+emailProfesional: profesional.email,
+profesionProfesional: profesional.profesion,
+registroSis: profesional.registro_sis,
+nombrePaciente: nombrePaciente,
+rutPaciente: rutPaciente,
+correoPaciente: correoPaciente,
+telefonoPaciente: telefonoPaciente,
+examenes: textoExamenes,
+motivo: motivoFinal
+});
 
 const nuevasOrdenes = saldoActual - 1;
 
