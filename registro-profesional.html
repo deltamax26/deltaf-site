@@ -318,8 +318,14 @@ const html = `
 </div>
 `;
 
+const destinatarios = [
+"figueroabernalm@gmail.com",
+"contactodeltaf@gmail.com"
+];
+
+for(const correo of destinatarios){
 const payload = {
-to: "figueroabernalm@gmail.com, contactodeltaf@gmail.com",
+to: correo,
 subject: "Nuevo registro profesional pendiente - DeltaF",
 html: html
 };
@@ -334,7 +340,8 @@ body: JSON.stringify(payload)
 
 if(!response.ok){
 const texto = await response.text();
-throw new Error("No se pudo enviar correo de aviso: " + texto);
+console.error("Error enviando correo a " + correo + ": " + texto);
+}
 }
 
 return true;
@@ -407,7 +414,6 @@ if(insertError){
 throw insertError;
 }
 
-try{
 await enviarCorreoAvisoRegistroProfesional({
 nombreCompleto: nombreCompleto,
 rut: rut,
@@ -419,9 +425,6 @@ telefono: telefono,
 direccion: direccion || "-",
 informacionAdicional: informacionAdicional || "-"
 });
-}catch(correoError){
-console.error(correoError);
-}
 
 mostrarMensaje("Solicitud enviada correctamente. DeltaF revisará sus antecedentes y le contactará por correo.", "success");
 form.reset();
