@@ -6,6 +6,7 @@
 <title>Panel Administrador | DeltaF</title>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js"></script>
 
 <style>
 body{margin:0;font-family:Arial,sans-serif;background:#f4f8fb;color:#1f2937;}
@@ -21,7 +22,8 @@ header h1{margin:0;font-size:24px;}
 .section h2{margin-top:0;color:#0f172a;}
 .form-grid{display:grid;grid-template-columns:2fr 1fr 2fr auto;gap:15px;align-items:end;}
 label{font-weight:bold;display:block;margin-bottom:6px;}
-input,select{width:100%;padding:12px;border:1px solid #cbd5e1;border-radius:8px;}
+input,select,textarea{width:100%;padding:12px;border:1px solid #cbd5e1;border-radius:8px;box-sizing:border-box;}
+textarea{min-height:110px;resize:vertical;}
 table{width:100%;border-collapse:collapse;min-width:1150px;}
 th,td{border-bottom:1px solid #e5e7eb;padding:12px;text-align:left;font-size:14px;vertical-align:top;}
 th{background:#e0f2fe;color:#075985;}
@@ -29,8 +31,10 @@ th{background:#e0f2fe;color:#075985;}
 .pendiente{background:#fef3c7;color:#92400e;}
 .emitida,.aprobado,.aprobada{background:#dcfce7;color:#166534;}
 .rechazado,.rechazada{background:#fee2e2;color:#991b1b;}
+.modificacion{background:#ffedd5;color:#9a3412;}
 .error{background:#fee2e2;color:#991b1b;padding:12px;border-radius:8px;display:none;margin-bottom:20px;}
 .success{background:#dcfce7;color:#166534;padding:12px;border-radius:8px;display:none;margin-bottom:20px;}
+.info{background:#eff6ff;color:#1e40af;padding:12px;border-radius:8px;display:none;margin-bottom:20px;}
 .btn{border:none;padding:8px 12px;border-radius:8px;cursor:pointer;font-weight:bold;margin:3px;}
 .btn-approve{background:#16a34a;color:white;}
 .btn-reject{background:#dc2626;color:white;}
@@ -38,6 +42,15 @@ th{background:#e0f2fe;color:#075985;}
 .btn-export{background:#16a34a;color:white;padding:12px 18px;margin-bottom:20px;}
 .btn-reload{background:#0284c7;color:white;padding:12px 18px;margin-bottom:20px;}
 .btn-main{background:#2563eb;color:white;padding:13px 18px;}
+.btn-modify{background:#f59e0b;color:white;}
+.detail-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:15px;margin-bottom:20px;}
+.field{background:#f8fafc;padding:14px;border-radius:10px;border:1px solid #e2e8f0;}
+.field small{display:block;color:#64748b;margin-bottom:5px;font-weight:bold;}
+.field div{white-space:pre-wrap;}
+.actions-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px;margin-top:20px;}
+.origin{font-weight:bold;padding:6px 10px;border-radius:8px;display:inline-block;}
+.origin-prof{background:#dbeafe;color:#1e40af;}
+.origin-pac{background:#f3e8ff;color:#6b21a8;}
 @media(max-width:900px){.form-grid{grid-template-columns:1fr;}}
 </style>
 </head>
@@ -53,6 +66,7 @@ th{background:#e0f2fe;color:#075985;}
 
 <div id="mensajeError" class="error"></div>
 <div id="mensajeOk" class="success"></div>
+<div id="mensajeInfo" class="info"></div>
 
 <div class="cards">
 <div class="card"><h3>Total ventas del día</h3><p id="ventasDia">$0</p></div>
@@ -63,6 +77,62 @@ th{background:#e0f2fe;color:#075985;}
 <div class="card"><h3>Órdenes emitidas</h3><p id="ordenesEmitidas">0</p></div>
 <div class="card"><h3>Profesionales registrados</h3><p id="profesionalesRegistrados">0</p></div>
 <div class="card"><h3>Profesionales pendientes</h3><p id="profesionalesPendientes">0</p></div>
+</div>
+
+<div class="section">
+<h2>Gestión médica de solicitudes</h2>
+<button class="btn btn-reload" onclick="cargarDashboard()">Actualizar</button>
+<button class="btn btn-export" onclick="exportarSolicitudesMedicasExcel()">Exportar solicitudes médicas</button>
+
+<table id="tablaSolicitudesMedicas">
+<thead>
+<tr>
+<th>Código</th>
+<th>Origen</th>
+<th>Paciente</th>
+<th>RUT</th>
+<th>Correo</th>
+<th>Exámenes</th>
+<th>Fecha</th>
+<th>Estado</th>
+<th>Acciones</th>
+</tr>
+</thead>
+<tbody>
+<tr><td colspan="9">Cargando solicitudes médicas...</td></tr>
+</tbody>
+</table>
+</div>
+
+<div id="detalleMedico" class="section" style="display:none;">
+<h2>Revisión médica desde administración</h2>
+
+<div class="detail-grid">
+<div class="field"><small>Código</small><div id="detalleCodigo"></div></div>
+<div class="field"><small>Origen</small><div id="detalleOrigen"></div></div>
+<div class="field"><small>Paciente</small><div id="detallePaciente"></div></div>
+<div class="field"><small>RUT</small><div id="detalleRut"></div></div>
+<div class="field"><small>Correo</small><div id="detalleCorreo"></div></div>
+<div class="field"><small>Fecha</small><div id="detalleFecha"></div></div>
+<div class="field"><small>Estado</small><div id="detalleEstado"></div></div>
+<div class="field"><small>Comprobante</small><div id="detalleComprobante"></div></div>
+</div>
+
+<label>Exámenes solicitados / modificados</label>
+<textarea id="detalleExamenesEditable"></textarea>
+
+<label style="margin-top:15px;">Motivo / Justificación clínica</label>
+<textarea id="detalleMotivoEditable"></textarea>
+
+<label style="margin-top:15px;">Observaciones médicas</label>
+<textarea id="observacionesMedicas" placeholder="Agregar observaciones para el paciente o profesional..."></textarea>
+
+<div class="actions-grid">
+<button class="btn btn-approve" onclick="aprobarComoAdmin()">✅ Aprobar y enviar PDF</button>
+<button class="btn btn-modify" onclick="solicitarModificacionAdmin()">✏️ Solicitar modificación</button>
+<button class="btn btn-reject" onclick="rechazarComoAdmin()">❌ Rechazar</button>
+<button class="btn btn-reload" onclick="cerrarDetalleMedico()">Cerrar detalle</button>
+</div>
 </div>
 
 <div class="section">
@@ -196,7 +266,16 @@ th{background:#e0f2fe;color:#075985;}
 
 <script>
 const SUPABASE_URL = "https://goxkmtnmfessroveanje.supabase.co";
-const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImdveGttdG5tZmVzc3JvdmVhbmplIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODE4MjcyNTEsImV4cCI6MjA5NzQwMzI1MX0.bHIKtMF9K5PTHgYdacYpJgr4ga0pHa11_8j5Vgkn-gI";
+const SUPABASE_KEY = "sb_publishable_w8xrtEanlJJAc5FYvk1X5A_fKu9vb5d";
+const FUNCTION_EMAIL_URL = "https://goxkmtnmfessroveanje.supabase.co/functions/v1/resend-email";
+const STORAGE_BUCKET = "ordenes";
+
+const MEDICO_NOMBRE = "Dra. Carolina Domínguez";
+const MEDICO_RUT = "RUT Médico: 24.891.056-9";
+const MEDICO_REGISTRO = "Registro SIS: 544925";
+const MEDICO_ESPECIALIDAD = "Médico autorizador";
+const LOGO_URL = "https://deltaf.site/img/logo-deltaf.png";
+const FIRMA_URL = "https://deltaf.site/img/firma-carolina.jpg";
 
 const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
@@ -204,6 +283,9 @@ let solicitudesGlobal = [];
 let profesionalesGlobal = [];
 let solicitudesPacientesGlobal = [];
 let comprasGlobal = [];
+let ordenesMedicasGlobal = [];
+let solicitudesMedicasGlobal = [];
+let solicitudMedicaSeleccionada = null;
 
 function mostrarError(texto){
 const div=document.getElementById("mensajeError");
@@ -217,7 +299,20 @@ const div=document.getElementById("mensajeOk");
 div.style.display="block";
 div.innerText=texto;
 window.scrollTo({top:0,behavior:"smooth"});
-setTimeout(()=>{div.style.display="none";},3000);
+setTimeout(()=>{div.style.display="none";},4000);
+}
+
+function mostrarInfo(texto){
+const div=document.getElementById("mensajeInfo");
+div.style.display="block";
+div.innerText=texto;
+window.scrollTo({top:0,behavior:"smooth"});
+}
+
+function limpiarMensajes(){
+document.getElementById("mensajeError").style.display="none";
+document.getElementById("mensajeOk").style.display="none";
+document.getElementById("mensajeInfo").style.display="none";
 }
 
 function formatoPeso(valor){
@@ -251,8 +346,50 @@ if(valor === null || valor === undefined) return "";
 return String(valor).replace(/"/g,'""').replace(/\n/g," ").replace(/\r/g," ");
 }
 
+function limpiarTexto(valor){
+if(!valor) return "-";
+return String(valor).replace(/</g,"&lt;").replace(/>/g,"&gt;");
+}
+
+function limpiarPdf(valor){
+if(!valor) return "-";
+return String(valor).replace(/[\r\n]+/g," ").trim();
+}
+
+function formatearFecha(fechaISO){
+if(!fechaISO) return "-";
+return new Date(fechaISO).toLocaleDateString("es-CL");
+}
+
+function obtenerBase64DeDataUri(dataUri){
+return dataUri.split(",")[1];
+}
+
+async function cargarImagenBase64(url){
+return new Promise((resolve) => {
+const img = new Image();
+img.crossOrigin = "anonymous";
+img.onload = function(){
+try{
+const canvas = document.createElement("canvas");
+canvas.width = img.width;
+canvas.height = img.height;
+const ctx = canvas.getContext("2d");
+ctx.drawImage(img,0,0);
+resolve(canvas.toDataURL("image/png"));
+}catch(error){
+resolve(null);
+}
+};
+img.onerror = function(){
+resolve(null);
+};
+img.src = url + "?v=" + Date.now();
+});
+}
+
 async function cargarDashboard(){
-document.getElementById("mensajeError").style.display="none";
+limpiarMensajes();
 
 try{
 const {data: solicitudes, error: errorSolicitudes}=await supabaseClient
@@ -263,7 +400,8 @@ if(errorSolicitudes) throw errorSolicitudes;
 
 const {data: pacientes, error: errorPacientes}=await supabaseClient
 .from("solicitudes_pacientes")
-.select("*");
+.select("*")
+.order("created_at",{ascending:false});
 
 if(errorPacientes) throw errorPacientes;
 
@@ -276,14 +414,42 @@ if(errorProfesionales) throw errorProfesionales;
 
 const {data: compras, error: errorCompras}=await supabaseClient
 .from("compras_ordenes")
-.select("*");
+.select("*")
+.order("created_at",{ascending:false});
 
 if(errorCompras) throw errorCompras;
+
+const {data: ordenesMedicas, error: errorOrdenesMedicas}=await supabaseClient
+.from("ordenes")
+.select("*")
+.order("created_at",{ascending:false});
+
+if(errorOrdenesMedicas) throw errorOrdenesMedicas;
 
 solicitudesGlobal=solicitudes||[];
 solicitudesPacientesGlobal=pacientes||[];
 profesionalesGlobal=profesionales||[];
 comprasGlobal=compras||[];
+ordenesMedicasGlobal=ordenesMedicas||[];
+
+solicitudesMedicasGlobal=[
+...ordenesMedicasGlobal.map(o=>({
+...o,
+_origen:"profesional",
+_codigo:o.codigo || "-",
+_examenes:o.tipo_orden || "-",
+_tabla:"ordenes"
+})),
+...solicitudesPacientesGlobal.map(p=>({
+...p,
+_origen:"paciente",
+_codigo:"PAC-" + p.id,
+_examenes:p.examenes_solicitados || "-",
+_tabla:"solicitudes_pacientes"
+}))
+];
+
+solicitudesMedicasGlobal.sort((a,b)=>new Date(b.created_at)-new Date(a.created_at));
 
 let hoy=fechaHoyChile();
 let ventasDia=0;
@@ -294,14 +460,8 @@ let comprasPendientes=0;
 let emitidas=0;
 let profesionalesPendientes=0;
 
-solicitudesGlobal.forEach(s=>{
-const fecha=s.created_at ? s.created_at.split("T")[0] : "";
-const monto=Number(s.monto || s.valor || 0);
-
-if(fecha===hoy) ventasDia += monto;
-if(s.created_at && esMismoMes(s.created_at)) ventasMes += monto;
-
-const estado=(s.estado || "").toLowerCase();
+ordenesMedicasGlobal.forEach(s=>{
+const estado=(s.estado || "pendiente").toLowerCase();
 if(estado==="pendiente") pendientes++;
 if(estado==="emitida" || estado==="aprobada" || estado==="aprobado") emitidas++;
 });
@@ -309,11 +469,10 @@ if(estado==="emitida" || estado==="aprobada" || estado==="aprobado") emitidas++;
 solicitudesPacientesGlobal.forEach(s=>{
 const fecha=s.created_at ? s.created_at.split("T")[0] : "";
 const monto=Number(s.monto || 0);
+const estado=(s.estado || "").toLowerCase();
 
 if(fecha===hoy) ventasDia += monto;
 if(s.created_at && esMismoMes(s.created_at)) ventasMes += monto;
-
-const estado=(s.estado || "").toLowerCase();
 if(estado==="pendiente") pacientesPendientes++;
 if(estado==="emitida" || estado==="aprobada" || estado==="aprobado") emitidas++;
 });
@@ -324,7 +483,6 @@ const monto=Number(c.monto || 0);
 const estado=(c.estado || "").toLowerCase();
 
 if(estado==="pendiente") comprasPendientes++;
-
 if(estado==="aprobada" || estado==="aprobado"){
 if(fecha===hoy) ventasDia += monto;
 if(c.created_at && esMismoMes(c.created_at)) ventasMes += monto;
@@ -345,6 +503,7 @@ document.getElementById("ordenesEmitidas").innerText=emitidas;
 document.getElementById("profesionalesRegistrados").innerText=profesionalesGlobal.length;
 document.getElementById("profesionalesPendientes").innerText=profesionalesPendientes;
 
+pintarTablaSolicitudesMedicas(solicitudesMedicasGlobal);
 pintarTablaCompras(comprasGlobal);
 pintarTablaPacientes(solicitudesPacientesGlobal);
 pintarTablaSolicitudes(solicitudesGlobal);
@@ -354,6 +513,596 @@ cargarSelectProfesionales(profesionalesGlobal);
 }catch(error){
 console.error(error);
 mostrarError("Error al cargar el panel: " + error.message);
+}
+}
+
+function pintarTablaSolicitudesMedicas(solicitudes){
+const tbody=document.querySelector("#tablaSolicitudesMedicas tbody");
+tbody.innerHTML="";
+
+if(!solicitudes || solicitudes.length===0){
+tbody.innerHTML=`<tr><td colspan="9">No hay solicitudes médicas registradas.</td></tr>`;
+return;
+}
+
+solicitudes.forEach(s=>{
+const estado=(s.estado || "pendiente").toLowerCase();
+const origenTexto=s._origen==="paciente" ? "Paciente directo" : "Profesional";
+const origenClase=s._origen==="paciente" ? "origin origin-pac" : "origin origin-prof";
+
+const tr=document.createElement("tr");
+
+tr.innerHTML=`
+<td>${limpiarTexto(s._codigo || "-")}</td>
+<td><span class="${origenClase}">${origenTexto}</span></td>
+<td>${limpiarTexto(s.nombre_paciente || "-")}</td>
+<td>${limpiarTexto(s.rut_paciente || "-")}</td>
+<td>${limpiarTexto(s.correo_paciente || "-")}</td>
+<td>${limpiarTexto(s._examenes || "-")}</td>
+<td>${formatearFecha(s.created_at)}</td>
+<td><span class="badge ${estado}">${s.estado || "pendiente"}</span></td>
+<td>
+<button class="btn btn-main" onclick="seleccionarSolicitudMedica('${s._origen}','${s.id}')">Ver / Resolver</button>
+</td>
+`;
+
+tbody.appendChild(tr);
+});
+}
+
+function seleccionarSolicitudMedica(origen,id){
+const item=solicitudesMedicasGlobal.find(s=>String(s.id)===String(id) && s._origen===origen);
+
+if(!item){
+mostrarError("No se encontró la solicitud seleccionada.");
+return;
+}
+
+solicitudMedicaSeleccionada={...item};
+
+document.getElementById("detalleCodigo").textContent=item._codigo || "-";
+document.getElementById("detalleOrigen").textContent=item._origen==="paciente" ? "Paciente directo" : "Profesional";
+document.getElementById("detallePaciente").textContent=item.nombre_paciente || "-";
+document.getElementById("detalleRut").textContent=item.rut_paciente || "-";
+document.getElementById("detalleCorreo").textContent=item.correo_paciente || "-";
+document.getElementById("detalleFecha").textContent=formatearFecha(item.created_at);
+document.getElementById("detalleEstado").textContent=item.estado || "pendiente";
+document.getElementById("detalleComprobante").textContent=item.comprobante || "-";
+document.getElementById("detalleExamenesEditable").value=item._examenes || "";
+document.getElementById("detalleMotivoEditable").value=item.motivo || "";
+document.getElementById("observacionesMedicas").value=item.observaciones || "";
+
+document.getElementById("detalleMedico").style.display="block";
+window.scrollTo({top:document.getElementById("detalleMedico").offsetTop - 20,behavior:"smooth"});
+}
+
+function cerrarDetalleMedico(){
+document.getElementById("detalleMedico").style.display="none";
+solicitudMedicaSeleccionada=null;
+}
+
+async function guardarEdicionSolicitudMedica(){
+if(!solicitudMedicaSeleccionada){
+throw new Error("No hay solicitud seleccionada.");
+}
+
+const examenes=document.getElementById("detalleExamenesEditable").value.trim();
+const motivo=document.getElementById("detalleMotivoEditable").value.trim();
+const observaciones=document.getElementById("observacionesMedicas").value.trim();
+
+let errorUpdate=null;
+
+if(solicitudMedicaSeleccionada._origen==="paciente"){
+const {error}=await supabaseClient
+.from("solicitudes_pacientes")
+.update({
+examenes_solicitados:examenes,
+motivo:motivo
+})
+.eq("id",solicitudMedicaSeleccionada.id);
+
+errorUpdate=error;
+}else{
+const {error}=await supabaseClient
+.from("ordenes")
+.update({
+tipo_orden:examenes,
+motivo:motivo,
+observaciones:observaciones
+})
+.eq("id",solicitudMedicaSeleccionada.id);
+
+errorUpdate=error;
+}
+
+if(errorUpdate) throw errorUpdate;
+
+solicitudMedicaSeleccionada._examenes=examenes;
+solicitudMedicaSeleccionada.motivo=motivo;
+solicitudMedicaSeleccionada.observaciones=observaciones;
+
+return {examenes,motivo,observaciones};
+}
+
+async function enviarCorreo(to,subject,html,attachments=[]){
+if(!to){
+console.log("Sin destinatario de correo.");
+return {success:false,error:"Sin destinatario"};
+}
+
+try{
+const response=await fetch(FUNCTION_EMAIL_URL,{
+method:"POST",
+headers:{"Content-Type":"application/json"},
+body:JSON.stringify({
+to:to,
+subject:subject,
+html:html,
+attachments:attachments
+})
+});
+
+const data=await response.json().catch(()=>({}));
+
+return {
+success:response.ok,
+status:response.status,
+data:data
+};
+
+}catch(error){
+console.log("Error enviando correo:",error);
+return {success:false,error:error};
+}
+}
+
+async function generarPdfOrdenBase64(ordenActual,observaciones){
+const { jsPDF } = window.jspdf;
+const doc = new jsPDF("p","mm","a4");
+
+const logoBase64 = await cargarImagenBase64(LOGO_URL);
+const firmaBase64 = await cargarImagenBase64(FIRMA_URL);
+
+const codigo = ordenActual._codigo || "ORDEN-DELTAF";
+const paciente = limpiarPdf(ordenActual.nombre_paciente || "-");
+const rut = limpiarPdf(ordenActual.rut_paciente || "-");
+const correo = limpiarPdf(ordenActual.correo_paciente || "-");
+const fecha = new Date().toLocaleDateString("es-CL");
+const examenes = limpiarPdf(ordenActual._examenes || "-");
+const motivo = limpiarPdf(ordenActual.motivo || "-");
+const obs = limpiarPdf(observaciones || "Sin observaciones.");
+const folio = codigo + "-" + Date.now();
+
+doc.setDrawColor(37,99,235);
+doc.setFillColor(37,99,235);
+doc.rect(0,0,210,28,"F");
+
+if(logoBase64){
+doc.addImage(logoBase64,"PNG",15,6,42,16);
+}else{
+doc.setTextColor(255,255,255);
+doc.setFont("helvetica","bold");
+doc.setFontSize(20);
+doc.text("DELTAF",15,18);
+}
+
+doc.setTextColor(255,255,255);
+doc.setFont("helvetica","bold");
+doc.setFontSize(15);
+doc.text("ORDEN MÉDICA DE EXÁMENES",75,14);
+doc.setFontSize(9);
+doc.text("Validación médica digital",75,21);
+
+doc.setTextColor(30,41,59);
+doc.setDrawColor(203,213,225);
+doc.setFillColor(248,250,252);
+doc.roundedRect(15,36,180,30,3,3,"FD");
+
+doc.setFont("helvetica","bold");
+doc.setFontSize(11);
+doc.text("Datos de emisión",20,45);
+
+doc.setFont("helvetica","normal");
+doc.setFontSize(10);
+doc.text("Folio: " + folio,20,53);
+doc.text("Fecha de emisión: " + fecha,20,60);
+doc.text("Estado: APROBADA",125,53);
+doc.text("Origen: " + (ordenActual._origen === "paciente" ? "Paciente directo" : "Profesional"),125,60);
+
+doc.setFillColor(239,246,255);
+doc.roundedRect(15,74,180,36,3,3,"F");
+
+doc.setTextColor(37,99,235);
+doc.setFont("helvetica","bold");
+doc.setFontSize(12);
+doc.text("Datos del paciente",20,84);
+
+doc.setTextColor(30,41,59);
+doc.setFont("helvetica","normal");
+doc.setFontSize(10);
+doc.text("Nombre: " + paciente,20,93);
+doc.text("RUT: " + rut,20,101);
+doc.text("Correo: " + correo,100,101);
+
+doc.setTextColor(37,99,235);
+doc.setFont("helvetica","bold");
+doc.setFontSize(12);
+doc.text("Exámenes solicitados",20,124);
+
+doc.setTextColor(30,41,59);
+doc.setFont("helvetica","normal");
+doc.setFontSize(10);
+
+let y = 133;
+const examenesLineas = doc.splitTextToSize(examenes,170);
+doc.text(examenesLineas,20,y);
+y += examenesLineas.length * 6 + 8;
+
+doc.setTextColor(37,99,235);
+doc.setFont("helvetica","bold");
+doc.setFontSize(12);
+doc.text("Motivo / justificación clínica",20,y);
+y += 9;
+
+doc.setTextColor(30,41,59);
+doc.setFont("helvetica","normal");
+doc.setFontSize(10);
+const motivoLineas = doc.splitTextToSize(motivo,170);
+doc.text(motivoLineas,20,y);
+y += motivoLineas.length * 6 + 8;
+
+if(y > 215){
+doc.addPage();
+y = 25;
+}
+
+doc.setTextColor(37,99,235);
+doc.setFont("helvetica","bold");
+doc.setFontSize(12);
+doc.text("Observaciones médicas",20,y);
+y += 9;
+
+doc.setTextColor(30,41,59);
+doc.setFont("helvetica","normal");
+doc.setFontSize(10);
+const obsLineas = doc.splitTextToSize(obs,170);
+doc.text(obsLineas,20,y);
+y += obsLineas.length * 6 + 14;
+
+if(y > 220){
+doc.addPage();
+y = 25;
+}
+
+doc.setDrawColor(203,213,225);
+doc.setFillColor(248,250,252);
+doc.roundedRect(15,y,180,45,3,3,"FD");
+
+doc.setTextColor(37,99,235);
+doc.setFont("helvetica","bold");
+doc.setFontSize(12);
+doc.text("Médico autorizador",20,y+10);
+
+doc.setTextColor(30,41,59);
+doc.setFont("helvetica","bold");
+doc.setFontSize(11);
+doc.text(MEDICO_NOMBRE,20,y+20);
+
+doc.setFont("helvetica","normal");
+doc.setFontSize(10);
+doc.text(MEDICO_ESPECIALIDAD,20,y+27);
+doc.text(MEDICO_RUT,20,y+34);
+doc.text(MEDICO_REGISTRO,20,y+41);
+
+if(firmaBase64){
+doc.addImage(firmaBase64,"PNG",130,y+8,45,22);
+doc.setDrawColor(100,116,139);
+doc.line(125,y+34,185,y+34);
+doc.setFontSize(9);
+doc.text("Firma médica autorizadora",132,y+40);
+}else{
+doc.setDrawColor(100,116,139);
+doc.line(125,y+30,185,y+30);
+doc.setFontSize(9);
+doc.text("Firma médica autorizadora",132,y+37);
+}
+
+doc.setFontSize(8);
+doc.setTextColor(100,116,139);
+doc.text("Código de verificación: " + folio,20,278);
+doc.text("Documento emitido electrónicamente por DeltaF. Validación sujeta a revisión médica.",20,284);
+
+const dataUri = doc.output("datauristring");
+const base64 = obtenerBase64DeDataUri(dataUri);
+const blob = doc.output("blob");
+
+return {
+base64:base64,
+blob:blob,
+filename:codigo + "-" + Date.now() + ".pdf"
+};
+}
+
+async function subirPdfStorage(pdfBlob,filename){
+const {error}=await supabaseClient.storage
+.from(STORAGE_BUCKET)
+.upload(filename,pdfBlob,{
+contentType:"application/pdf",
+upsert:true
+});
+
+if(error) throw error;
+
+const {data:publicData}=supabaseClient.storage
+.from(STORAGE_BUCKET)
+.getPublicUrl(filename);
+
+return publicData.publicUrl;
+}
+
+function crearHtmlAprobacion(ordenActual,observaciones,pdfUrl){
+return `
+<div style="font-family:Arial,sans-serif;color:#1e293b;line-height:1.5;">
+<h2 style="color:#2563eb;">Solicitud aprobada - DeltaF</h2>
+<p>Estimado/a, la solicitud de exámenes fue revisada y aprobada por el médico autorizador.</p>
+<h3>Datos de la solicitud</h3>
+<p><strong>Código:</strong> ${limpiarTexto(ordenActual._codigo || "-")}</p>
+<p><strong>Paciente:</strong> ${limpiarTexto(ordenActual.nombre_paciente || "-")}</p>
+<p><strong>RUT:</strong> ${limpiarTexto(ordenActual.rut_paciente || "-")}</p>
+<p><strong>Exámenes:</strong> ${limpiarTexto(ordenActual._examenes || "-")}</p>
+<h3>Observaciones médicas</h3>
+<p>${limpiarTexto(observaciones || "Sin observaciones adicionales.")}</p>
+<p><strong>Orden médica en PDF:</strong> se adjunta a este correo.</p>
+<p>También puedes verla aquí: <a href="${pdfUrl}" target="_blank">Descargar orden médica</a></p>
+<hr>
+<p style="font-size:12px;color:#64748b;">DeltaF - Plataforma de solicitudes de exámenes.</p>
+</div>
+`;
+}
+
+function crearHtmlRechazo(ordenActual,observaciones){
+return `
+<div style="font-family:Arial,sans-serif;color:#1e293b;line-height:1.5;">
+<h2 style="color:#dc2626;">Solicitud rechazada - DeltaF</h2>
+<p>Estimado/a, la solicitud de exámenes fue revisada por el médico autorizador y ha sido rechazada.</p>
+<h3>Datos de la solicitud</h3>
+<p><strong>Código:</strong> ${limpiarTexto(ordenActual._codigo || "-")}</p>
+<p><strong>Paciente:</strong> ${limpiarTexto(ordenActual.nombre_paciente || "-")}</p>
+<p><strong>RUT:</strong> ${limpiarTexto(ordenActual.rut_paciente || "-")}</p>
+<p><strong>Exámenes:</strong> ${limpiarTexto(ordenActual._examenes || "-")}</p>
+<h3>Motivo / observaciones</h3>
+<p>${limpiarTexto(observaciones || "Sin observaciones registradas.")}</p>
+<hr>
+<p style="font-size:12px;color:#64748b;">DeltaF - Plataforma de solicitudes de exámenes.</p>
+</div>
+`;
+}
+
+function crearHtmlModificacion(ordenActual,observaciones){
+return `
+<div style="font-family:Arial,sans-serif;color:#1e293b;line-height:1.5;">
+<h2 style="color:#f59e0b;">Solicitud requiere modificación - DeltaF</h2>
+<p>Estimado/a, el médico autorizador revisó la solicitud y requiere modificaciones antes de aprobarla.</p>
+<h3>Datos de la solicitud</h3>
+<p><strong>Código:</strong> ${limpiarTexto(ordenActual._codigo || "-")}</p>
+<p><strong>Paciente:</strong> ${limpiarTexto(ordenActual.nombre_paciente || "-")}</p>
+<p><strong>RUT:</strong> ${limpiarTexto(ordenActual.rut_paciente || "-")}</p>
+<p><strong>Exámenes:</strong> ${limpiarTexto(ordenActual._examenes || "-")}</p>
+<h3>Solicitud médica</h3>
+<p>${limpiarTexto(observaciones || "-")}</p>
+<p>Por favor revise la solicitud en DeltaF y realice las correcciones necesarias.</p>
+<hr>
+<p style="font-size:12px;color:#64748b;">DeltaF - Plataforma de solicitudes de exámenes.</p>
+</div>
+`;
+}
+
+async function aprobarComoAdmin(){
+if(!solicitudMedicaSeleccionada){
+mostrarError("Primero selecciona una solicitud.");
+return;
+}
+
+const confirmar=confirm("¿Aprobar esta solicitud y enviar PDF al paciente?");
+if(!confirmar) return;
+
+try{
+mostrarInfo("Guardando modificaciones, generando PDF y enviando correo...");
+
+const edit=await guardarEdicionSolicitudMedica();
+
+const ordenActual={
+...solicitudMedicaSeleccionada,
+_examenes:edit.examenes,
+motivo:edit.motivo
+};
+
+const pdf=await generarPdfOrdenBase64(ordenActual,edit.observaciones);
+const pdfUrl=await subirPdfStorage(pdf.blob,pdf.filename);
+
+let errorUpdate=null;
+
+if(ordenActual._origen==="paciente"){
+const {error}=await supabaseClient
+.from("solicitudes_pacientes")
+.update({
+estado:"aprobada",
+pdf_url:pdfUrl
+})
+.eq("id",ordenActual.id);
+
+errorUpdate=error;
+}else{
+const {error}=await supabaseClient
+.from("ordenes")
+.update({
+estado:"aprobada",
+observaciones:edit.observaciones,
+pdf_url:pdfUrl
+})
+.eq("id",ordenActual.id);
+
+errorUpdate=error;
+}
+
+if(errorUpdate) throw errorUpdate;
+
+await enviarCorreo(
+ordenActual.correo_paciente || "",
+"Orden médica aprobada DeltaF - " + (ordenActual._codigo || ""),
+crearHtmlAprobacion(ordenActual,edit.observaciones,pdfUrl),
+[
+{
+filename:pdf.filename,
+content:pdf.base64
+}
+]
+);
+
+mostrarOk("Solicitud aprobada correctamente. Se generó PDF y se envió correo al paciente.");
+cerrarDetalleMedico();
+await cargarDashboard();
+
+}catch(error){
+console.error(error);
+mostrarError("Error al aprobar solicitud: " + error.message);
+}
+}
+
+async function rechazarComoAdmin(){
+if(!solicitudMedicaSeleccionada){
+mostrarError("Primero selecciona una solicitud.");
+return;
+}
+
+const observaciones=document.getElementById("observacionesMedicas").value.trim();
+
+if(!observaciones){
+alert("Para rechazar, escribe una observación o motivo de rechazo.");
+return;
+}
+
+const confirmar=confirm("¿Seguro que deseas rechazar esta solicitud?");
+if(!confirmar) return;
+
+try{
+mostrarInfo("Rechazando solicitud y enviando correo...");
+
+const edit=await guardarEdicionSolicitudMedica();
+
+const ordenActual={
+...solicitudMedicaSeleccionada,
+_examenes:edit.examenes,
+motivo:edit.motivo
+};
+
+let errorUpdate=null;
+
+if(ordenActual._origen==="paciente"){
+const {error}=await supabaseClient
+.from("solicitudes_pacientes")
+.update({
+estado:"rechazada"
+})
+.eq("id",ordenActual.id);
+
+errorUpdate=error;
+}else{
+const {error}=await supabaseClient
+.from("ordenes")
+.update({
+estado:"rechazada",
+observaciones:edit.observaciones
+})
+.eq("id",ordenActual.id);
+
+errorUpdate=error;
+}
+
+if(errorUpdate) throw errorUpdate;
+
+await enviarCorreo(
+ordenActual.correo_paciente || "",
+"Solicitud rechazada DeltaF - " + (ordenActual._codigo || ""),
+crearHtmlRechazo(ordenActual,edit.observaciones)
+);
+
+mostrarOk("Solicitud rechazada correctamente y correo enviado.");
+cerrarDetalleMedico();
+await cargarDashboard();
+
+}catch(error){
+console.error(error);
+mostrarError("Error al rechazar solicitud: " + error.message);
+}
+}
+
+async function solicitarModificacionAdmin(){
+if(!solicitudMedicaSeleccionada){
+mostrarError("Primero selecciona una solicitud.");
+return;
+}
+
+const observaciones=document.getElementById("observacionesMedicas").value.trim();
+
+if(!observaciones){
+alert("Para solicitar modificación, escribe la observación médica.");
+return;
+}
+
+const confirmar=confirm("¿Solicitar modificación de esta solicitud?");
+if(!confirmar) return;
+
+try{
+mostrarInfo("Registrando solicitud de modificación y enviando correo...");
+
+const edit=await guardarEdicionSolicitudMedica();
+
+const ordenActual={
+...solicitudMedicaSeleccionada,
+_examenes:edit.examenes,
+motivo:edit.motivo
+};
+
+let errorUpdate=null;
+const texto="Solicitud de modificación médica: " + edit.observaciones;
+
+if(ordenActual._origen==="paciente"){
+const {error}=await supabaseClient
+.from("solicitudes_pacientes")
+.update({
+estado:"pendiente"
+})
+.eq("id",ordenActual.id);
+
+errorUpdate=error;
+}else{
+const {error}=await supabaseClient
+.from("ordenes")
+.update({
+estado:"pendiente",
+observaciones:texto
+})
+.eq("id",ordenActual.id);
+
+errorUpdate=error;
+}
+
+if(errorUpdate) throw errorUpdate;
+
+await enviarCorreo(
+ordenActual.correo_paciente || "",
+"Solicitud requiere modificación DeltaF - " + (ordenActual._codigo || ""),
+crearHtmlModificacion(ordenActual,edit.observaciones)
+);
+
+mostrarOk("Modificación solicitada correctamente y correo enviado.");
+cerrarDetalleMedico();
+await cargarDashboard();
+
+}catch(error){
+console.error(error);
+mostrarError("Error al solicitar modificación: " + error.message);
 }
 }
 
@@ -437,8 +1186,7 @@ tr.innerHTML=`
 <td>${formatoPeso(Number(s.monto || 0))}</td>
 <td><span class="badge ${estado}">${s.estado || "pendiente"}</span></td>
 <td>
-<button class="btn btn-approve" onclick="cambiarEstadoPaciente('${s.id}','aprobada')">Aprobar</button>
-<button class="btn btn-reject" onclick="cambiarEstadoPaciente('${s.id}','rechazada')">Rechazar</button>
+<button class="btn btn-main" onclick="seleccionarSolicitudMedica('paciente','${s.id}')">Resolver</button>
 </td>
 `;
 
@@ -599,27 +1347,6 @@ mostrarError("Error al rechazar compra: " + error.message);
 }
 }
 
-async function cambiarEstadoPaciente(id,nuevoEstado){
-const confirmar=confirm("¿Seguro que deseas cambiar esta solicitud de paciente a estado: " + nuevoEstado + "?");
-if(!confirmar) return;
-
-try{
-const {error}=await supabaseClient
-.from("solicitudes_pacientes")
-.update({estado:nuevoEstado})
-.eq("id",id);
-
-if(error) throw error;
-
-mostrarOk("Solicitud de paciente actualizada correctamente.");
-await cargarDashboard();
-
-}catch(error){
-console.error(error);
-mostrarError("Error al actualizar solicitud de paciente: " + error.message);
-}
-}
-
 async function cambiarEstadoProfesional(id,nuevoEstado){
 const confirmar=confirm("¿Seguro que deseas cambiar este profesional a estado: " + nuevoEstado + "?");
 if(!confirmar) return;
@@ -747,6 +1474,30 @@ await cargarDashboard();
 console.error(error);
 mostrarError("Error al asignar órdenes: " + error.message);
 }
+}
+
+function exportarSolicitudesMedicasExcel(){
+if(!solicitudesMedicasGlobal || solicitudesMedicasGlobal.length===0){
+alert("No hay solicitudes médicas para exportar.");
+return;
+}
+
+let csv="Codigo,Origen,Paciente,RUT,Correo,Examenes,Motivo,Fecha,Estado,PDF\n";
+
+solicitudesMedicasGlobal.forEach(s=>{
+csv += `"${limpiarCSV(s._codigo || "-")}",`;
+csv += `"${limpiarCSV(s._origen || "-")}",`;
+csv += `"${limpiarCSV(s.nombre_paciente || "-")}",`;
+csv += `"${limpiarCSV(s.rut_paciente || "-")}",`;
+csv += `"${limpiarCSV(s.correo_paciente || "-")}",`;
+csv += `"${limpiarCSV(s._examenes || "-")}",`;
+csv += `"${limpiarCSV(s.motivo || "-")}",`;
+csv += `"${limpiarCSV(s.created_at ? new Date(s.created_at).toLocaleDateString("es-CL") : "-")}",`;
+csv += `"${limpiarCSV(s.estado || "pendiente")}",`;
+csv += `"${limpiarCSV(s.pdf_url || "-")}"\n`;
+});
+
+descargarCSV(csv,"solicitudes_medicas_deltaf.csv");
 }
 
 function exportarComprasExcel(){
