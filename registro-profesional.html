@@ -260,6 +260,7 @@ Una vez aprobado recibirá un correo de confirmación para acceder a la platafor
 <script>
 const SUPABASE_URL = "https://goxkmtnmfessroveanje.supabase.co";
 const SUPABASE_ANON_KEY = "sb_publishable_w8xrtEanlJJAc5FYvk1X5A_fKu9vb5d";
+const FUNCTION_EMAIL_URL = "https://goxkmtnmfessroveanje.supabase.co/functions/v1/resend-email";
 
 const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
@@ -270,6 +271,73 @@ const btnRegistro = document.getElementById("btnRegistro");
 function mostrarMensaje(texto, tipo){
 mensaje.textContent = texto;
 mensaje.className = "message " + tipo;
+}
+
+function limpiarHtml(texto){
+if(!texto) return "-";
+return String(texto)
+.replace(/&/g, "&amp;")
+.replace(/</g, "&lt;")
+.replace(/>/g, "&gt;")
+.replace(/"/g, "&quot;")
+.replace(/'/g, "&#039;");
+}
+
+async function enviarCorreoAvisoRegistroProfesional(datos){
+const html = `
+<div style="font-family:Arial,sans-serif;color:#1e293b;line-height:1.5;">
+  <h2 style="color:#2563eb;">Nuevo registro profesional en DeltaF</h2>
+
+  <p>Un nuevo profesional solicitó acceso a la plataforma DeltaF.</p>
+
+  <h3>Datos del profesional</h3>
+  <p><strong>Nombre:</strong> ${limpiarHtml(datos.nombreCompleto)}</p>
+  <p><strong>RUT:</strong> ${limpiarHtml(datos.rut)}</p>
+  <p><strong>Fecha de nacimiento:</strong> ${limpiarHtml(datos.fechaNacimiento)}</p>
+  <p><strong>Profesión:</strong> ${limpiarHtml(datos.profesion)}</p>
+  <p><strong>Registro SIS:</strong> ${limpiarHtml(datos.registroSis)}</p>
+  <p><strong>Email:</strong> ${limpiarHtml(datos.email)}</p>
+  <p><strong>Teléfono:</strong> ${limpiarHtml(datos.telefono)}</p>
+  <p><strong>Dirección:</strong> ${limpiarHtml(datos.direccion)}</p>
+
+  <h3>Información adicional</h3>
+  <p>${limpiarHtml(datos.informacionAdicional).replaceAll("\\n","<br>")}</p>
+
+  <hr>
+  <p>
+    Revisar y aprobar/rechazar en el panel administrador:
+    <br>
+    <a href="https://deltaf.site/panel-admin.html" target="_blank">
+      Ir al panel administrador DeltaF
+    </a>
+  </p>
+
+  <p style="font-size:12px;color:#64748b;">
+    Notificación automática generada por DeltaF.
+  </p>
+</div>
+`;
+
+const payload = {
+to: "figueroabernalm@gmail.com, contactodeltaf@gmail.com",
+subject: "Nuevo registro profesional pendiente - DeltaF",
+html: html
+};
+
+const response = await fetch(FUNCTION_EMAIL_URL, {
+method: "POST",
+headers: {
+"Content-Type": "application/json"
+},
+body: JSON.stringify(payload)
+});
+
+if(!response.ok){
+const texto = await response.text();
+throw new Error("No se pudo enviar correo de aviso: " + texto);
+}
+
+return true;
 }
 
 form.addEventListener("submit", async function(event){
@@ -284,12 +352,15 @@ btnRegistro.textContent = "Enviando solicitud...";
 const nombre = document.getElementById("nombre").value.trim();
 const apellidos = document.getElementById("apellidos").value.trim();
 const rut = document.getElementById("rut").value.trim();
+const fechaNacimiento = document.getElementById("fechaNacimiento").value;
 const profesion = document.getElementById("profesion").value;
 const registroSis = document.getElementById("registroSis").value.trim();
 const email = document.getElementById("email").value.trim().toLowerCase();
 const telefono = document.getElementById("telefono").value.trim();
+const direccion = document.getElementById("direccion").value.trim();
 const password = document.getElementById("password").value;
 const confirmarPassword = document.getElementById("confirmarPassword").value;
+const informacionAdicional = document.getElementById("informacionAdicional").value.trim();
 
 if(password !== confirmarPassword){
 mostrarMensaje("Las contraseñas no coinciden.", "error");
@@ -334,6 +405,22 @@ ordenes_disponibles: 0
 
 if(insertError){
 throw insertError;
+}
+
+try{
+await enviarCorreoAvisoRegistroProfesional({
+nombreCompleto: nombreCompleto,
+rut: rut,
+fechaNacimiento: fechaNacimiento || "-",
+profesion: profesion,
+registroSis: registroSis,
+email: email,
+telefono: telefono,
+direccion: direccion || "-",
+informacionAdicional: informacionAdicional || "-"
+});
+}catch(correoError){
+console.error(correoError);
 }
 
 mostrarMensaje("Solicitud enviada correctamente. DeltaF revisará sus antecedentes y le contactará por correo.", "success");
