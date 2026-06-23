@@ -297,7 +297,7 @@
     const { data, error } = await supabaseClient
       .from("biblioteca_mnbe")
       .select("*")
-      .eq("activo", true)
+      .or("activo.eq.true,activo.is.null")
       .order("categoria", { ascending: true })
       .order("patologia", { ascending: true });
 
