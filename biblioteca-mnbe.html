@@ -1,0 +1,457 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Biblioteca MNBE | DeltaF</title>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: #f4f7fb;
+      color: #1f2937;
+    }
+
+    header {
+      background: #0f766e;
+      color: white;
+      padding: 18px 28px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    header h1 { margin: 0; font-size: 22px; }
+
+    .btn {
+      border: none;
+      border-radius: 8px;
+      padding: 10px 14px;
+      cursor: pointer;
+      font-weight: bold;
+    }
+
+    .btn-primary { background: #0f766e; color: white; }
+    .btn-light { background: white; color: #0f766e; }
+    .btn-danger { background: #dc2626; color: white; }
+
+    .container {
+      max-width: 1200px;
+      margin: 28px auto;
+      padding: 0 18px;
+    }
+
+    .card {
+      background: white;
+      border-radius: 14px;
+      padding: 22px;
+      box-shadow: 0 8px 22px rgba(0,0,0,0.08);
+      margin-bottom: 18px;
+    }
+
+    .premium {
+      text-align: center;
+      max-width: 760px;
+      margin: 40px auto;
+    }
+
+    .price {
+      font-size: 36px;
+      color: #0f766e;
+      font-weight: bold;
+      margin: 16px 0;
+    }
+
+    input, select, textarea {
+      width: 100%;
+      padding: 12px;
+      border: 1px solid #d1d5db;
+      border-radius: 8px;
+      margin-top: 8px;
+      margin-bottom: 14px;
+      font-size: 15px;
+      box-sizing: border-box;
+    }
+
+    .filters {
+      display: grid;
+      grid-template-columns: 1fr 240px;
+      gap: 12px;
+    }
+
+    .result {
+      border-left: 5px solid #0f766e;
+      padding: 18px;
+      border-radius: 12px;
+      background: #ffffff;
+      margin-bottom: 18px;
+      box-shadow: 0 4px 14px rgba(0,0,0,0.06);
+    }
+
+    .tag {
+      display: inline-block;
+      background: #ccfbf1;
+      color: #115e59;
+      padding: 5px 10px;
+      border-radius: 999px;
+      font-size: 13px;
+      margin-bottom: 8px;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 14px;
+      margin-top: 12px;
+    }
+
+    .box {
+      background: #f9fafb;
+      border: 1px solid #e5e7eb;
+      border-radius: 10px;
+      padding: 14px;
+    }
+
+    .box h4 {
+      margin: 0 0 8px 0;
+      color: #0f766e;
+    }
+
+    .hidden { display: none; }
+
+    .loading {
+      text-align: center;
+      padding: 40px;
+      font-size: 18px;
+    }
+
+    @media (max-width: 780px) {
+      .filters, .grid {
+        grid-template-columns: 1fr;
+      }
+
+      header {
+        flex-direction: column;
+        gap: 10px;
+        text-align: center;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+<header>
+  <h1>📚 Biblioteca Clínica MNBE</h1>
+  <div>
+    <button class="btn btn-light" onclick="volverDashboard()">Volver al Panel</button>
+    <button class="btn btn-danger" onclick="cerrarSesion()">Salir</button>
+  </div>
+</header>
+
+<div class="container">
+
+  <div id="loading" class="loading">
+    Verificando acceso...
+  </div>
+
+  <div id="bloqueado" class="card premium hidden">
+    <h2>Biblioteca MNBE Premium</h2>
+    <p>
+      Acceso clínico avanzado para profesionales de salud.
+      Incluye protocolos organizados por sistema, fisiopatología, biomarcadores,
+      tratamientos MNBE, dosis, mecanismos y referencias.
+    </p>
+
+    <div class="price">$49.000</div>
+    <p><strong>Pago único</strong></p>
+
+    <ul style="text-align:left; max-width:520px; margin:20px auto; line-height:1.8;">
+      <li>Cardiología</li>
+      <li>Digestivo</li>
+      <li>Endocrinología</li>
+      <li>Dermatología</li>
+      <li>Respiratorio</li>
+      <li>Nefrourinario</li>
+      <li>SOMA / Osteomuscular</li>
+      <li>Sueño</li>
+      <li>Neurología, cuando sea habilitada</li>
+    </ul>
+
+    <hr />
+
+    <h3>Solicitar activación</h3>
+    <p>
+      Después de pagar, ingresa el código de autorización Transbank.
+      El administrador revisará el pago y activará tu acceso.
+    </p>
+
+    <label>Código de autorización Transbank</label>
+    <input id="codigoPago" placeholder="Ej: 123456" />
+
+    <button class="btn btn-primary" onclick="registrarPagoMNBE()">
+      Enviar solicitud de activación
+    </button>
+
+    <p id="msgPago"></p>
+  </div>
+
+  <div id="biblioteca" class="hidden">
+
+    <div class="card">
+      <h2>Asistente Clínico MNBE</h2>
+      <p>
+        Busca por patología, síndrome, biomarcador, tratamiento, dosis o mecanismo.
+      </p>
+
+      <div class="filters">
+        <input id="busqueda" placeholder="Ej: Hashimoto, hipertensión, omega-3, IL-1β, insomnio..." oninput="filtrar()" />
+
+        <select id="categoria" onchange="filtrar()">
+          <option value="">Todas las secciones</option>
+          <option value="Cardiología">Cardiología</option>
+          <option value="Digestivo">Digestivo</option>
+          <option value="Endocrinología">Endocrinología</option>
+          <option value="Dermatología">Dermatología</option>
+          <option value="Respiratorio">Respiratorio</option>
+          <option value="Nefrourinario">Nefrourinario</option>
+          <option value="SOMA">SOMA / Osteomuscular</option>
+          <option value="Sueño">Sueño</option>
+          <option value="Neurología">Neurología</option>
+        </select>
+      </div>
+    </div>
+
+    <div id="contador" style="margin-bottom:14px; font-weight:bold;"></div>
+
+    <div id="resultados"></div>
+  </div>
+
+</div>
+
+<script>
+  const SUPABASE_URL = "https://goxkmtnmfessroveanje.supabase.co";
+  const SUPABASE_ANON_KEY = "sb_publishable_w8xrtEanlJJAc5FYvk1X5A_fKu9vb5d";
+
+  const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+  let profesionalActual = null;
+  let registrosMNBE = [];
+
+  async function iniciar() {
+    const loading = document.getElementById("loading");
+    const bloqueado = document.getElementById("bloqueado");
+    const biblioteca = document.getElementById("biblioteca");
+
+    try {
+      const { data: sessionData, error: sessionError } = await supabaseClient.auth.getSession();
+
+      if (sessionError) throw sessionError;
+
+      const session = sessionData.session;
+
+      if (!session || !session.user) {
+        alert("Debes iniciar sesión.");
+        window.location.href = "login.html";
+        return;
+      }
+
+      const email = session.user.email;
+
+      const { data: profesional, error } = await supabaseClient
+        .from("profesionales")
+        .select("*")
+        .eq("email", email)
+        .single();
+
+      if (error || !profesional) {
+        alert("No se encontró tu perfil profesional.");
+        window.location.href = "login.html";
+        return;
+      }
+
+      profesionalActual = profesional;
+
+      loading.classList.add("hidden");
+
+      if (profesional.acceso_mnbe === true) {
+        biblioteca.classList.remove("hidden");
+        await cargarBiblioteca();
+      } else {
+        bloqueado.classList.remove("hidden");
+      }
+
+    } catch (error) {
+      console.error(error);
+      loading.innerHTML = "Error al verificar acceso.";
+    }
+  }
+
+  async function cargarBiblioteca() {
+    const resultados = document.getElementById("resultados");
+    resultados.innerHTML = "<div class='card'>Cargando biblioteca...</div>";
+
+    const { data, error } = await supabaseClient
+      .from("biblioteca_mnbe")
+      .select("*")
+      .eq("activo", true)
+      .order("categoria", { ascending: true })
+      .order("patologia", { ascending: true });
+
+    if (error) {
+      console.error(error);
+      resultados.innerHTML = "<div class='card'>Error al cargar la biblioteca MNBE.</div>";
+      return;
+    }
+
+    registrosMNBE = data || [];
+    filtrar();
+  }
+
+  function filtrar() {
+    const texto = document.getElementById("busqueda").value.toLowerCase().trim();
+    const categoria = document.getElementById("categoria").value;
+    const resultados = document.getElementById("resultados");
+    const contador = document.getElementById("contador");
+
+    let filtrados = registrosMNBE.filter(item => {
+      const coincideCategoria = !categoria || item.categoria === categoria;
+
+      const contenido = `
+        ${item.categoria || ""}
+        ${item.patologia || ""}
+        ${item.fisiopatologia || ""}
+        ${item.biomarcadores || ""}
+        ${item.tratamiento_mnbe || ""}
+        ${item.dosis || ""}
+        ${item.mecanismo || ""}
+        ${item.referencias || ""}
+      `.toLowerCase();
+
+      const coincideTexto = !texto || contenido.includes(texto);
+
+      return coincideCategoria && coincideTexto;
+    });
+
+    contador.innerText = `${filtrados.length} resultado(s) encontrado(s)`;
+
+    if (filtrados.length === 0) {
+      resultados.innerHTML = `
+        <div class="card">
+          No se encontraron resultados. Prueba con otra palabra clave.
+        </div>
+      `;
+      return;
+    }
+
+    resultados.innerHTML = filtrados.map(item => `
+      <div class="result">
+        <span class="tag">${limpiar(item.categoria)}</span>
+        <h2>${limpiar(item.patologia)}</h2>
+
+        <div class="grid">
+          <div class="box">
+            <h4>Fisiopatología</h4>
+            <p>${formatear(item.fisiopatologia)}</p>
+          </div>
+
+          <div class="box">
+            <h4>Biomarcadores / Exámenes</h4>
+            <p>${formatear(item.biomarcadores)}</p>
+          </div>
+
+          <div class="box">
+            <h4>Tratamiento MNBE</h4>
+            <p>${formatear(item.tratamiento_mnbe)}</p>
+          </div>
+
+          <div class="box">
+            <h4>Dosis</h4>
+            <p>${formatear(item.dosis)}</p>
+          </div>
+
+          <div class="box">
+            <h4>Mecanismo</h4>
+            <p>${formatear(item.mecanismo)}</p>
+          </div>
+
+          <div class="box">
+            <h4>Referencias</h4>
+            <p>${formatear(item.referencias)}</p>
+          </div>
+        </div>
+      </div>
+    `).join("");
+  }
+
+  async function registrarPagoMNBE() {
+    const codigo = document.getElementById("codigoPago").value.trim();
+    const msg = document.getElementById("msgPago");
+
+    if (!codigo) {
+      msg.innerHTML = "Debes ingresar el código de autorización Transbank.";
+      msg.style.color = "red";
+      return;
+    }
+
+    if (!profesionalActual) {
+      msg.innerHTML = "No se pudo identificar al profesional.";
+      msg.style.color = "red";
+      return;
+    }
+
+    const payload = {
+      profesional_id: profesionalActual.id,
+      nombre_profesional: profesionalActual.nombre || "",
+      email: profesionalActual.email || "",
+      codigo_pago: codigo,
+      monto: 49000,
+      estado: "pendiente"
+    };
+
+    const { error } = await supabaseClient
+      .from("pagos_mnbe")
+      .insert([payload]);
+
+    if (error) {
+      console.error(error);
+      msg.innerHTML = "Error al registrar solicitud. Intenta nuevamente.";
+      msg.style.color = "red";
+      return;
+    }
+
+    msg.innerHTML = "Solicitud enviada correctamente. El administrador activará tu acceso cuando valide el pago.";
+    msg.style.color = "green";
+
+    document.getElementById("codigoPago").value = "";
+  }
+
+  function limpiar(texto) {
+    if (!texto) return "";
+    return String(texto)
+      .replace(/</g, "&lt;")
+      .replace(/>/g, "&gt;");
+  }
+
+  function formatear(texto) {
+    if (!texto) return "No registrado.";
+    return limpiar(texto).replace(/\n/g, "<br>");
+  }
+
+  function volverDashboard() {
+    window.location.href = "dashboard-profesional.html";
+  }
+
+  async function cerrarSesion() {
+    await supabaseClient.auth.signOut();
+    window.location.href = "login.html";
+  }
+
+  iniciar();
+</script>
+
+</body>
+</html>
