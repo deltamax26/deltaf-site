@@ -68,6 +68,17 @@ background:#1e293b;
 color:white;
 }
 
+.menu a.premium-link{
+background:#064e3b;
+color:#d1fae5;
+font-weight:700;
+}
+
+.menu a.premium-link:hover{
+background:#047857;
+color:white;
+}
+
 .main{
 margin-left:260px;
 flex:1;
@@ -115,6 +126,23 @@ color:#166534;
 .status.pendiente{
 background:#fef3c7;
 color:#92400e;
+}
+
+.status.rechazado{
+background:#fee2e2;
+color:#991b1b;
+}
+
+.badge-mnbe{
+display:inline-block;
+margin-top:10px;
+margin-left:8px;
+padding:6px 12px;
+border-radius:999px;
+font-size:.85rem;
+font-weight:700;
+background:#ccfbf1;
+color:#115e59;
 }
 
 .cards{
@@ -167,6 +195,22 @@ color:#64748b;
 margin-bottom:20px;
 }
 
+.action-card.premium{
+border:2px solid #0f766e;
+background:linear-gradient(180deg,#ffffff 0%,#ecfdf5 100%);
+}
+
+.action-card.premium h2{
+color:#0f766e;
+}
+
+.price{
+font-size:1.8rem;
+font-weight:900;
+color:#0f766e;
+margin-bottom:12px;
+}
+
 .btn{
 display:inline-block;
 background:#2563eb;
@@ -189,6 +233,14 @@ background:#10b981;
 
 .btn-green:hover{
 background:#059669;
+}
+
+.btn-teal{
+background:#0f766e;
+}
+
+.btn-teal:hover{
+background:#115e59;
 }
 
 .notice{
@@ -234,6 +286,10 @@ margin-bottom:25px;
 font-weight:600;
 }
 
+.hidden{
+display:none !important;
+}
+
 @media(max-width:900px){
 .sidebar{
 position:relative;
@@ -268,6 +324,9 @@ flex-direction:column;
 <a href="mis-solicitudes.html?estado=aprobada">✅ Aprobadas</a>
 <a href="mis-solicitudes.html?estado=rechazada">❌ Rechazadas</a>
 <a href="comprar-ordenes.html">💳 Comprar Órdenes</a>
+
+<a id="menuMNBE" class="premium-link hidden" href="biblioteca-mnbe.html">📚 Biblioteca MNBE</a>
+
 <a href="#">👤 Mi Perfil</a>
 <button id="cerrarSesion">🚪 Cerrar Sesión</button>
 </div>
@@ -300,6 +359,7 @@ Cargando información del profesional...
 <span id="profesionProfesional"></span>
 <br>
 <span id="estadoProfesional" class="status"></span>
+<span id="badgeMNBE" class="badge-mnbe hidden">Biblioteca MNBE activa</span>
 </div>
 
 </div>
@@ -348,6 +408,19 @@ Cargando información del profesional...
 <a href="mis-solicitudes.html" class="btn btn-green">Ver Historial / PDFs</a>
 </div>
 
+<div id="cardMNBEActiva" class="action-card premium hidden">
+<h2>📚 Biblioteca MNBE</h2>
+<p>Accede al asistente clínico con protocolos por sistema, fisiopatología, biomarcadores, dosis, mecanismos y referencias.</p>
+<a href="biblioteca-mnbe.html" class="btn btn-teal">Abrir Biblioteca</a>
+</div>
+
+<div id="cardMNBEBloqueada" class="action-card premium hidden">
+<h2>📚 Biblioteca MNBE Premium</h2>
+<div class="price">$49.000</div>
+<p>Pago único para activar tratamientos MNBE por sistema: Cardiología, Digestivo, Endocrino, Dermatología, Respiratorio, Nefrourinario, SOMA y Sueño.</p>
+<a href="biblioteca-mnbe.html" class="btn btn-teal">Solicitar Activación</a>
+</div>
+
 </div>
 
 <div class="notice">
@@ -377,6 +450,11 @@ const contenidoDashboard = document.getElementById("contenidoDashboard");
 const cerrarSesion = document.getElementById("cerrarSesion");
 const alertaOrdenes = document.getElementById("alertaOrdenes");
 const btnNuevaSolicitud = document.getElementById("btnNuevaSolicitud");
+
+const menuMNBE = document.getElementById("menuMNBE");
+const badgeMNBE = document.getElementById("badgeMNBE");
+const cardMNBEActiva = document.getElementById("cardMNBEActiva");
+const cardMNBEBloqueada = document.getElementById("cardMNBEBloqueada");
 
 function mostrarError(texto){
 loading.style.display = "none";
@@ -416,6 +494,22 @@ return 0;
 }
 
 return count || 0;
+}
+
+function configurarAccesoMNBE(profesional){
+const tieneMNBE = profesional.acceso_mnbe === true;
+
+if(tieneMNBE){
+menuMNBE.classList.remove("hidden");
+badgeMNBE.classList.remove("hidden");
+cardMNBEActiva.classList.remove("hidden");
+cardMNBEBloqueada.classList.add("hidden");
+} else {
+menuMNBE.classList.add("hidden");
+badgeMNBE.classList.add("hidden");
+cardMNBEActiva.classList.add("hidden");
+cardMNBEBloqueada.classList.remove("hidden");
+}
 }
 
 async function cargarDashboard(){
@@ -472,6 +566,8 @@ document.getElementById("profesionProfesional").textContent = "Profesión: " + p
 const estadoSpan = document.getElementById("estadoProfesional");
 estadoSpan.textContent = "Estado: " + profesional.estado;
 estadoSpan.classList.add(profesional.estado);
+
+configurarAccesoMNBE(profesional);
 
 const ordenesDisponibles = profesional.ordenes_disponibles || 0;
 
