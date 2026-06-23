@@ -42,6 +42,8 @@ th{background:#e0f2fe;color:#075985;}
 .btn-export{background:#16a34a;color:white;padding:12px 18px;margin-bottom:20px;}
 .btn-reload{background:#0284c7;color:white;padding:12px 18px;margin-bottom:20px;}
 .btn-main{background:#2563eb;color:white;padding:13px 18px;}
+.btn-mnbe{background:#0f766e;color:white;}
+.btn-mnbe-off{background:#64748b;color:white;}
 .btn-modify{background:#f59e0b;color:white;}
 .detail-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:15px;margin-bottom:20px;}
 .field{background:#f8fafc;padding:14px;border-radius:10px;border:1px solid #e2e8f0;}
@@ -74,6 +76,7 @@ th{background:#e0f2fe;color:#075985;}
 <div class="card"><h3>Solicitudes profesionales pendientes</h3><p id="solicitudesPendientes">0</p></div>
 <div class="card"><h3>Solicitudes pacientes pendientes</h3><p id="pacientesPendientes">0</p></div>
 <div class="card"><h3>Compras pendientes</h3><p id="comprasPendientes">0</p></div>
+<div class="card"><h3>Pagos MNBE pendientes</h3><p id="pagosMNBEPendientes">0</p></div>
 <div class="card"><h3>Órdenes emitidas</h3><p id="ordenesEmitidas">0</p></div>
 <div class="card"><h3>Profesionales registrados</h3><p id="profesionalesRegistrados">0</p></div>
 <div class="card"><h3>Profesionales pendientes</h3><p id="profesionalesPendientes">0</p></div>
@@ -161,6 +164,30 @@ th{background:#e0f2fe;color:#075985;}
 </div>
 
 <div class="section">
+<h2>Pagos Biblioteca MNBE Premium</h2>
+<p style="color:#64748b;margin-bottom:15px;">Pago único Biblioteca MNBE: $49.000. Al aprobar, se activa el acceso MNBE del profesional.</p>
+<button class="btn btn-reload" onclick="cargarDashboard()">Actualizar</button>
+<button class="btn btn-export" onclick="exportarPagosMNBEExcel()">Exportar pagos MNBE</button>
+
+<table id="tablaPagosMNBE">
+<thead>
+<tr>
+<th>Fecha</th>
+<th>Profesional</th>
+<th>Email</th>
+<th>Código Transbank</th>
+<th>Monto</th>
+<th>Estado</th>
+<th>Acciones</th>
+</tr>
+</thead>
+<tbody>
+<tr><td colspan="7">Cargando pagos MNBE...</td></tr>
+</tbody>
+</table>
+</div>
+
+<div class="section">
 <h2>Asignar órdenes manualmente</h2>
 
 <div class="form-grid">
@@ -229,12 +256,13 @@ th{background:#e0f2fe;color:#075985;}
 <th>Registro SIS</th>
 <th>Teléfono</th>
 <th>Órdenes</th>
+<th>MNBE</th>
 <th>Estado</th>
 <th>Acciones</th>
 </tr>
 </thead>
 <tbody>
-<tr><td colspan="10">Cargando profesionales...</td></tr>
+<tr><td colspan="11">Cargando profesionales...</td></tr>
 </tbody>
 </table>
 </div>
@@ -283,6 +311,7 @@ let solicitudesGlobal = [];
 let profesionalesGlobal = [];
 let solicitudesPacientesGlobal = [];
 let comprasGlobal = [];
+let pagosMNBEGlobal = [];
 let ordenesMedicasGlobal = [];
 let solicitudesMedicasGlobal = [];
 let solicitudMedicaSeleccionada = null;
@@ -419,6 +448,13 @@ const {data: compras, error: errorCompras}=await supabaseClient
 
 if(errorCompras) throw errorCompras;
 
+const {data: pagosMNBE, error: errorPagosMNBE}=await supabaseClient
+.from("pagos_mnbe")
+.select("*")
+.order("created_at",{ascending:false});
+
+if(errorPagosMNBE) throw errorPagosMNBE;
+
 const {data: ordenesMedicas, error: errorOrdenesMedicas}=await supabaseClient
 .from("ordenes")
 .select("*")
@@ -430,6 +466,7 @@ solicitudesGlobal=solicitudes||[];
 solicitudesPacientesGlobal=pacientes||[];
 profesionalesGlobal=profesionales||[];
 comprasGlobal=compras||[];
+pagosMNBEGlobal=pagosMNBE||[];
 ordenesMedicasGlobal=ordenesMedicas||[];
 
 solicitudesMedicasGlobal=[
@@ -457,6 +494,7 @@ let ventasMes=0;
 let pendientes=0;
 let pacientesPendientes=0;
 let comprasPendientes=0;
+let pagosMNBEPendientes=0;
 let emitidas=0;
 let profesionalesPendientes=0;
 
@@ -489,6 +527,18 @@ if(c.created_at && esMismoMes(c.created_at)) ventasMes += monto;
 }
 });
 
+pagosMNBEGlobal.forEach(p=>{
+const fecha=p.created_at ? p.created_at.split("T")[0] : "";
+const monto=Number(p.monto || 49000);
+const estado=(p.estado || "pendiente").toLowerCase();
+
+if(estado==="pendiente") pagosMNBEPendientes++;
+if(estado==="aprobada" || estado==="aprobado"){
+if(fecha===hoy) ventasDia += monto;
+if(p.created_at && esMismoMes(p.created_at)) ventasMes += monto;
+}
+});
+
 profesionalesGlobal.forEach(p=>{
 const estado=(p.estado || "pendiente").toLowerCase();
 if(estado==="pendiente") profesionalesPendientes++;
@@ -499,12 +549,14 @@ document.getElementById("ventasMes").innerText=formatoPeso(ventasMes);
 document.getElementById("solicitudesPendientes").innerText=pendientes;
 document.getElementById("pacientesPendientes").innerText=pacientesPendientes;
 document.getElementById("comprasPendientes").innerText=comprasPendientes;
+document.getElementById("pagosMNBEPendientes").innerText=pagosMNBEPendientes;
 document.getElementById("ordenesEmitidas").innerText=emitidas;
 document.getElementById("profesionalesRegistrados").innerText=profesionalesGlobal.length;
 document.getElementById("profesionalesPendientes").innerText=profesionalesPendientes;
 
 pintarTablaSolicitudesMedicas(solicitudesMedicasGlobal);
 pintarTablaCompras(comprasGlobal);
+pintarTablaPagosMNBE(pagosMNBEGlobal);
 pintarTablaPacientes(solicitudesPacientesGlobal);
 pintarTablaSolicitudes(solicitudesGlobal);
 pintarTablaProfesionales(profesionalesGlobal);
@@ -1145,6 +1197,162 @@ tbody.appendChild(tr);
 });
 }
 
+
+function pintarTablaPagosMNBE(pagos){
+const tbody=document.querySelector("#tablaPagosMNBE tbody");
+tbody.innerHTML="";
+
+if(!pagos || pagos.length===0){
+tbody.innerHTML=`<tr><td colspan="7">No hay pagos MNBE registrados.</td></tr>`;
+return;
+}
+
+pagos.forEach(p=>{
+const estado=(p.estado || "pendiente").toLowerCase();
+const profesional=obtenerProfesionalPorId(p.profesional_id);
+const nombreProfesional=p.nombre_profesional || (profesional ? profesional.nombre : "-");
+const email=p.email || (profesional ? profesional.email : "-");
+const monto=Number(p.monto || 49000);
+
+const tr=document.createElement("tr");
+
+tr.innerHTML=`
+<td>${p.created_at ? new Date(p.created_at).toLocaleDateString("es-CL") : "-"}</td>
+<td>${limpiarTexto(nombreProfesional)}</td>
+<td>${limpiarTexto(email)}</td>
+<td><strong>${limpiarTexto(p.codigo_pago || "-")}</strong></td>
+<td>${formatoPeso(monto)}</td>
+<td><span class="badge ${estado}">${p.estado || "pendiente"}</span></td>
+<td>
+<button class="btn btn-approve" onclick="aprobarPagoMNBE('${p.id}')">Aprobar MNBE</button>
+<button class="btn btn-reject" onclick="rechazarPagoMNBE('${p.id}')">Rechazar</button>
+</td>
+`;
+
+tbody.appendChild(tr);
+});
+}
+
+async function aprobarPagoMNBE(id){
+const pago=pagosMNBEGlobal.find(p => String(p.id) === String(id));
+
+if(!pago){
+mostrarError("No se encontró el pago MNBE seleccionado.");
+return;
+}
+
+const estadoActual=(pago.estado || "pendiente").toLowerCase();
+
+if(estadoActual==="aprobada" || estadoActual==="aprobado"){
+mostrarError("Este pago MNBE ya fue aprobado anteriormente.");
+return;
+}
+
+const profesional=obtenerProfesionalPorId(pago.profesional_id);
+
+if(!profesional){
+mostrarError("No se encontró el profesional asociado a este pago MNBE.");
+return;
+}
+
+const confirmar=confirm(
+"¿Aprobar acceso Biblioteca MNBE?\n\n" +
+"Profesional: " + (pago.nombre_profesional || profesional.nombre || "-") + "\n" +
+"Email: " + (pago.email || profesional.email || "-") + "\n" +
+"Código Transbank: " + (pago.codigo_pago || "-") + "\n" +
+"Monto: " + formatoPeso(Number(pago.monto || 49000)) + "\n\n" +
+"Esto activará acceso_mnbe en el perfil profesional."
+);
+
+if(!confirmar) return;
+
+try{
+const {error:updateProfesionalError}=await supabaseClient
+.from("profesionales")
+.update({
+acceso_mnbe:true,
+fecha_activacion_mnbe:new Date().toISOString(),
+pago_mnbe_codigo:pago.codigo_pago || ""
+})
+.eq("id",profesional.id);
+
+if(updateProfesionalError) throw updateProfesionalError;
+
+const {error:updatePagoError}=await supabaseClient
+.from("pagos_mnbe")
+.update({estado:"aprobada"})
+.eq("id",id);
+
+if(updatePagoError) throw updatePagoError;
+
+mostrarOk("Biblioteca MNBE activada correctamente para el profesional.");
+await cargarDashboard();
+
+}catch(error){
+console.error(error);
+mostrarError("Error al aprobar pago MNBE: " + error.message);
+}
+}
+
+async function rechazarPagoMNBE(id){
+const confirmar=confirm("¿Seguro que deseas rechazar este pago MNBE?");
+if(!confirmar) return;
+
+try{
+const {error}=await supabaseClient
+.from("pagos_mnbe")
+.update({estado:"rechazada"})
+.eq("id",id);
+
+if(error) throw error;
+
+mostrarOk("Pago MNBE rechazado correctamente.");
+await cargarDashboard();
+
+}catch(error){
+console.error(error);
+mostrarError("Error al rechazar pago MNBE: " + error.message);
+}
+}
+
+async function alternarMNBEProfesional(profesionalId, activar){
+const profesional=obtenerProfesionalPorId(profesionalId);
+
+if(!profesional){
+mostrarError("No se encontró el profesional.");
+return;
+}
+
+const confirmar=confirm(
+(activar ? "¿Activar" : "¿Desactivar") + " Biblioteca MNBE para " + profesional.nombre + "?"
+);
+
+if(!confirmar) return;
+
+try{
+const payload = activar ? {
+acceso_mnbe:true,
+fecha_activacion_mnbe:new Date().toISOString()
+} : {
+acceso_mnbe:false
+};
+
+const {error}=await supabaseClient
+.from("profesionales")
+.update(payload)
+.eq("id",profesionalId);
+
+if(error) throw error;
+
+mostrarOk(activar ? "Biblioteca MNBE activada." : "Biblioteca MNBE desactivada.");
+await cargarDashboard();
+
+}catch(error){
+console.error(error);
+mostrarError("Error al cambiar acceso MNBE: " + error.message);
+}
+}
+
 function cargarSelectProfesionales(profesionales){
 const select=document.getElementById("profesionalAsignar");
 select.innerHTML=`<option value="">Selecciona un profesional</option>`;
@@ -1199,7 +1407,7 @@ const tbody=document.querySelector("#tablaProfesionales tbody");
 tbody.innerHTML="";
 
 if(!profesionales || profesionales.length===0){
-tbody.innerHTML=`<tr><td colspan="10">No hay profesionales registrados.</td></tr>`;
+tbody.innerHTML=`<tr><td colspan="11">No hay profesionales registrados.</td></tr>`;
 return;
 }
 
@@ -1225,11 +1433,15 @@ tr.innerHTML=`
 <td>${registro}</td>
 <td>${telefono}</td>
 <td><strong>${ordenes}</strong></td>
+<td>
+<span class="badge ${p.acceso_mnbe ? 'aprobado' : 'pendiente'}">${p.acceso_mnbe ? 'Activo' : 'Sin acceso'}</span>
+</td>
 <td><span class="badge ${estado}">${p.estado || "pendiente"}</span></td>
 <td>
 <button class="btn btn-approve" onclick="cambiarEstadoProfesional('${p.id}','aprobado')">Aprobar</button>
 <button class="btn btn-reject" onclick="cambiarEstadoProfesional('${p.id}','rechazado')">Rechazar</button>
 <button class="btn btn-orders" onclick="asignarOrdenesRapido('${p.id}')">+ Órdenes</button>
+${p.acceso_mnbe ? `<button class="btn btn-mnbe-off" onclick="alternarMNBEProfesional('${p.id}',false)">Desactivar MNBE</button>` : `<button class="btn btn-mnbe" onclick="alternarMNBEProfesional('${p.id}',true)">Activar MNBE</button>`}
 </td>
 `;
 
@@ -1498,6 +1710,28 @@ csv += `"${limpiarCSV(s.pdf_url || "-")}"\n`;
 });
 
 descargarCSV(csv,"solicitudes_medicas_deltaf.csv");
+}
+
+
+function exportarPagosMNBEExcel(){
+if(!pagosMNBEGlobal || pagosMNBEGlobal.length===0){
+alert("No hay pagos MNBE para exportar.");
+return;
+}
+
+let csv="Fecha,Profesional,Email,Codigo Transbank,Monto,Estado\n";
+
+pagosMNBEGlobal.forEach(p=>{
+const profesional=obtenerProfesionalPorId(p.profesional_id);
+csv += `"${limpiarCSV(p.created_at ? new Date(p.created_at).toLocaleDateString("es-CL") : "-" )}",`;
+csv += `"${limpiarCSV(p.nombre_profesional || (profesional ? profesional.nombre : "-"))}",`;
+csv += `"${limpiarCSV(p.email || (profesional ? profesional.email : "-"))}",`;
+csv += `"${limpiarCSV(p.codigo_pago || "-")}",`;
+csv += `"${limpiarCSV(p.monto || 49000)}",`;
+csv += `"${limpiarCSV(p.estado || "pendiente")}"\n`;
+});
+
+descargarCSV(csv,"pagos_mnbe_deltaf.csv");
 }
 
 function exportarComprasExcel(){
