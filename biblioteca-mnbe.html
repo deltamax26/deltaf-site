@@ -324,15 +324,15 @@
 
         <select id="categoria" onchange="filtrar()">
           <option value="">Todas las secciones</option>
-          <option value="CardiologÃ­a">Cardiologia</option>
+          <option value="Cardiologia">Cardiologia</option>
           <option value="Digestivo">Digestivo</option>
-          <option value="EndocrinologÃ­a">Endocrinologia</option>
-          <option value="DermatologÃ­a">Dermatologia</option>
+          <option value="Endocrinologia">Endocrinologia</option>
+          <option value="Dermatologia">Dermatologia</option>
           <option value="Respiratorio">Respiratorio</option>
           <option value="Nefrourinario">Nefrourinario</option>
           <option value="SOMA">SOMA / Osteomuscular</option>
-          <option value="SueÃ±o">Sueno</option>
-          <option value="NeurologÃ­a">Neurologia</option>
+          <option value="Sueno">Sueno</option>
+          <option value="Neurologia">Neurologia</option>
         </select>
       </div>
     </div>
@@ -437,7 +437,7 @@
     const contador = document.getElementById("contador");
 
     let filtrados = registrosMNBE.filter(item => {
-      const coincideCategoria = !categoria || item.categoria === categoria;
+      const coincideCategoria = !categoria || normalizar(item.categoria) === normalizar(categoria);
 
       const contenido = normalizar(`
         ${item.categoria || ""}
@@ -525,9 +525,8 @@
         </div>
 
         <div class="doc-buttons">
-          <a class="btn btn-primary" href="pdf/guia-hta-diagnostico.pdf" target="_blank">Ver guia diagnostico HTA</a>
-          <a class="btn btn-outline" href="pdf/tabla-tratamiento-hta-mnbe.pdf" target="_blank">Ver tabla tratamiento MNBE</a>
-          <a class="btn btn-outline" href="nueva-solicitud.html?perfil=hta" target="_blank">Solicitar examenes HTA</a>
+          <a class="btn btn-primary" href="nueva-solicitud.html?perfil=hta" target="_blank">Solicitar examenes HTA</a>
+          <a class="btn btn-outline" href="ficha-clinica.html?motivo=hta" target="_blank">Crear ficha clinica</a>
         </div>
 
         <div class="tabs">
