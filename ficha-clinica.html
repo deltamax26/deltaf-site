@@ -582,6 +582,11 @@
 
       await cargarFichas();
 
+      const fichaIdUrl = params.get("id");
+      if (fichaIdUrl) {
+        abrirFicha(fichaIdUrl);
+      }
+
     } catch (error) {
       console.error(error);
       document.getElementById("loading").innerHTML = "Error al verificar acceso.";
