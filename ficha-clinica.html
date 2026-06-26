@@ -1,1 +1,902 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Ficha Clinica Naturopatica | DeltaF</title>
 
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js"></script>
+
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: #f4f7fb;
+      color: #1f2937;
+    }
+
+    header {
+      background: #0f766e;
+      color: white;
+      padding: 18px 28px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    header h1 { margin: 0; font-size: 22px; }
+
+    .btn {
+      border: none;
+      border-radius: 8px;
+      padding: 10px 14px;
+      cursor: pointer;
+      font-weight: bold;
+      text-decoration: none;
+      display: inline-block;
+      margin: 4px;
+    }
+
+    .btn-primary { background: #0f766e; color: white; }
+    .btn-light { background: white; color: #0f766e; }
+    .btn-danger { background: #dc2626; color: white; }
+    .btn-outline {
+      background: #ecfdf5;
+      color: #0f766e;
+      border: 1px solid #99f6e4;
+    }
+
+    .container {
+      max-width: 1180px;
+      margin: 28px auto;
+      padding: 0 18px;
+    }
+
+    .card {
+      background: white;
+      border-radius: 14px;
+      padding: 22px;
+      box-shadow: 0 8px 22px rgba(0,0,0,0.08);
+      margin-bottom: 18px;
+    }
+
+    .alert {
+      background: #fff7ed;
+      border: 1px solid #fed7aa;
+      color: #7c2d12;
+      border-radius: 10px;
+      padding: 12px;
+      line-height: 1.5;
+      margin: 10px 0 18px 0;
+    }
+
+    .ok {
+      background: #ecfdf5;
+      border: 1px solid #99f6e4;
+      color: #115e59;
+      border-radius: 10px;
+      padding: 12px;
+      line-height: 1.5;
+      margin: 10px 0 18px 0;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 14px;
+    }
+
+    .grid-3 {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 14px;
+    }
+
+    label {
+      font-weight: bold;
+      font-size: 14px;
+      color: #374151;
+    }
+
+    input, select, textarea {
+      width: 100%;
+      padding: 11px;
+      border: 1px solid #d1d5db;
+      border-radius: 8px;
+      margin-top: 6px;
+      margin-bottom: 12px;
+      font-size: 15px;
+      box-sizing: border-box;
+      font-family: Arial, sans-serif;
+    }
+
+    textarea { min-height: 90px; resize: vertical; }
+
+    h2 {
+      color: #0f766e;
+      border-bottom: 1px solid #e5e7eb;
+      padding-bottom: 8px;
+      margin-top: 0;
+    }
+
+    h3 { color: #0f766e; margin-bottom: 10px; }
+
+    .actions {
+      position: sticky;
+      bottom: 0;
+      background: white;
+      border-top: 1px solid #e5e7eb;
+      padding: 14px;
+      box-shadow: 0 -8px 18px rgba(0,0,0,0.06);
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      justify-content: flex-end;
+      z-index: 20;
+    }
+
+    .hidden { display: none; }
+
+    .small {
+      font-size: 13px;
+      color: #6b7280;
+      line-height: 1.5;
+    }
+
+    .checkbox-row {
+      display: flex;
+      gap: 10px;
+      align-items: flex-start;
+      margin: 10px 0;
+    }
+
+    .checkbox-row input {
+      width: auto;
+      margin-top: 3px;
+    }
+
+    .listado {
+      max-height: 260px;
+      overflow: auto;
+      border: 1px solid #e5e7eb;
+      border-radius: 10px;
+      padding: 8px;
+      background: #f9fafb;
+    }
+
+    .item-ficha {
+      padding: 10px;
+      border-bottom: 1px solid #e5e7eb;
+      cursor: pointer;
+    }
+
+    .item-ficha:hover {
+      background: #ecfdf5;
+    }
+
+    @media (max-width: 780px) {
+      header {
+        flex-direction: column;
+        gap: 10px;
+        text-align: center;
+      }
+      .grid, .grid-3 { grid-template-columns: 1fr; }
+      .actions { position: static; justify-content: stretch; }
+      .actions .btn { width: 100%; }
+    }
+  </style>
+</head>
+
+<body>
+
+<header>
+  <h1>Ficha Clinica Naturopatica | DeltaF</h1>
+  <div>
+    <button class="btn btn-light" onclick="volverDashboard()">Volver al Panel</button>
+    <button class="btn btn-danger" onclick="cerrarSesion()">Salir</button>
+  </div>
+</header>
+
+<div class="container">
+
+  <div id="loading" class="card">Verificando acceso...</div>
+
+  <div id="app" class="hidden">
+
+    <div class="card">
+      <h2>Nueva ficha clinica</h2>
+
+      <div class="alert">
+        <strong>Uso profesional y limite de alcance:</strong>
+        este documento corresponde a una ficha clinica de atencion naturopatica.
+        No constituye diagnostico medico. Use "hipotesis clinica naturopatica",
+        "observaciones clinicas" y "criterios de derivacion" cuando corresponda.
+      </div>
+
+      <div class="ok">
+        La ficha puede guardarse en linea en Supabase y descargarse en PDF.
+        Se recomienda guardar en linea solo con acceso restringido al profesional tratante.
+      </div>
+
+      <div class="grid">
+        <div>
+          <label>Buscar fichas guardadas por paciente/RUT</label>
+          <input id="buscarFicha" placeholder="Nombre, RUT o motivo..." oninput="buscarFichas()">
+        </div>
+        <div style="display:flex; align-items:end;">
+          <button class="btn btn-outline" onclick="cargarFichas()">Actualizar listado</button>
+          <button class="btn btn-outline" onclick="nuevaFicha()">Limpiar formulario</button>
+        </div>
+      </div>
+
+      <div id="listadoFichas" class="listado hidden"></div>
+    </div>
+
+    <form id="formFicha">
+
+      <input type="hidden" id="fichaId">
+
+      <div class="card">
+        <h2>1. Identificacion del paciente</h2>
+
+        <div class="grid-3">
+          <div>
+            <label>Nombre completo</label>
+            <input id="pacienteNombre" required>
+          </div>
+
+          <div>
+            <label>RUT / Documento</label>
+            <input id="pacienteRut" required>
+          </div>
+
+          <div>
+            <label>Fecha de nacimiento</label>
+            <input id="pacienteNacimiento" type="date">
+          </div>
+        </div>
+
+        <div class="grid-3">
+          <div>
+            <label>Edad</label>
+            <input id="pacienteEdad" type="number" min="0">
+          </div>
+
+          <div>
+            <label>Sexo / genero registrado</label>
+            <input id="pacienteSexo" placeholder="Ej: Femenino, masculino, otro">
+          </div>
+
+          <div>
+            <label>Telefono</label>
+            <input id="pacienteTelefono">
+          </div>
+        </div>
+
+        <div class="grid">
+          <div>
+            <label>Email</label>
+            <input id="pacienteEmail" type="email">
+          </div>
+
+          <div>
+            <label>Direccion / comuna</label>
+            <input id="pacienteDireccion">
+          </div>
+        </div>
+
+        <label>Contacto de emergencia</label>
+        <input id="contactoEmergencia" placeholder="Nombre, telefono y relacion">
+      </div>
+
+      <div class="card">
+        <h2>2. Datos de la atencion</h2>
+
+        <div class="grid-3">
+          <div>
+            <label>Fecha de atencion</label>
+            <input id="fechaAtencion" type="datetime-local" required>
+          </div>
+
+          <div>
+            <label>Modalidad</label>
+            <select id="modalidad">
+              <option value="Presencial">Presencial</option>
+              <option value="Telematica">Telematica</option>
+              <option value="Domiciliaria">Domiciliaria</option>
+            </select>
+          </div>
+
+          <div>
+            <label>Profesional</label>
+            <input id="profesionalNombre" readonly>
+          </div>
+        </div>
+
+        <div class="grid">
+          <div>
+            <label>Profesion / rol</label>
+            <input id="profesionalProfesion" readonly>
+          </div>
+
+          <div>
+            <label>Registro SIS / identificador profesional</label>
+            <input id="profesionalRegistro" readonly>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <h2>3. Motivo de consulta y anamnesis</h2>
+
+        <label>Motivo de consulta</label>
+        <textarea id="motivoConsulta" required></textarea>
+
+        <label>Historia del problema actual</label>
+        <textarea id="historiaActual"></textarea>
+
+        <div class="grid">
+          <div>
+            <label>Antecedentes morbidos personales</label>
+            <textarea id="antecedentesPersonales" placeholder="HTA, diabetes, ERC, alergias, cirugias, hospitalizaciones, etc."></textarea>
+          </div>
+
+          <div>
+            <label>Antecedentes familiares</label>
+            <textarea id="antecedentesFamiliares"></textarea>
+          </div>
+        </div>
+
+        <div class="grid">
+          <div>
+            <label>Medicamentos actuales</label>
+            <textarea id="medicamentosActuales"></textarea>
+          </div>
+
+          <div>
+            <label>Alergias / reacciones adversas</label>
+            <textarea id="alergias"></textarea>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <h2>4. Habitos y determinantes de salud</h2>
+
+        <div class="grid">
+          <div>
+            <label>Alimentacion</label>
+            <textarea id="alimentacion"></textarea>
+          </div>
+
+          <div>
+            <label>Hidratacion</label>
+            <textarea id="hidratacion"></textarea>
+          </div>
+
+          <div>
+            <label>Sueno</label>
+            <textarea id="sueno"></textarea>
+          </div>
+
+          <div>
+            <label>Actividad fisica</label>
+            <textarea id="actividadFisica"></textarea>
+          </div>
+
+          <div>
+            <label>Consumo de tabaco, alcohol u otros</label>
+            <textarea id="consumos"></textarea>
+          </div>
+
+          <div>
+            <label>Estres, salud mental y red de apoyo</label>
+            <textarea id="estres"></textarea>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <h2>5. Evaluacion naturopatica y signos relevantes</h2>
+
+        <div class="grid">
+          <div>
+            <label>Signos vitales / antropometria</label>
+            <textarea id="signosVitales" placeholder="PA, FC, peso, talla, IMC, cintura, temperatura, saturacion si aplica."></textarea>
+          </div>
+
+          <div>
+            <label>Sistemas revisados / sintomas referidos</label>
+            <textarea id="sistemasRevisados"></textarea>
+          </div>
+        </div>
+
+        <label>Biomarcadores / examenes revisados</label>
+        <textarea id="biomarcadores"></textarea>
+
+        <label>Hallazgos relevantes de la evaluacion</label>
+        <textarea id="hallazgos"></textarea>
+      </div>
+
+      <div class="card">
+        <h2>6. Hipotesis, observaciones y derivacion</h2>
+
+        <label>Hipotesis clinica naturopatica / problemas identificados</label>
+        <textarea id="hipotesisNaturopatica" placeholder="No usar como diagnostico medico. Registrar patrones, problemas funcionales o hipotesis de trabajo."></textarea>
+
+        <label>Observaciones clinicas y criterios de derivacion</label>
+        <textarea id="observacionesDerivacion" placeholder="Red flags, necesidad de evaluacion medica, urgencia, derivacion a medico, nutricionista, psicologo u otro profesional."></textarea>
+
+        <label>Diagnosticos medicos informados por el paciente o documentados</label>
+        <textarea id="diagnosticosInformados" placeholder="Solo registrar si el paciente lo informa o presenta documento/respaldo."></textarea>
+      </div>
+
+      <div class="card">
+        <h2>7. Plan de cuidado naturopatico MNBE</h2>
+
+        <label>Objetivos de la intervencion</label>
+        <textarea id="objetivos"></textarea>
+
+        <label>Educacion en salud / indicaciones generales</label>
+        <textarea id="educacion"></textarea>
+
+        <label>Plan alimentario / estilo de vida</label>
+        <textarea id="planAlimentario"></textarea>
+
+        <label>Fitoterapia / suplementos / dosis / duracion</label>
+        <textarea id="suplementos" placeholder="Producto, dosis, frecuencia, duracion, precauciones e interacciones."></textarea>
+
+        <label>Examenes sugeridos / solicitud DeltaF</label>
+        <textarea id="examenesSugeridos"></textarea>
+
+        <label>Plan de seguimiento</label>
+        <textarea id="seguimiento" placeholder="Fecha proximo control, metas, parametros a monitorizar."></textarea>
+      </div>
+
+      <div class="card">
+        <h2>8. Consentimiento y cierre</h2>
+
+        <div class="checkbox-row">
+          <input id="consentimientoInfo" type="checkbox" required>
+          <label for="consentimientoInfo">
+            El paciente declara haber entregado informacion veraz y entiende el alcance de la atencion naturopatica.
+          </label>
+        </div>
+
+        <div class="checkbox-row">
+          <input id="consentimientoLimites" type="checkbox" required>
+          <label for="consentimientoLimites">
+            Se informa que esta atencion no reemplaza evaluacion medica, diagnostico medico ni tratamiento farmacologico indicado.
+          </label>
+        </div>
+
+        <div class="checkbox-row">
+          <input id="consentimientoDatos" type="checkbox">
+          <label for="consentimientoDatos">
+            El paciente autoriza el almacenamiento digital de esta ficha en la plataforma del prestador, bajo reserva y acceso restringido.
+          </label>
+        </div>
+
+        <label>Observaciones finales</label>
+        <textarea id="observacionesFinales"></textarea>
+
+        <div class="grid">
+          <div>
+            <label>Nombre profesional responsable</label>
+            <input id="firmaProfesional">
+          </div>
+
+          <div>
+            <label>Nombre paciente / representante</label>
+            <input id="firmaPaciente">
+          </div>
+        </div>
+
+        <p class="small">
+          Recomendacion: descargar copia PDF al finalizar la atencion y guardar en linea solo si el profesional cuenta con acceso restringido,
+          politicas de seguridad y consentimiento de almacenamiento digital.
+        </p>
+      </div>
+
+    </form>
+
+    <div class="actions">
+      <button class="btn btn-outline" onclick="descargarPDF()">Descargar PDF</button>
+      <button class="btn btn-primary" onclick="guardarFicha()">Guardar en linea</button>
+      <button class="btn btn-light" onclick="nuevaFicha()">Nueva ficha</button>
+    </div>
+
+  </div>
+
+</div>
+
+<script>
+  const SUPABASE_URL = "https://goxkmtnmfessroveanje.supabase.co";
+  const SUPABASE_ANON_KEY = "sb_publishable_w8xrtEanlJJAc5FYvk1X5A_fKu9vb5d";
+
+  const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+  let profesionalActual = null;
+  let fichasCache = [];
+
+  const campos = [
+    "fichaId",
+    "pacienteNombre","pacienteRut","pacienteNacimiento","pacienteEdad","pacienteSexo","pacienteTelefono","pacienteEmail","pacienteDireccion","contactoEmergencia",
+    "fechaAtencion","modalidad","profesionalNombre","profesionalProfesion","profesionalRegistro",
+    "motivoConsulta","historiaActual","antecedentesPersonales","antecedentesFamiliares","medicamentosActuales","alergias",
+    "alimentacion","hidratacion","sueno","actividadFisica","consumos","estres",
+    "signosVitales","sistemasRevisados","biomarcadores","hallazgos",
+    "hipotesisNaturopatica","observacionesDerivacion","diagnosticosInformados",
+    "objetivos","educacion","planAlimentario","suplementos","examenesSugeridos","seguimiento",
+    "observacionesFinales","firmaProfesional","firmaPaciente"
+  ];
+
+  async function iniciar() {
+    try {
+      const { data: sessionData, error: sessionError } = await supabaseClient.auth.getSession();
+      if (sessionError) throw sessionError;
+
+      const session = sessionData.session;
+
+      if (!session || !session.user) {
+        alert("Debes iniciar sesion.");
+        window.location.href = "login.html";
+        return;
+      }
+
+      const email = session.user.email;
+
+      const { data: profesional, error } = await supabaseClient
+        .from("profesionales")
+        .select("*")
+        .eq("email", email)
+        .single();
+
+      if (error || !profesional) {
+        alert("No se encontro tu perfil profesional.");
+        window.location.href = "login.html";
+        return;
+      }
+
+      profesionalActual = profesional;
+
+      document.getElementById("loading").classList.add("hidden");
+      document.getElementById("app").classList.remove("hidden");
+
+      document.getElementById("profesionalNombre").value = profesional.nombre || "";
+      document.getElementById("profesionalProfesion").value = profesional.profesion || "";
+      document.getElementById("profesionalRegistro").value = profesional.registro_sis || "";
+      document.getElementById("firmaProfesional").value = profesional.nombre || "";
+
+      const ahora = new Date();
+      ahora.setMinutes(ahora.getMinutes() - ahora.getTimezoneOffset());
+      document.getElementById("fechaAtencion").value = ahora.toISOString().slice(0,16);
+
+      const params = new URLSearchParams(window.location.search);
+      if (params.get("motivo") === "hta") {
+        document.getElementById("motivoConsulta").value = "Evaluacion naturopatica relacionada con hipertension arterial / riesgo cardiovascular.";
+        document.getElementById("examenesSugeridos").value = "Creatinina, potasio, examen completo de orina, glicemia, perfil lipidico, uricemia, hematocrito y electrocardiograma segun criterio profesional y necesidad clinica.";
+      }
+
+      await cargarFichas();
+
+    } catch (error) {
+      console.error(error);
+      document.getElementById("loading").innerHTML = "Error al verificar acceso.";
+    }
+  }
+
+  function obtenerDatos() {
+    const datos = {};
+    campos.forEach(id => {
+      const el = document.getElementById(id);
+      if (el) datos[id] = el.value || "";
+    });
+
+    datos.consentimientoInfo = document.getElementById("consentimientoInfo").checked;
+    datos.consentimientoLimites = document.getElementById("consentimientoLimites").checked;
+    datos.consentimientoDatos = document.getElementById("consentimientoDatos").checked;
+
+    return datos;
+  }
+
+  function validarMinimo() {
+    const nombre = document.getElementById("pacienteNombre").value.trim();
+    const rut = document.getElementById("pacienteRut").value.trim();
+    const motivo = document.getElementById("motivoConsulta").value.trim();
+    const c1 = document.getElementById("consentimientoInfo").checked;
+    const c2 = document.getElementById("consentimientoLimites").checked;
+
+    if (!nombre || !rut || !motivo) {
+      alert("Debes completar al menos nombre, RUT/documento y motivo de consulta.");
+      return false;
+    }
+
+    if (!c1 || !c2) {
+      alert("Debes marcar los consentimientos obligatorios antes de guardar o descargar.");
+      return false;
+    }
+
+    return true;
+  }
+
+  async function guardarFicha() {
+    if (!validarMinimo()) return;
+
+    if (!document.getElementById("consentimientoDatos").checked) {
+      const ok = confirm("El paciente no marco autorizacion de almacenamiento digital. Deseas guardar de todas formas?");
+      if (!ok) return;
+    }
+
+    const datos = obtenerDatos();
+
+    const payload = {
+      profesional_id: profesionalActual.id,
+      profesional_email: profesionalActual.email || "",
+      paciente_nombre: datos.pacienteNombre,
+      paciente_rut: datos.pacienteRut,
+      fecha_atencion: datos.fechaAtencion ? new Date(datos.fechaAtencion).toISOString() : new Date().toISOString(),
+      motivo_consulta: datos.motivoConsulta,
+      contenido: datos,
+      actualizado_en: new Date().toISOString()
+    };
+
+    let error = null;
+
+    if (datos.fichaId) {
+      const res = await supabaseClient
+        .from("fichas_clinicas")
+        .update(payload)
+        .eq("id", datos.fichaId);
+      error = res.error;
+    } else {
+      payload.creado_en = new Date().toISOString();
+      const res = await supabaseClient
+        .from("fichas_clinicas")
+        .insert([payload])
+        .select()
+        .single();
+
+      error = res.error;
+
+      if (!error && res.data) {
+        document.getElementById("fichaId").value = res.data.id;
+      }
+    }
+
+    if (error) {
+      console.error(error);
+      alert("Error al guardar la ficha. Revisa si creaste la tabla y las politicas en Supabase.");
+      return;
+    }
+
+    alert("Ficha guardada correctamente.");
+    await cargarFichas();
+  }
+
+  async function cargarFichas() {
+    if (!profesionalActual) return;
+
+    const { data, error } = await supabaseClient
+      .from("fichas_clinicas")
+      .select("*")
+      .eq("profesional_id", profesionalActual.id)
+      .order("fecha_atencion", { ascending: false })
+      .limit(50);
+
+    if (error) {
+      console.warn("No se pudo cargar fichas:", error);
+      return;
+    }
+
+    fichasCache = data || [];
+    buscarFichas();
+  }
+
+  function normalizar(texto) {
+    return String(texto || "").toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+  }
+
+  function buscarFichas() {
+    const caja = document.getElementById("listadoFichas");
+    const q = normalizar(document.getElementById("buscarFicha").value.trim());
+
+    const filtradas = fichasCache.filter(f => {
+      const texto = normalizar(`${f.paciente_nombre || ""} ${f.paciente_rut || ""} ${f.motivo_consulta || ""}`);
+      return !q || texto.includes(q);
+    });
+
+    if (filtradas.length === 0) {
+      caja.classList.add("hidden");
+      caja.innerHTML = "";
+      return;
+    }
+
+    caja.classList.remove("hidden");
+    caja.innerHTML = filtradas.map(f => `
+      <div class="item-ficha" onclick="abrirFicha('${f.id}')">
+        <strong>${limpiar(f.paciente_nombre)}</strong><br>
+        <span>${limpiar(f.paciente_rut)} | ${formatearFecha(f.fecha_atencion)}</span><br>
+        <small>${limpiar(f.motivo_consulta)}</small>
+      </div>
+    `).join("");
+  }
+
+  function abrirFicha(id) {
+    const ficha = fichasCache.find(f => String(f.id) === String(id));
+    if (!ficha) return;
+
+    const datos = ficha.contenido || {};
+
+    campos.forEach(campo => {
+      const el = document.getElementById(campo);
+      if (el) el.value = datos[campo] || "";
+    });
+
+    document.getElementById("fichaId").value = ficha.id;
+    document.getElementById("consentimientoInfo").checked = !!datos.consentimientoInfo;
+    document.getElementById("consentimientoLimites").checked = !!datos.consentimientoLimites;
+    document.getElementById("consentimientoDatos").checked = !!datos.consentimientoDatos;
+
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  }
+
+  function nuevaFicha() {
+    document.getElementById("formFicha").reset();
+    document.getElementById("fichaId").value = "";
+
+    document.getElementById("profesionalNombre").value = profesionalActual.nombre || "";
+    document.getElementById("profesionalProfesion").value = profesionalActual.profesion || "";
+    document.getElementById("profesionalRegistro").value = profesionalActual.registro_sis || "";
+    document.getElementById("firmaProfesional").value = profesionalActual.nombre || "";
+
+    const ahora = new Date();
+    ahora.setMinutes(ahora.getMinutes() - ahora.getTimezoneOffset());
+    document.getElementById("fechaAtencion").value = ahora.toISOString().slice(0,16);
+  }
+
+  function descargarPDF() {
+    if (!validarMinimo()) return;
+
+    const datos = obtenerDatos();
+    const { jsPDF } = window.jspdf;
+    const doc = new jsPDF({ unit: "pt", format: "a4" });
+
+    const margen = 42;
+    let y = 45;
+    const ancho = 512;
+
+    function addLine(texto, size=10, bold=false) {
+      doc.setFont("helvetica", bold ? "bold" : "normal");
+      doc.setFontSize(size);
+
+      const lineas = doc.splitTextToSize(String(texto || ""), ancho);
+      lineas.forEach(linea => {
+        if (y > 780) {
+          doc.addPage();
+          y = 45;
+        }
+        doc.text(linea, margen, y);
+        y += size + 5;
+      });
+    }
+
+    function section(titulo) {
+      y += 8;
+      addLine(titulo, 13, true);
+      doc.setDrawColor(15, 118, 110);
+      doc.line(margen, y - 8, margen + ancho, y - 8);
+      y += 4;
+    }
+
+    function field(label, value) {
+      if (value || value === 0) {
+        addLine(label + ": " + value, 10, false);
+      }
+    }
+
+    addLine("FICHA CLINICA NATUROPATICA - DELTAF", 16, true);
+    addLine("Documento de registro profesional. No constituye diagnostico medico.", 10, false);
+
+    section("1. Identificacion del paciente");
+    field("Nombre", datos.pacienteNombre);
+    field("RUT/Documento", datos.pacienteRut);
+    field("Nacimiento", datos.pacienteNacimiento);
+    field("Edad", datos.pacienteEdad);
+    field("Sexo/genero registrado", datos.pacienteSexo);
+    field("Telefono", datos.pacienteTelefono);
+    field("Email", datos.pacienteEmail);
+    field("Direccion/comuna", datos.pacienteDireccion);
+    field("Contacto emergencia", datos.contactoEmergencia);
+
+    section("2. Datos de la atencion");
+    field("Fecha atencion", datos.fechaAtencion);
+    field("Modalidad", datos.modalidad);
+    field("Profesional", datos.profesionalNombre);
+    field("Profesion/rol", datos.profesionalProfesion);
+    field("Registro SIS/ID", datos.profesionalRegistro);
+
+    section("3. Motivo y anamnesis");
+    field("Motivo de consulta", datos.motivoConsulta);
+    field("Historia actual", datos.historiaActual);
+    field("Antecedentes personales", datos.antecedentesPersonales);
+    field("Antecedentes familiares", datos.antecedentesFamiliares);
+    field("Medicamentos actuales", datos.medicamentosActuales);
+    field("Alergias", datos.alergias);
+
+    section("4. Habitos");
+    field("Alimentacion", datos.alimentacion);
+    field("Hidratacion", datos.hidratacion);
+    field("Sueno", datos.sueno);
+    field("Actividad fisica", datos.actividadFisica);
+    field("Consumos", datos.consumos);
+    field("Estres y red de apoyo", datos.estres);
+
+    section("5. Evaluacion naturopatica");
+    field("Signos vitales / antropometria", datos.signosVitales);
+    field("Sistemas revisados", datos.sistemasRevisados);
+    field("Biomarcadores / examenes", datos.biomarcadores);
+    field("Hallazgos relevantes", datos.hallazgos);
+
+    section("6. Hipotesis y derivacion");
+    field("Hipotesis clinica naturopatica", datos.hipotesisNaturopatica);
+    field("Observaciones / derivacion", datos.observacionesDerivacion);
+    field("Diagnosticos medicos informados/documentados", datos.diagnosticosInformados);
+
+    section("7. Plan MNBE");
+    field("Objetivos", datos.objetivos);
+    field("Educacion en salud", datos.educacion);
+    field("Plan alimentario / estilo de vida", datos.planAlimentario);
+    field("Fitoterapia / suplementos / dosis", datos.suplementos);
+    field("Examenes sugeridos", datos.examenesSugeridos);
+    field("Seguimiento", datos.seguimiento);
+
+    section("8. Consentimiento y cierre");
+    field("Consentimiento informacion", datos.consentimientoInfo ? "Si" : "No");
+    field("Consentimiento limites de atencion", datos.consentimientoLimites ? "Si" : "No");
+    field("Autorizacion almacenamiento digital", datos.consentimientoDatos ? "Si" : "No");
+    field("Observaciones finales", datos.observacionesFinales);
+
+    y += 24;
+    addLine("Firma profesional: " + (datos.firmaProfesional || ""), 10, false);
+    y += 16;
+    addLine("Firma paciente/representante: " + (datos.firmaPaciente || ""), 10, false);
+
+    const nombreArchivo = `ficha-clinica-${limpiarArchivo(datos.pacienteRut || datos.pacienteNombre)}.pdf`;
+    doc.save(nombreArchivo);
+  }
+
+  function limpiar(texto) {
+    if (!texto) return "";
+    return String(texto).replace(/</g, "&lt;").replace(/>/g, "&gt;");
+  }
+
+  function limpiarArchivo(texto) {
+    return String(texto || "paciente").replace(/[^a-zA-Z0-9_-]/g, "-");
+  }
+
+  function formatearFecha(fecha) {
+    if (!fecha) return "";
+    try {
+      return new Date(fecha).toLocaleString("es-CL");
+    } catch {
+      return fecha;
+    }
+  }
+
+  function volverDashboard() {
+    window.location.href = "dashboard-profesional.html";
+  }
+
+  async function cerrarSesion() {
+    await supabaseClient.auth.signOut();
+    window.location.href = "login.html";
+  }
+
+  iniciar();
+</script>
+
+</body>
+</html>
