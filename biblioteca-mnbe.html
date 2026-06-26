@@ -1,8 +1,9 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta charset="UTF-8">
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Biblioteca MNBE | DeltaF</title>
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -39,6 +40,7 @@
     .btn-primary { background: #0f766e; color: white; }
     .btn-light { background: white; color: #0f766e; }
     .btn-danger { background: #dc2626; color: white; }
+
     .btn-outline {
       background: #ecfdf5;
       color: #0f766e;
@@ -135,8 +137,6 @@
       font-size: 18px;
     }
 
-    /* ===== MÃDULO CLÃNICO HTA ===== */
-
     .hta-module {
       margin-top: 18px;
       background: #f8fffd;
@@ -199,9 +199,7 @@
       margin-top: 8px;
     }
 
-    .tab-content.active {
-      display: block;
-    }
+    .tab-content.active { display: block; }
 
     .mini-table {
       width: 100%;
@@ -241,9 +239,7 @@
     }
 
     @media (max-width: 780px) {
-      .filters, .grid {
-        grid-template-columns: 1fr;
-      }
+      .filters, .grid { grid-template-columns: 1fr; }
 
       header {
         flex-direction: column;
@@ -251,17 +247,9 @@
         text-align: center;
       }
 
-      .doc-buttons {
-        flex-direction: column;
-      }
-
-      .doc-buttons .btn {
-        text-align: center;
-      }
-
-      .mini-table {
-        font-size: 12px;
-      }
+      .doc-buttons { flex-direction: column; }
+      .doc-buttons .btn { text-align: center; }
+      .mini-table { font-size: 12px; }
     }
   </style>
 </head>
@@ -269,7 +257,7 @@
 <body>
 
 <header>
-  <h1>&#128218; Biblioteca Cl&iacute;nica MNBE</h1>
+  <h1>Biblioteca Clinica MNBE</h1>
   <div>
     <button class="btn btn-light" onclick="volverDashboard()">Volver al Panel</button>
     <button class="btn btn-danger" onclick="cerrarSesion()">Salir</button>
@@ -285,39 +273,39 @@
   <div id="bloqueado" class="card premium hidden">
     <h2>Biblioteca MNBE Premium</h2>
     <p>
-      Acceso cl&iacute;nico avanzado para profesionales de salud.
-      Incluye protocolos organizados por sistema, fisiopatolog&iacute;a, biomarcadores,
+      Acceso clinico avanzado para profesionales de salud.
+      Incluye protocolos organizados por sistema, fisiopatologia, biomarcadores,
       tratamientos MNBE, dosis, mecanismos y referencias.
     </p>
 
     <div class="price">$49.000</div>
-    <p><strong>Pago &uacute;nico</strong></p>
+    <p><strong>Pago unico</strong></p>
 
     <ul style="text-align:left; max-width:520px; margin:20px auto; line-height:1.8;">
-      <li>Cardiolog&iacute;a</li>
+      <li>Cardiologia</li>
       <li>Digestivo</li>
-      <li>Endocrinolog&iacute;a</li>
-      <li>Dermatolog&iacute;a</li>
+      <li>Endocrinologia</li>
+      <li>Dermatologia</li>
       <li>Respiratorio</li>
       <li>Nefrourinario</li>
       <li>SOMA / Osteomuscular</li>
-      <li>Sue&ntilde;o</li>
-      <li>Neurolog&iacute;a, cuando sea habilitada</li>
+      <li>Sueno</li>
+      <li>Neurologia, cuando sea habilitada</li>
     </ul>
 
-    <hr />
+    <hr>
 
-    <h3>Solicitar activaci&oacute;n</h3>
+    <h3>Solicitar activacion</h3>
     <p>
-      DespuÃ©s de pagar, ingresa el c&oacute;digo de autorizaci&oacute;n Transbank.
-      El administrador revisarÃ¡ el pago y activarÃ¡ tu acceso.
+      Despues de pagar, ingresa el codigo de autorizacion Transbank.
+      El administrador revisara el pago y activara tu acceso.
     </p>
 
-    <label>C&oacute;digo de autorizaci&oacute;n Transbank</label>
-    <input id="codigoPago" placeholder="Ej: 123456" />
+    <label>Codigo de autorizacion Transbank</label>
+    <input id="codigoPago" placeholder="Ej: 123456">
 
     <button class="btn btn-primary" onclick="registrarPagoMNBE()">
-      Enviar solicitud de activaci&oacute;n
+      Enviar solicitud de activacion
     </button>
 
     <p id="msgPago"></p>
@@ -326,25 +314,25 @@
   <div id="biblioteca" class="hidden">
 
     <div class="card">
-      <h2>Asistente Cl&iacute;nico MNBE</h2>
+      <h2>Asistente Clinico MNBE</h2>
       <p>
-        Busca por patolog&iacute;a, sÃ­ndrome, biomarcador, tratamiento, dosis o mecanismo.
+        Busca por patologia, sindrome, biomarcador, tratamiento, dosis o mecanismo.
       </p>
 
       <div class="filters">
-        <input id="busqueda" placeholder="Ej: Hashimoto, hipertensi&oacute;n, omega-3, IL-1Î², insomnio..." oninput="filtrar()" />
+        <input id="busqueda" placeholder="Ej: Hashimoto, hipertension, omega-3, IL-1b, insomnio..." oninput="filtrar()">
 
         <select id="categoria" onchange="filtrar()">
           <option value="">Todas las secciones</option>
-          <option value="Cardiolog&iacute;a">Cardiolog&iacute;a</option>
+          <option value="CardiologÃ­a">Cardiologia</option>
           <option value="Digestivo">Digestivo</option>
-          <option value="Endocrinolog&iacute;a">Endocrinolog&iacute;a</option>
-          <option value="Dermatolog&iacute;a">Dermatolog&iacute;a</option>
+          <option value="EndocrinologÃ­a">Endocrinologia</option>
+          <option value="DermatologÃ­a">Dermatologia</option>
           <option value="Respiratorio">Respiratorio</option>
           <option value="Nefrourinario">Nefrourinario</option>
           <option value="SOMA">SOMA / Osteomuscular</option>
-          <option value="Sue&ntilde;o">Sue&ntilde;o</option>
-          <option value="Neurolog&iacute;a">Neurolog&iacute;a</option>
+          <option value="SueÃ±o">Sueno</option>
+          <option value="NeurologÃ­a">Neurologia</option>
         </select>
       </div>
     </div>
@@ -378,7 +366,7 @@
       const session = sessionData.session;
 
       if (!session || !session.user) {
-        alert("Debes iniciar sesiÃ³n.");
+        alert("Debes iniciar sesion.");
         window.location.href = "login.html";
         return;
       }
@@ -392,7 +380,7 @@
         .single();
 
       if (error || !profesional) {
-        alert("No se encontrÃ³ tu perfil profesional.");
+        alert("No se encontro tu perfil profesional.");
         window.location.href = "login.html";
         return;
       }
@@ -435,8 +423,15 @@
     filtrar();
   }
 
+  function normalizar(texto) {
+    return String(texto || "")
+      .toLowerCase()
+      .normalize("NFD")
+      .replace(/[\u0300-\u036f]/g, "");
+  }
+
   function filtrar() {
-    const texto = document.getElementById("busqueda").value.toLowerCase().trim();
+    const texto = normalizar(document.getElementById("busqueda").value.trim());
     const categoria = document.getElementById("categoria").value;
     const resultados = document.getElementById("resultados");
     const contador = document.getElementById("contador");
@@ -444,7 +439,7 @@
     let filtrados = registrosMNBE.filter(item => {
       const coincideCategoria = !categoria || item.categoria === categoria;
 
-      const contenido = `
+      const contenido = normalizar(`
         ${item.categoria || ""}
         ${item.patologia || ""}
         ${item.fisiopatologia || ""}
@@ -454,7 +449,7 @@
         ${item.mecanismo || ""}
         ${item.referencias || ""}
         hipertension hta ieca ara ii calcioantagonistas tiazidicos hibiscus coq10 magnesio
-      `.toLowerCase();
+      `);
 
       const coincideTexto = !texto || contenido.includes(texto);
 
@@ -479,12 +474,12 @@
 
         <div class="grid">
           <div class="box">
-            <h4>Fisiopatolog&iacute;a</h4>
+            <h4>Fisiopatologia</h4>
             <p>${formatear(item.fisiopatologia)}</p>
           </div>
 
           <div class="box">
-            <h4>Biomarcadores / Ex&aacute;menes</h4>
+            <h4>Biomarcadores / Examenes</h4>
             <p>${formatear(item.biomarcadores)}</p>
           </div>
 
@@ -515,91 +510,91 @@
   }
 
   function esHTA(item) {
-    const texto = `${item.patologia || ""} ${item.categoria || ""}`.toLowerCase();
-    return texto.includes("hipertensi&oacute;n") || texto.includes("hipertension") || texto.includes("hta");
+    const texto = normalizar(`${item.patologia || ""} ${item.categoria || ""} ${item.tratamiento_mnbe || ""}`);
+    return texto.includes("hipertension") || texto.includes("hta");
   }
 
   function moduloHTA(index) {
     return `
       <div class="hta-module">
-        <h3 class="hta-title">&#129728; M&oacute;dulo Cl&iacute;nico Avanzado: Hipertensi&oacute;n Arterial</h3>
+        <h3 class="hta-title">Modulo Clinico Avanzado: Hipertension Arterial</h3>
 
         <div class="hta-alert">
-          <strong>Uso profesional:</strong> este mÃ³dulo integra gu&iacute;a cl&iacute;nica, diagn&oacute;stico, seguimiento, tratamiento farmacol&oacute;gico
-          y equivalencias MNBE. No reemplaza evaluaci&oacute;n mÃ©dica, manejo farmacol&oacute;gico indicado ni derivaciÃ³n cuando corresponda.
+          <strong>Uso profesional:</strong> este modulo integra guia clinica, diagnostico, seguimiento, tratamiento farmacologico
+          y equivalencias MNBE. No reemplaza evaluacion medica, manejo farmacologico indicado ni derivacion cuando corresponda.
         </div>
 
         <div class="doc-buttons">
-          <a class="btn btn-primary" href="pdf/guia-hta-diagnostico.pdf" target="_blank">&#128196; Ver gu&iacute;a diagn&oacute;stico HTA</a>
-          <a class="btn btn-outline" href="pdf/tabla-tratamiento-hta-mnbe.pdf" target="_blank">&#127807; Ver tabla tratamiento MNBE</a>
-          <a class="btn btn-outline" href="nueva-solicitud.html?perfil=hta" target="_blank">&#129514; Solicitar ex&aacute;menes HTA</a>
+          <a class="btn btn-primary" href="pdf/guia-hta-diagnostico.pdf" target="_blank">Ver guia diagnostico HTA</a>
+          <a class="btn btn-outline" href="pdf/tabla-tratamiento-hta-mnbe.pdf" target="_blank">Ver tabla tratamiento MNBE</a>
+          <a class="btn btn-outline" href="nueva-solicitud.html?perfil=hta" target="_blank">Solicitar examenes HTA</a>
         </div>
 
         <div class="tabs">
-          <button class="tab-btn active" onclick="abrirTab(event, 'hta-dx-${index}')">Diagn&oacute;stico</button>
+          <button class="tab-btn active" onclick="abrirTab(event, 'hta-dx-${index}')">Diagnostico</button>
           <button class="tab-btn" onclick="abrirTab(event, 'hta-riesgo-${index}')">Riesgo CV</button>
-          <button class="tab-btn" onclick="abrirTab(event, 'hta-farmacos-${index}')">F&aacute;rmacos</button>
+          <button class="tab-btn" onclick="abrirTab(event, 'hta-farmacos-${index}')">Farmacos</button>
           <button class="tab-btn" onclick="abrirTab(event, 'hta-mnbe-${index}')">MNBE</button>
-          <button class="tab-btn" onclick="abrirTab(event, 'hta-examenes-${index}')">Ex&aacute;menes</button>
+          <button class="tab-btn" onclick="abrirTab(event, 'hta-examenes-${index}')">Examenes</button>
           <button class="tab-btn" onclick="abrirTab(event, 'hta-seguimiento-${index}')">Seguimiento</button>
         </div>
 
         <div id="hta-dx-${index}" class="tab-content active">
-          <h4>ConfirmaciÃ³n diagnÃ³stica</h4>
+          <h4>Confirmacion diagnostica</h4>
           <ul class="clinical-list">
-            <li>Confirmar sospecha con perfil de presi&oacute;n arterial y tÃ©cnica estandarizada.</li>
-            <li>Clasificar presi&oacute;n arterial: etapa 1, etapa 2 o etapa 3.</li>
-            <li>Evaluar da&ntilde;o de &oacute;rgano blanco, comorbilidades y factores de riesgo cardiovascular.</li>
-            <li>Considerar MAPA cuando exista sospecha de HTA de bata blanca, HTA enmascarada o necesidad de mejor caracterizaciÃ³n.</li>
+            <li>Confirmar sospecha con perfil de presion arterial y tecnica estandarizada.</li>
+            <li>Clasificar presion arterial: etapa 1, etapa 2 o etapa 3.</li>
+            <li>Evaluar dano de organo blanco, comorbilidades y factores de riesgo cardiovascular.</li>
+            <li>Considerar MAPA cuando exista sospecha de HTA de bata blanca, HTA enmascarada o necesidad de mejor caracterizacion.</li>
           </ul>
 
           <table class="mini-table">
-            <tr><th>Clasificaci&oacute;n</th><th>Presi&oacute;n arterial</th><th>Conducta inicial</th></tr>
-            <tr><td>HTA etapa 1</td><td>140â159 / 90â99 mmHg</td><td>CEV + manejo seg&uacute;n riesgo cardiovascular.</td></tr>
-            <tr><td>HTA etapa 2</td><td>160â179 / 100â109 mmHg</td><td>Evaluar inicio farmacol&oacute;gico y seguimiento estrecho.</td></tr>
-            <tr><td>HTA etapa 3</td><td>â¥180 / â¥110 mmHg</td><td>Evaluaci&oacute;n mÃ©dica prioritaria.</td></tr>
+            <tr><th>Clasificacion</th><th>Presion arterial</th><th>Conducta inicial</th></tr>
+            <tr><td>HTA etapa 1</td><td>140-159 / 90-99 mmHg</td><td>CEV + manejo segun riesgo cardiovascular.</td></tr>
+            <tr><td>HTA etapa 2</td><td>160-179 / 100-109 mmHg</td><td>Evaluar inicio farmacologico y seguimiento estrecho.</td></tr>
+            <tr><td>HTA etapa 3</td><td>Mayor o igual a 180 / mayor o igual a 110 mmHg</td><td>Evaluacion medica prioritaria.</td></tr>
           </table>
         </div>
 
         <div id="hta-riesgo-${index}" class="tab-content">
-          <h4>EstratificaciÃ³n de riesgo cardiovascular</h4>
-          <p>Todo paciente hipertenso debe clasificarse seg&uacute;n riesgo cardiovascular para definir intensidad terap&eacute;utica y frecuencia de seguimiento.</p>
+          <h4>Estratificacion de riesgo cardiovascular</h4>
+          <p>Todo paciente hipertenso debe clasificarse segun riesgo cardiovascular para definir intensidad terapeutica y frecuencia de seguimiento.</p>
 
           <table class="mini-table">
             <tr><th>Riesgo</th><th>Meta general</th><th>Seguimiento orientativo</th></tr>
-            <tr><td>Bajo</td><td>&lt;140/90 mmHg</td><td>Control cada 6 meses si normotensado.</td></tr>
-            <tr><td>Moderado</td><td>&lt;140/90 mmHg</td><td>Control cada 4 meses si normotensado.</td></tr>
-            <tr><td>Alto</td><td>&lt;140/90 mmHg</td><td>Control cada 3 meses.</td></tr>
-            <tr><td>Muy alto / diabetes / nefropatÃ­a proteinÃºrica</td><td>&lt;130/80 mmHg si tolerado</td><td>Control estrecho y manejo mÃ©dico.</td></tr>
+            <tr><td>Bajo</td><td>Menor a 140/90 mmHg</td><td>Control cada 6 meses si normotensado.</td></tr>
+            <tr><td>Moderado</td><td>Menor a 140/90 mmHg</td><td>Control cada 4 meses si normotensado.</td></tr>
+            <tr><td>Alto</td><td>Menor a 140/90 mmHg</td><td>Control cada 3 meses.</td></tr>
+            <tr><td>Muy alto / diabetes / nefropatia proteinurica</td><td>Menor a 130/80 mmHg si tolerado</td><td>Control estrecho y manejo medico.</td></tr>
           </table>
         </div>
 
         <div id="hta-farmacos-${index}" class="tab-content">
-          <h4>Tratamiento farmacol&oacute;gico de referencia</h4>
+          <h4>Tratamiento farmacologico de referencia</h4>
 
           <table class="mini-table">
-            <tr><th>Grupo</th><th>Ejemplos</th><th>Mecanismo</th><th>ObservaciÃ³n cl&iacute;nica</th></tr>
-            <tr><td>IECA</td><td>Captopril, enalapril, lisinopril, ramipril</td><td>â Ang II, â bradicinina</td><td>&Uacute;tiles en pacientes &lt;55 aÃ±os, albuminuria o HVI seg&uacute;n contexto.</td></tr>
-            <tr><td>ARA II</td><td>LosartÃ¡n, valsartÃ¡n, candesartÃ¡n, telmisartÃ¡n</td><td>Bloqueo receptor AT1</td><td>Alternativa cuando IECA no se tolera.</td></tr>
-            <tr><td>Calcioantagonistas</td><td>Amlodipino, nifedipino retard, diltiazem, verapamilo</td><td>Bloqueo canales de calcio</td><td>Frecuentes en â¥55 aÃ±os.</td></tr>
-            <tr><td>Diur&eacute;ticos tiaz&iacute;dicos</td><td>Hidroclorotiazida, indapamida</td><td>Natriuresis y reducciÃ³n de volumen</td><td>Vigilar potasio, &aacute;cido Ãºrico, glicemia y funci&oacute;n renal.</td></tr>
-            <tr><td>Betabloqueadores</td><td>Atenolol, metoprolol, bisoprolol, carvedilol</td><td>â FC, â contractilidad, â renina</td><td>&Uacute;tiles si hay indicaciÃ³n especÃ­fica.</td></tr>
+            <tr><th>Grupo</th><th>Ejemplos</th><th>Mecanismo</th><th>Observacion clinica</th></tr>
+            <tr><td>IECA</td><td>Captopril, enalapril, lisinopril, ramipril</td><td>Disminuye Ang II y aumenta bradicinina</td><td>Utiles en pacientes menores de 55 anos, albuminuria o HVI segun contexto.</td></tr>
+            <tr><td>ARA II</td><td>Losartan, valsartan, candesartan, telmisartan</td><td>Bloqueo receptor AT1</td><td>Alternativa cuando IECA no se tolera.</td></tr>
+            <tr><td>Calcioantagonistas</td><td>Amlodipino, nifedipino retard, diltiazem, verapamilo</td><td>Bloqueo canales de calcio</td><td>Frecuentes en mayores de 55 anos.</td></tr>
+            <tr><td>Diureticos tiazidicos</td><td>Hidroclorotiazida, indapamida</td><td>Natriuresis y reduccion de volumen</td><td>Vigilar potasio, acido urico, glicemia y funcion renal.</td></tr>
+            <tr><td>Betabloqueadores</td><td>Atenolol, metoprolol, bisoprolol, carvedilol</td><td>Disminuye FC, contractilidad y renina</td><td>Utiles si hay indicacion especifica.</td></tr>
           </table>
         </div>
 
         <div id="hta-mnbe-${index}" class="tab-content">
           <h4>Equivalentes funcionales MNBE</h4>
-          <p>Equivalente funcional no significa reemplazo farmacol&oacute;gico. Se usa para comprender mecanismos naturales similares o complementarios.</p>
+          <p>Equivalente funcional no significa reemplazo farmacologico. Se usa para comprender mecanismos naturales similares o complementarios.</p>
 
           <table class="mini-table">
-            <tr><th>Grupo farmacol&oacute;gico</th><th>Equivalente MNBE</th><th>Dosis orientativa</th><th>Mecanismo</th><th>PrecauciÃ³n</th></tr>
-            <tr><td>IECA</td><td>Hibiscus, ajo envejecido, IPP/VPP, magnesio, CoQ10</td><td>Hibiscus 250â500 mg/d; ajo 600â1200 mg/d; IPP/VPP 3â10 mg/d; Mg 200â400 mg/d; CoQ10 100â200 mg/d</td><td>Apoyo RAAS, vasodilataciÃ³n, endotelio y estr&eacute;s oxidativo.</td><td>Vigilar hipotensiÃ³n, K+ y creatinina si usa IECA/ARA II.</td></tr>
-            <tr><td>ARA II funcional</td><td>Magnesio, taurina, L-arginina, omega-3</td><td>Taurina 1â3 g/d; arginina 2â6 g/d; omega-3 1â2 g/d; Mg 200â400 mg/d</td><td>Mejora NO, tono vascular y elasticidad arterial.</td><td>No duplicar intervenci&oacute;n RAAS sin supervisiÃ³n.</td></tr>
-            <tr><td>Tiaz&iacute;dico funcional</td><td>Hibiscus, diente de leÃ³n, ortiga</td><td>Hibiscus 2â3 inf/d; Taraxacum 1â3 inf/d</td><td>Diuresis y natriuresis leves.</td><td>PrecauciÃ³n en ERC, litio, digoxina, hipokalemia o gota.</td></tr>
-            <tr><td>Calcioagonista funcional</td><td>Magnesio, Crataegus, CoQ10</td><td>Mg 200â400 mg/d; Crataegus 300â600 mg/d; CoQ10 100â200 mg/d</td><td>RelajaciÃ³n vascular y soporte endotelial.</td><td>Vigilar hipotensiÃ³n e interacciones cardiovasculares.</td></tr>
+            <tr><th>Grupo farmacologico</th><th>Equivalente MNBE</th><th>Dosis orientativa</th><th>Mecanismo</th><th>Precaucion</th></tr>
+            <tr><td>IECA</td><td>Hibiscus, ajo envejecido, IPP/VPP, magnesio, CoQ10</td><td>Hibiscus 250-500 mg/d; ajo 600-1200 mg/d; IPP/VPP 3-10 mg/d; Mg 200-400 mg/d; CoQ10 100-200 mg/d</td><td>Apoyo RAAS, vasodilatacion, endotelio y estres oxidativo.</td><td>Vigilar hipotension, K+ y creatinina si usa IECA/ARA II.</td></tr>
+            <tr><td>ARA II funcional</td><td>Magnesio, taurina, L-arginina, omega-3</td><td>Taurina 1-3 g/d; arginina 2-6 g/d; omega-3 1-2 g/d; Mg 200-400 mg/d</td><td>Mejora NO, tono vascular y elasticidad arterial.</td><td>No duplicar intervencion RAAS sin supervision.</td></tr>
+            <tr><td>Tiazidico funcional</td><td>Hibiscus, diente de leon, ortiga</td><td>Hibiscus 2-3 inf/d; Taraxacum 1-3 inf/d</td><td>Diuresis y natriuresis leves.</td><td>Precaucion en ERC, litio, digoxina, hipokalemia o gota.</td></tr>
+            <tr><td>Calcioantagonista funcional</td><td>Magnesio, Crataegus, CoQ10</td><td>Mg 200-400 mg/d; Crataegus 300-600 mg/d; CoQ10 100-200 mg/d</td><td>Relajacion vascular y soporte endotelial.</td><td>Vigilar hipotension e interacciones cardiovasculares.</td></tr>
           </table>
 
-          <h4>DOI / referencias rÃ¡pidas</h4>
+          <h4>DOI / referencias rapidas</h4>
           <p>
             <span class="pill">Hibiscus: 10.1055/s-2006-957065</span>
             <span class="pill">Magnesio: 10.1161/HYPERTENSIONAHA.116.07664</span>
@@ -608,22 +603,22 @@
         </div>
 
         <div id="hta-examenes-${index}" class="tab-content">
-          <h4>Ex&aacute;menes sugeridos en evaluaci&oacute;n inicial HTA</h4>
+          <h4>Examenes sugeridos en evaluacion inicial HTA</h4>
 
           <table class="mini-table">
-            <tr><th>Examen</th><th>Utilidad cl&iacute;nica</th></tr>
-            <tr><td>Creatinina</td><td>EvalÃºa funci&oacute;n renal y da&ntilde;o de &oacute;rgano blanco.</td></tr>
-            <tr><td>Potasio</td><td>&Uacute;til antes/durante IECA, ARA II, diur&eacute;ticos y sospecha endocrina.</td></tr>
+            <tr><th>Examen</th><th>Utilidad clinica</th></tr>
+            <tr><td>Creatinina</td><td>Evalua funcion renal y dano de organo blanco.</td></tr>
+            <tr><td>Potasio</td><td>Util antes/durante IECA, ARA II, diureticos y sospecha endocrina.</td></tr>
             <tr><td>Examen completo de orina</td><td>Busca proteinuria, hematuria o compromiso renal.</td></tr>
             <tr><td>Glicemia</td><td>Pesquisa diabetes y riesgo cardiovascular.</td></tr>
-            <tr><td>Perfil lipÃ­dico</td><td>EstratificaciÃ³n de riesgo cardiovascular.</td></tr>
-            <tr><td>Uricemia</td><td>&Uacute;til en da&ntilde;o renal, gota y uso de tiazidas.</td></tr>
-            <tr><td>Hematocrito</td><td>Apoyo en evaluaci&oacute;n general y sospecha de comorbilidad.</td></tr>
-            <tr><td>Electrocardiograma</td><td>Pesquisa HVI, arritmias y da&ntilde;o card&iacute;aco.</td></tr>
+            <tr><td>Perfil lipidico</td><td>Estratificacion de riesgo cardiovascular.</td></tr>
+            <tr><td>Uricemia</td><td>Util en dano renal, gota y uso de tiazidas.</td></tr>
+            <tr><td>Hematocrito</td><td>Apoyo en evaluacion general y sospecha de comorbilidad.</td></tr>
+            <tr><td>Electrocardiograma</td><td>Pesquisa HVI, arritmias y dano cardiaco.</td></tr>
           </table>
 
           <div class="doc-buttons">
-            <a class="btn btn-primary" href="nueva-solicitud.html?perfil=hta" target="_blank">&#129514; Ir a solicitud de ex&aacute;menes</a>
+            <a class="btn btn-primary" href="nueva-solicitud.html?perfil=hta" target="_blank">Ir a solicitud de examenes</a>
           </div>
         </div>
 
@@ -631,17 +626,17 @@
           <h4>Seguimiento</h4>
           <ul class="clinical-list">
             <li>Evaluar adherencia con herramientas como Morisky Green Levine.</li>
-            <li>Promover automediciÃ³n de presi&oacute;n arterial.</li>
-            <li>Revisar cumplimiento de cambios de estilo de vida: sal, peso, alcohol, tabaco, actividad fÃ­sica, frutas y verduras.</li>
+            <li>Promover automedicion de presion arterial.</li>
+            <li>Revisar cumplimiento de cambios de estilo de vida: sal, peso, alcohol, tabaco, actividad fisica, frutas y verduras.</li>
             <li>Si no se logra meta o existe HTA resistente, derivar a especialista.</li>
           </ul>
 
           <table class="mini-table">
-            <tr><th>SituaciÃ³n</th><th>Conducta</th></tr>
+            <tr><th>Situacion</th><th>Conducta</th></tr>
             <tr><td>Normotensado, riesgo bajo</td><td>Control cada 6 meses.</td></tr>
             <tr><td>Normotensado, riesgo moderado</td><td>Control cada 4 meses.</td></tr>
-            <tr><td>Riesgo alto o muy alto</td><td>Control cada 3 meses y ex&aacute;menes anuales.</td></tr>
-            <tr><td>No logra normotensiÃ³n</td><td>Evaluar adherencia, ajustar manejo y derivar si corresponde.</td></tr>
+            <tr><td>Riesgo alto o muy alto</td><td>Control cada 3 meses y examenes anuales.</td></tr>
+            <tr><td>No logra normotension</td><td>Evaluar adherencia, ajustar manejo y derivar si corresponde.</td></tr>
           </table>
         </div>
       </div>
@@ -665,7 +660,7 @@
     const msg = document.getElementById("msgPago");
 
     if (!codigo) {
-      msg.innerHTML = "Debes ingresar el c&oacute;digo de autorizaci&oacute;n Transbank.";
+      msg.innerHTML = "Debes ingresar el codigo de autorizacion Transbank.";
       msg.style.color = "red";
       return;
     }
@@ -696,7 +691,7 @@
       return;
     }
 
-    msg.innerHTML = "Solicitud enviada correctamente. El administrador activarÃ¡ tu acceso cuando valide el pago.";
+    msg.innerHTML = "Solicitud enviada correctamente. El administrador activara tu acceso cuando valide el pago.";
     msg.style.color = "green";
 
     document.getElementById("codigoPago").value = "";
