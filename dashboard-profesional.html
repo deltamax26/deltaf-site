@@ -318,17 +318,19 @@ flex-direction:column;
 </div>
 
 <div class="menu">
-<a href="dashboard-profesional.html">🏠 Inicio</a>
-<a href="nueva-solicitud.html">📋 Nueva Solicitud</a>
-<a href="mis-solicitudes.html">📂 Mis Solicitudes</a>
-<a href="mis-solicitudes.html?estado=aprobada">✅ Aprobadas</a>
-<a href="mis-solicitudes.html?estado=rechazada">❌ Rechazadas</a>
-<a href="comprar-ordenes.html">💳 Comprar Órdenes</a>
+<a href="dashboard-profesional.html">ð  Inicio</a>
+<a href="nueva-solicitud.html">ð Nueva Solicitud</a>
+<a href="mis-solicitudes.html">ð Mis Solicitudes</a>
+<a href="pacientes.html">ð©º Pacientes</a>
+<a href="ficha-clinica.html">ð Nueva Ficha ClÃ­nica</a>
+<a href="mis-solicitudes.html?estado=aprobada">â Aprobadas</a>
+<a href="mis-solicitudes.html?estado=rechazada">â Rechazadas</a>
+<a href="comprar-ordenes.html">ð³ Comprar Ãrdenes</a>
 
-<a id="menuMNBE" class="premium-link hidden" href="biblioteca-mnbe.html">📚 Biblioteca MNBE</a>
+<a id="menuMNBE" class="premium-link hidden" href="biblioteca-mnbe.html">ð Biblioteca MNBE</a>
 
-<a href="#">👤 Mi Perfil</a>
-<button id="cerrarSesion">🚪 Cerrar Sesión</button>
+<a href="#">ð¤ Mi Perfil</a>
+<button id="cerrarSesion">ðª Cerrar SesiÃ³n</button>
 </div>
 
 </div>
@@ -336,7 +338,7 @@ flex-direction:column;
 <div class="main">
 
 <div id="loading" class="loading">
-Cargando información del profesional...
+Cargando informaciÃ³n del profesional...
 </div>
 
 <div id="errorBox" class="error-box" style="display:none;"></div>
@@ -344,14 +346,14 @@ Cargando información del profesional...
 <div id="contenidoDashboard" style="display:none;">
 
 <div id="alertaOrdenes" class="alert">
-⚠️ No tienes órdenes disponibles. Debes comprar órdenes antes de crear una nueva solicitud.
+â ï¸ No tienes Ã³rdenes disponibles. Debes comprar Ã³rdenes antes de crear una nueva solicitud.
 </div>
 
 <div class="topbar">
 
 <h1 id="bienvenida">Bienvenido a DeltaF</h1>
 
-<p>Panel profesional para gestión de solicitudes de exámenes.</p>
+<p>Panel profesional para gestiÃ³n de solicitudes de exÃ¡menes.</p>
 
 <div class="user-info">
 <span id="correoProfesional"></span>
@@ -367,7 +369,7 @@ Cargando información del profesional...
 <div class="cards">
 
 <div class="card">
-<h3>Órdenes Disponibles</h3>
+<h3>Ãrdenes Disponibles</h3>
 <div id="ordenesDisponibles" class="number">0</div>
 </div>
 
@@ -392,13 +394,13 @@ Cargando información del profesional...
 
 <div class="action-card">
 <h2>Nueva Solicitud</h2>
-<p>Solicita exámenes clínicos o radiografías para tus pacientes.</p>
+<p>Solicita exÃ¡menes clÃ­nicos o radiografÃ­as para tus pacientes.</p>
 <a id="btnNuevaSolicitud" href="nueva-solicitud.html" class="btn">Crear Solicitud</a>
 </div>
 
 <div class="action-card">
-<h2>Comprar Órdenes</h2>
-<p>Recarga órdenes individuales o adquiere planes promocionales.</p>
+<h2>Comprar Ãrdenes</h2>
+<p>Recarga Ã³rdenes individuales o adquiere planes promocionales.</p>
 <a href="comprar-ordenes.html" class="btn">Comprar</a>
 </div>
 
@@ -408,29 +410,36 @@ Cargando información del profesional...
 <a href="mis-solicitudes.html" class="btn btn-green">Ver Historial / PDFs</a>
 </div>
 
+<div class="action-card">
+<h2>ð©º Pacientes / Ficha ClÃ­nica</h2>
+<p>Busca pacientes, crea nuevas fichas clÃ­nicas, revisa evoluciones y descarga registros en PDF.</p>
+<a href="pacientes.html" class="btn btn-green">Abrir Pacientes</a>
+<a href="ficha-clinica.html" class="btn" style="margin-left:8px;">Nueva Ficha</a>
+</div>
+
 <div id="cardMNBEActiva" class="action-card premium hidden">
-<h2>📚 Biblioteca MNBE</h2>
-<p>Accede al asistente clínico con protocolos por sistema, fisiopatología, biomarcadores, dosis, mecanismos y referencias.</p>
+<h2>ð Biblioteca MNBE</h2>
+<p>Accede al asistente clÃ­nico con protocolos por sistema, fisiopatologÃ­a, biomarcadores, dosis, mecanismos y referencias.</p>
 <a href="biblioteca-mnbe.html" class="btn btn-teal">Abrir Biblioteca</a>
 </div>
 
 <div id="cardMNBEBloqueada" class="action-card premium hidden">
-<h2>📚 Biblioteca MNBE Premium</h2>
+<h2>ð Biblioteca MNBE Premium</h2>
 <div class="price">$49.000</div>
-<p>Pago único para activar tratamientos MNBE por sistema: Cardiología, Digestivo, Endocrino, Dermatología, Respiratorio, Nefrourinario, SOMA y Sueño.</p>
-<a href="biblioteca-mnbe.html" class="btn btn-teal">Solicitar Activación</a>
+<p>Pago Ãºnico para activar tratamientos MNBE por sistema: CardiologÃ­a, Digestivo, Endocrino, DermatologÃ­a, Respiratorio, Nefrourinario, SOMA y SueÃ±o.</p>
+<a href="biblioteca-mnbe.html" class="btn btn-teal">Solicitar ActivaciÃ³n</a>
 </div>
 
 </div>
 
 <div class="notice">
-<h3>Promoción Vigente</h3>
+<h3>PromociÃ³n Vigente</h3>
 <p>
 Orden individual: $2.990 (valor normal $3.990)
 <br><br>
-Pack promocional: 10 órdenes por $25.000
+Pack promocional: 10 Ã³rdenes por $25.000
 <br><br>
-Plan profesional: hasta 50 órdenes por $50.000.
+Plan profesional: hasta 50 Ã³rdenes por $50.000.
 </p>
 </div>
 
@@ -547,7 +556,7 @@ return;
 }
 
 if(!profesionalesData || profesionalesData.length === 0){
-mostrarError("No se encontró el perfil profesional asociado a este usuario.");
+mostrarError("No se encontrÃ³ el perfil profesional asociado a este usuario.");
 return;
 }
 
@@ -561,7 +570,7 @@ return;
 
 document.getElementById("bienvenida").textContent = "Bienvenido, " + profesional.nombre;
 document.getElementById("correoProfesional").textContent = "Correo: " + profesional.email;
-document.getElementById("profesionProfesional").textContent = "Profesión: " + profesional.profesion;
+document.getElementById("profesionProfesional").textContent = "ProfesiÃ³n: " + profesional.profesion;
 
 const estadoSpan = document.getElementById("estadoProfesional");
 estadoSpan.textContent = "Estado: " + profesional.estado;
@@ -576,7 +585,7 @@ document.getElementById("ordenesDisponibles").textContent = ordenesDisponibles;
 if(ordenesDisponibles <= 0){
 alertaOrdenes.style.display = "block";
 btnNuevaSolicitud.href = "comprar-ordenes.html";
-btnNuevaSolicitud.textContent = "Comprar Órdenes";
+btnNuevaSolicitud.textContent = "Comprar Ãrdenes";
 }
 
 const pendientes = await contarOrdenes(profesional.id, "pendiente");
