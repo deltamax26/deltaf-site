@@ -45,6 +45,8 @@ th{background:#e0f2fe;color:#075985;}
 .btn-mnbe{background:#0f766e;color:white;}
 .btn-mnbe-off{background:#64748b;color:white;}
 .btn-modify{background:#f59e0b;color:white;}
+.btn-delete{background:#991b1b;color:white;}
+.btn-clean{background:#334155;color:white;padding:12px 18px;margin-bottom:20px;}
 .detail-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:15px;margin-bottom:20px;}
 .field{background:#f8fafc;padding:14px;border-radius:10px;border:1px solid #e2e8f0;}
 .field small{display:block;color:#64748b;margin-bottom:5px;font-weight:bold;}
@@ -61,7 +63,7 @@ th{background:#e0f2fe;color:#075985;}
 
 <header>
 <h1>Panel Administrador DeltaF</h1>
-<button class="logout" onclick="cerrarSesion()">Cerrar sesión</button>
+<button class="logout" onclick="cerrarSesion()">Cerrar sesiÃ³n</button>
 </header>
 
 <div class="container">
@@ -71,47 +73,60 @@ th{background:#e0f2fe;color:#075985;}
 <div id="mensajeInfo" class="info"></div>
 
 <div class="cards">
-<div class="card"><h3>Total ventas del día</h3><p id="ventasDia">$0</p></div>
+<div class="card"><h3>Total ventas del dÃ­a</h3><p id="ventasDia">$0</p></div>
 <div class="card"><h3>Total ventas del mes</h3><p id="ventasMes">$0</p></div>
 <div class="card"><h3>Solicitudes profesionales pendientes</h3><p id="solicitudesPendientes">0</p></div>
 <div class="card"><h3>Solicitudes pacientes pendientes</h3><p id="pacientesPendientes">0</p></div>
 <div class="card"><h3>Compras pendientes</h3><p id="comprasPendientes">0</p></div>
 <div class="card"><h3>Pagos MNBE pendientes</h3><p id="pagosMNBEPendientes">0</p></div>
-<div class="card"><h3>Órdenes emitidas</h3><p id="ordenesEmitidas">0</p></div>
+<div class="card"><h3>Ãrdenes emitidas</h3><p id="ordenesEmitidas">0</p></div>
 <div class="card"><h3>Profesionales registrados</h3><p id="profesionalesRegistrados">0</p></div>
 <div class="card"><h3>Profesionales pendientes</h3><p id="profesionalesPendientes">0</p></div>
 </div>
 
+
 <div class="section">
-<h2>Gestión médica de solicitudes</h2>
+<h2>Limpieza administrativa / datos de prueba</h2>
+<p style="color:#64748b;margin-bottom:15px;">
+Usar solo para datos de prueba. Los profesionales aprobados se mantienen. Los profesionales rechazados y solicitudes de pacientes pueden eliminarse manualmente.
+</p>
+
+<button class="btn btn-delete" onclick="eliminarProfesionalesRechazados()">Eliminar profesionales rechazados</button>
+<button class="btn btn-delete" onclick="eliminarPacientesAntiguos30Dias()">Eliminar solicitudes de pacientes con mas de 30 dias</button>
+<button class="btn btn-delete" onclick="eliminarVentasPrueba()">Resetear ventas de prueba / dejar contador en cero</button>
+<button class="btn btn-reload" onclick="cargarDashboard()">Actualizar panel</button>
+</div>
+
+<div class="section">
+<h2>GestiÃ³n mÃ©dica de solicitudes</h2>
 <button class="btn btn-reload" onclick="cargarDashboard()">Actualizar</button>
-<button class="btn btn-export" onclick="exportarSolicitudesMedicasExcel()">Exportar solicitudes médicas</button>
+<button class="btn btn-export" onclick="exportarSolicitudesMedicasExcel()">Exportar solicitudes mÃ©dicas</button>
 
 <table id="tablaSolicitudesMedicas">
 <thead>
 <tr>
-<th>Código</th>
+<th>CÃ³digo</th>
 <th>Origen</th>
 <th>Paciente</th>
 <th>RUT</th>
 <th>Correo</th>
-<th>Exámenes</th>
+<th>ExÃ¡menes</th>
 <th>Fecha</th>
 <th>Estado</th>
 <th>Acciones</th>
 </tr>
 </thead>
 <tbody>
-<tr><td colspan="9">Cargando solicitudes médicas...</td></tr>
+<tr><td colspan="9">Cargando solicitudes mÃ©dicas...</td></tr>
 </tbody>
 </table>
 </div>
 
 <div id="detalleMedico" class="section" style="display:none;">
-<h2>Revisión médica desde administración</h2>
+<h2>RevisiÃ³n mÃ©dica desde administraciÃ³n</h2>
 
 <div class="detail-grid">
-<div class="field"><small>Código</small><div id="detalleCodigo"></div></div>
+<div class="field"><small>CÃ³digo</small><div id="detalleCodigo"></div></div>
 <div class="field"><small>Origen</small><div id="detalleOrigen"></div></div>
 <div class="field"><small>Paciente</small><div id="detallePaciente"></div></div>
 <div class="field"><small>RUT</small><div id="detalleRut"></div></div>
@@ -121,25 +136,25 @@ th{background:#e0f2fe;color:#075985;}
 <div class="field"><small>Comprobante</small><div id="detalleComprobante"></div></div>
 </div>
 
-<label>Exámenes solicitados / modificados</label>
+<label>ExÃ¡menes solicitados / modificados</label>
 <textarea id="detalleExamenesEditable"></textarea>
 
-<label style="margin-top:15px;">Motivo / Justificación clínica</label>
+<label style="margin-top:15px;">Motivo / JustificaciÃ³n clÃ­nica</label>
 <textarea id="detalleMotivoEditable"></textarea>
 
-<label style="margin-top:15px;">Observaciones médicas</label>
+<label style="margin-top:15px;">Observaciones mÃ©dicas</label>
 <textarea id="observacionesMedicas" placeholder="Agregar observaciones para el paciente o profesional..."></textarea>
 
 <div class="actions-grid">
-<button class="btn btn-approve" onclick="aprobarComoAdmin()">✅ Aprobar y enviar PDF</button>
-<button class="btn btn-modify" onclick="solicitarModificacionAdmin()">✏️ Solicitar modificación</button>
-<button class="btn btn-reject" onclick="rechazarComoAdmin()">❌ Rechazar</button>
+<button class="btn btn-approve" onclick="aprobarComoAdmin()">â Aprobar y enviar PDF</button>
+<button class="btn btn-modify" onclick="solicitarModificacionAdmin()">âï¸ Solicitar modificaciÃ³n</button>
+<button class="btn btn-reject" onclick="rechazarComoAdmin()">â Rechazar</button>
 <button class="btn btn-reload" onclick="cerrarDetalleMedico()">Cerrar detalle</button>
 </div>
 </div>
 
 <div class="section">
-<h2>Solicitudes de compra de órdenes</h2>
+<h2>Solicitudes de compra de Ã³rdenes</h2>
 <button class="btn btn-reload" onclick="cargarDashboard()">Actualizar</button>
 <button class="btn btn-export" onclick="exportarComprasExcel()">Exportar compras Excel</button>
 
@@ -150,7 +165,7 @@ th{background:#e0f2fe;color:#075985;}
 <th>Profesional</th>
 <th>Email</th>
 <th>Plan</th>
-<th>Órdenes</th>
+<th>Ãrdenes</th>
 <th>Monto</th>
 <th>Comprobante</th>
 <th>Estado</th>
@@ -165,7 +180,7 @@ th{background:#e0f2fe;color:#075985;}
 
 <div class="section">
 <h2>Pagos Biblioteca MNBE Premium</h2>
-<p style="color:#64748b;margin-bottom:15px;">Pago único Biblioteca MNBE: $49.000. Al aprobar, se activa el acceso MNBE del profesional.</p>
+<p style="color:#64748b;margin-bottom:15px;">Pago Ãºnico Biblioteca MNBE: $49.000. Al aprobar, se activa el acceso MNBE del profesional.</p>
 <button class="btn btn-reload" onclick="cargarDashboard()">Actualizar</button>
 <button class="btn btn-export" onclick="exportarPagosMNBEExcel()">Exportar pagos MNBE</button>
 
@@ -175,7 +190,7 @@ th{background:#e0f2fe;color:#075985;}
 <th>Fecha</th>
 <th>Profesional</th>
 <th>Email</th>
-<th>Código Transbank</th>
+<th>Comprobante / Pago</th>
 <th>Monto</th>
 <th>Estado</th>
 <th>Acciones</th>
@@ -188,7 +203,7 @@ th{background:#e0f2fe;color:#075985;}
 </div>
 
 <div class="section">
-<h2>Asignar órdenes manualmente</h2>
+<h2>Asignar Ã³rdenes manualmente</h2>
 
 <div class="form-grid">
 <div>
@@ -205,11 +220,11 @@ th{background:#e0f2fe;color:#075985;}
 
 <div>
 <label>Motivo</label>
-<input id="motivoOrdenes" type="text" placeholder="Ej: Pago manual, transferencia, compensación">
+<input id="motivoOrdenes" type="text" placeholder="Ej: Pago manual, transferencia, compensaciÃ³n">
 </div>
 
 <div>
-<button class="btn btn-main" onclick="asignarOrdenesManual()">Asignar órdenes</button>
+<button class="btn btn-main" onclick="asignarOrdenesManual()">Asignar Ã³rdenes</button>
 </div>
 </div>
 </div>
@@ -226,10 +241,10 @@ th{background:#e0f2fe;color:#075985;}
 <th>Paciente</th>
 <th>RUT</th>
 <th>Correo</th>
-<th>Teléfono</th>
-<th>Exámenes</th>
+<th>TelÃ©fono</th>
+<th>ExÃ¡menes</th>
 <th>Motivo</th>
-<th>Código Transbank</th>
+<th>Comprobante / Pago</th>
 <th>Monto</th>
 <th>Estado</th>
 <th>Acciones</th>
@@ -252,10 +267,10 @@ th{background:#e0f2fe;color:#075985;}
 <th>Nombre</th>
 <th>RUT</th>
 <th>Email</th>
-<th>Profesión</th>
+<th>ProfesiÃ³n</th>
 <th>Registro SIS</th>
-<th>Teléfono</th>
-<th>Órdenes</th>
+<th>TelÃ©fono</th>
+<th>Ãrdenes</th>
 <th>MNBE</th>
 <th>Estado</th>
 <th>Acciones</th>
@@ -278,10 +293,10 @@ th{background:#e0f2fe;color:#075985;}
 <th>Paciente</th>
 <th>RUT</th>
 <th>Profesional</th>
-<th>Exámenes</th>
+<th>ExÃ¡menes</th>
 <th>Monto</th>
 <th>Estado</th>
-<th>Código Transbank</th>
+<th>Comprobante / Pago</th>
 </tr>
 </thead>
 <tbody>
@@ -298,10 +313,10 @@ const SUPABASE_KEY = "sb_publishable_w8xrtEanlJJAc5FYvk1X5A_fKu9vb5d";
 const FUNCTION_EMAIL_URL = "https://goxkmtnmfessroveanje.supabase.co/functions/v1/resend-email";
 const STORAGE_BUCKET = "ordenes";
 
-const MEDICO_NOMBRE = "Dra. Carolina Domínguez";
-const MEDICO_RUT = "RUT Médico: 24.891.056-9";
+const MEDICO_NOMBRE = "Dra. Carolina DomÃ­nguez";
+const MEDICO_RUT = "RUT MÃ©dico: 24.891.056-9";
 const MEDICO_REGISTRO = "Registro SIS: 544925";
-const MEDICO_ESPECIALIDAD = "Médico autorizador";
+const MEDICO_ESPECIALIDAD = "MÃ©dico autorizador";
 const LOGO_URL = "https://deltaf.site/img/logo-deltaf.png";
 const FIRMA_URL = "https://deltaf.site/img/firma-carolina.jpg";
 
@@ -573,7 +588,7 @@ const tbody=document.querySelector("#tablaSolicitudesMedicas tbody");
 tbody.innerHTML="";
 
 if(!solicitudes || solicitudes.length===0){
-tbody.innerHTML=`<tr><td colspan="9">No hay solicitudes médicas registradas.</td></tr>`;
+tbody.innerHTML=`<tr><td colspan="9">No hay solicitudes mÃ©dicas registradas.</td></tr>`;
 return;
 }
 
@@ -606,7 +621,7 @@ function seleccionarSolicitudMedica(origen,id){
 const item=solicitudesMedicasGlobal.find(s=>String(s.id)===String(id) && s._origen===origen);
 
 if(!item){
-mostrarError("No se encontró la solicitud seleccionada.");
+mostrarError("No se encontrÃ³ la solicitud seleccionada.");
 return;
 }
 
@@ -741,9 +756,9 @@ doc.text("DELTAF",15,18);
 doc.setTextColor(255,255,255);
 doc.setFont("helvetica","bold");
 doc.setFontSize(15);
-doc.text("ORDEN MÉDICA DE EXÁMENES",75,14);
+doc.text("ORDEN MÃDICA DE EXÃMENES",75,14);
 doc.setFontSize(9);
-doc.text("Validación médica digital",75,21);
+doc.text("ValidaciÃ³n mÃ©dica digital",75,21);
 
 doc.setTextColor(30,41,59);
 doc.setDrawColor(203,213,225);
@@ -752,12 +767,12 @@ doc.roundedRect(15,36,180,30,3,3,"FD");
 
 doc.setFont("helvetica","bold");
 doc.setFontSize(11);
-doc.text("Datos de emisión",20,45);
+doc.text("Datos de emisiÃ³n",20,45);
 
 doc.setFont("helvetica","normal");
 doc.setFontSize(10);
 doc.text("Folio: " + folio,20,53);
-doc.text("Fecha de emisión: " + fecha,20,60);
+doc.text("Fecha de emisiÃ³n: " + fecha,20,60);
 doc.text("Estado: APROBADA",125,53);
 doc.text("Origen: " + (ordenActual._origen === "paciente" ? "Paciente directo" : "Profesional"),125,60);
 
@@ -779,7 +794,7 @@ doc.text("Correo: " + correo,100,101);
 doc.setTextColor(37,99,235);
 doc.setFont("helvetica","bold");
 doc.setFontSize(12);
-doc.text("Exámenes solicitados",20,124);
+doc.text("ExÃ¡menes solicitados",20,124);
 
 doc.setTextColor(30,41,59);
 doc.setFont("helvetica","normal");
@@ -793,7 +808,7 @@ y += examenesLineas.length * 6 + 8;
 doc.setTextColor(37,99,235);
 doc.setFont("helvetica","bold");
 doc.setFontSize(12);
-doc.text("Motivo / justificación clínica",20,y);
+doc.text("Motivo / justificaciÃ³n clÃ­nica",20,y);
 y += 9;
 
 doc.setTextColor(30,41,59);
@@ -811,7 +826,7 @@ y = 25;
 doc.setTextColor(37,99,235);
 doc.setFont("helvetica","bold");
 doc.setFontSize(12);
-doc.text("Observaciones médicas",20,y);
+doc.text("Observaciones mÃ©dicas",20,y);
 y += 9;
 
 doc.setTextColor(30,41,59);
@@ -833,7 +848,7 @@ doc.roundedRect(15,y,180,45,3,3,"FD");
 doc.setTextColor(37,99,235);
 doc.setFont("helvetica","bold");
 doc.setFontSize(12);
-doc.text("Médico autorizador",20,y+10);
+doc.text("MÃ©dico autorizador",20,y+10);
 
 doc.setTextColor(30,41,59);
 doc.setFont("helvetica","bold");
@@ -851,18 +866,18 @@ doc.addImage(firmaBase64,"PNG",130,y+8,45,22);
 doc.setDrawColor(100,116,139);
 doc.line(125,y+34,185,y+34);
 doc.setFontSize(9);
-doc.text("Firma médica autorizadora",132,y+40);
+doc.text("Firma mÃ©dica autorizadora",132,y+40);
 }else{
 doc.setDrawColor(100,116,139);
 doc.line(125,y+30,185,y+30);
 doc.setFontSize(9);
-doc.text("Firma médica autorizadora",132,y+37);
+doc.text("Firma mÃ©dica autorizadora",132,y+37);
 }
 
 doc.setFontSize(8);
 doc.setTextColor(100,116,139);
-doc.text("Código de verificación: " + folio,20,278);
-doc.text("Documento emitido electrónicamente por DeltaF. Validación sujeta a revisión médica.",20,284);
+doc.text("CÃ³digo de verificaciÃ³n: " + folio,20,278);
+doc.text("Documento emitido electrÃ³nicamente por DeltaF. ValidaciÃ³n sujeta a revisiÃ³n mÃ©dica.",20,284);
 
 const dataUri = doc.output("datauristring");
 const base64 = obtenerBase64DeDataUri(dataUri);
@@ -896,18 +911,18 @@ function crearHtmlAprobacion(ordenActual,observaciones,pdfUrl){
 return `
 <div style="font-family:Arial,sans-serif;color:#1e293b;line-height:1.5;">
 <h2 style="color:#2563eb;">Solicitud aprobada - DeltaF</h2>
-<p>Estimado/a, la solicitud de exámenes fue revisada y aprobada por el médico autorizador.</p>
+<p>Estimado/a, la solicitud de exÃ¡menes fue revisada y aprobada por el mÃ©dico autorizador.</p>
 <h3>Datos de la solicitud</h3>
-<p><strong>Código:</strong> ${limpiarTexto(ordenActual._codigo || "-")}</p>
+<p><strong>CÃ³digo:</strong> ${limpiarTexto(ordenActual._codigo || "-")}</p>
 <p><strong>Paciente:</strong> ${limpiarTexto(ordenActual.nombre_paciente || "-")}</p>
 <p><strong>RUT:</strong> ${limpiarTexto(ordenActual.rut_paciente || "-")}</p>
-<p><strong>Exámenes:</strong> ${limpiarTexto(ordenActual._examenes || "-")}</p>
-<h3>Observaciones médicas</h3>
+<p><strong>ExÃ¡menes:</strong> ${limpiarTexto(ordenActual._examenes || "-")}</p>
+<h3>Observaciones mÃ©dicas</h3>
 <p>${limpiarTexto(observaciones || "Sin observaciones adicionales.")}</p>
-<p><strong>Orden médica en PDF:</strong> se adjunta a este correo.</p>
-<p>También puedes verla aquí: <a href="${pdfUrl}" target="_blank">Descargar orden médica</a></p>
+<p><strong>Orden mÃ©dica en PDF:</strong> se adjunta a este correo.</p>
+<p>TambiÃ©n puedes verla aquÃ­: <a href="${pdfUrl}" target="_blank">Descargar orden mÃ©dica</a></p>
 <hr>
-<p style="font-size:12px;color:#64748b;">DeltaF - Plataforma de solicitudes de exámenes.</p>
+<p style="font-size:12px;color:#64748b;">DeltaF - Plataforma de solicitudes de exÃ¡menes.</p>
 </div>
 `;
 }
@@ -916,16 +931,16 @@ function crearHtmlRechazo(ordenActual,observaciones){
 return `
 <div style="font-family:Arial,sans-serif;color:#1e293b;line-height:1.5;">
 <h2 style="color:#dc2626;">Solicitud rechazada - DeltaF</h2>
-<p>Estimado/a, la solicitud de exámenes fue revisada por el médico autorizador y ha sido rechazada.</p>
+<p>Estimado/a, la solicitud de exÃ¡menes fue revisada por el mÃ©dico autorizador y ha sido rechazada.</p>
 <h3>Datos de la solicitud</h3>
-<p><strong>Código:</strong> ${limpiarTexto(ordenActual._codigo || "-")}</p>
+<p><strong>CÃ³digo:</strong> ${limpiarTexto(ordenActual._codigo || "-")}</p>
 <p><strong>Paciente:</strong> ${limpiarTexto(ordenActual.nombre_paciente || "-")}</p>
 <p><strong>RUT:</strong> ${limpiarTexto(ordenActual.rut_paciente || "-")}</p>
-<p><strong>Exámenes:</strong> ${limpiarTexto(ordenActual._examenes || "-")}</p>
+<p><strong>ExÃ¡menes:</strong> ${limpiarTexto(ordenActual._examenes || "-")}</p>
 <h3>Motivo / observaciones</h3>
 <p>${limpiarTexto(observaciones || "Sin observaciones registradas.")}</p>
 <hr>
-<p style="font-size:12px;color:#64748b;">DeltaF - Plataforma de solicitudes de exámenes.</p>
+<p style="font-size:12px;color:#64748b;">DeltaF - Plataforma de solicitudes de exÃ¡menes.</p>
 </div>
 `;
 }
@@ -933,18 +948,18 @@ return `
 function crearHtmlModificacion(ordenActual,observaciones){
 return `
 <div style="font-family:Arial,sans-serif;color:#1e293b;line-height:1.5;">
-<h2 style="color:#f59e0b;">Solicitud requiere modificación - DeltaF</h2>
-<p>Estimado/a, el médico autorizador revisó la solicitud y requiere modificaciones antes de aprobarla.</p>
+<h2 style="color:#f59e0b;">Solicitud requiere modificaciÃ³n - DeltaF</h2>
+<p>Estimado/a, el mÃ©dico autorizador revisÃ³ la solicitud y requiere modificaciones antes de aprobarla.</p>
 <h3>Datos de la solicitud</h3>
-<p><strong>Código:</strong> ${limpiarTexto(ordenActual._codigo || "-")}</p>
+<p><strong>CÃ³digo:</strong> ${limpiarTexto(ordenActual._codigo || "-")}</p>
 <p><strong>Paciente:</strong> ${limpiarTexto(ordenActual.nombre_paciente || "-")}</p>
 <p><strong>RUT:</strong> ${limpiarTexto(ordenActual.rut_paciente || "-")}</p>
-<p><strong>Exámenes:</strong> ${limpiarTexto(ordenActual._examenes || "-")}</p>
-<h3>Solicitud médica</h3>
+<p><strong>ExÃ¡menes:</strong> ${limpiarTexto(ordenActual._examenes || "-")}</p>
+<h3>Solicitud mÃ©dica</h3>
 <p>${limpiarTexto(observaciones || "-")}</p>
 <p>Por favor revise la solicitud en DeltaF y realice las correcciones necesarias.</p>
 <hr>
-<p style="font-size:12px;color:#64748b;">DeltaF - Plataforma de solicitudes de exámenes.</p>
+<p style="font-size:12px;color:#64748b;">DeltaF - Plataforma de solicitudes de exÃ¡menes.</p>
 </div>
 `;
 }
@@ -955,7 +970,7 @@ mostrarError("Primero selecciona una solicitud.");
 return;
 }
 
-const confirmar=confirm("¿Aprobar esta solicitud y enviar PDF al paciente?");
+const confirmar=confirm("Â¿Aprobar esta solicitud y enviar PDF al paciente?");
 if(!confirmar) return;
 
 try{
@@ -1001,7 +1016,7 @@ if(errorUpdate) throw errorUpdate;
 
 await enviarCorreo(
 ordenActual.correo_paciente || "",
-"Orden médica aprobada DeltaF - " + (ordenActual._codigo || ""),
+"Orden mÃ©dica aprobada DeltaF - " + (ordenActual._codigo || ""),
 crearHtmlAprobacion(ordenActual,edit.observaciones,pdfUrl),
 [
 {
@@ -1011,7 +1026,7 @@ content:pdf.base64
 ]
 );
 
-mostrarOk("Solicitud aprobada correctamente. Se generó PDF y se envió correo al paciente.");
+mostrarOk("Solicitud aprobada correctamente. Se generÃ³ PDF y se enviÃ³ correo al paciente.");
 cerrarDetalleMedico();
 await cargarDashboard();
 
@@ -1030,11 +1045,11 @@ return;
 const observaciones=document.getElementById("observacionesMedicas").value.trim();
 
 if(!observaciones){
-alert("Para rechazar, escribe una observación o motivo de rechazo.");
+alert("Para rechazar, escribe una observaciÃ³n o motivo de rechazo.");
 return;
 }
 
-const confirmar=confirm("¿Seguro que deseas rechazar esta solicitud?");
+const confirmar=confirm("Â¿Seguro que deseas rechazar esta solicitud?");
 if(!confirmar) return;
 
 try{
@@ -1098,15 +1113,15 @@ return;
 const observaciones=document.getElementById("observacionesMedicas").value.trim();
 
 if(!observaciones){
-alert("Para solicitar modificación, escribe la observación médica.");
+alert("Para solicitar modificaciÃ³n, escribe la observaciÃ³n mÃ©dica.");
 return;
 }
 
-const confirmar=confirm("¿Solicitar modificación de esta solicitud?");
+const confirmar=confirm("Â¿Solicitar modificaciÃ³n de esta solicitud?");
 if(!confirmar) return;
 
 try{
-mostrarInfo("Registrando solicitud de modificación y enviando correo...");
+mostrarInfo("Registrando solicitud de modificaciÃ³n y enviando correo...");
 
 const edit=await guardarEdicionSolicitudMedica();
 
@@ -1117,7 +1132,7 @@ motivo:edit.motivo
 };
 
 let errorUpdate=null;
-const texto="Solicitud de modificación médica: " + edit.observaciones;
+const texto="Solicitud de modificaciÃ³n mÃ©dica: " + edit.observaciones;
 
 if(ordenActual._origen==="paciente"){
 const {error}=await supabaseClient
@@ -1144,17 +1159,17 @@ if(errorUpdate) throw errorUpdate;
 
 await enviarCorreo(
 ordenActual.correo_paciente || "",
-"Solicitud requiere modificación DeltaF - " + (ordenActual._codigo || ""),
+"Solicitud requiere modificaciÃ³n DeltaF - " + (ordenActual._codigo || ""),
 crearHtmlModificacion(ordenActual,edit.observaciones)
 );
 
-mostrarOk("Modificación solicitada correctamente y correo enviado.");
+mostrarOk("ModificaciÃ³n solicitada correctamente y correo enviado.");
 cerrarDetalleMedico();
 await cargarDashboard();
 
 }catch(error){
 console.error(error);
-mostrarError("Error al solicitar modificación: " + error.message);
+mostrarError("Error al solicitar modificaciÃ³n: " + error.message);
 }
 }
 
@@ -1190,6 +1205,7 @@ tr.innerHTML=`
 <td>
 <button class="btn btn-approve" onclick="aprobarCompra('${c.id}')">Aprobar</button>
 <button class="btn btn-reject" onclick="rechazarCompra('${c.id}')">Rechazar</button>
+<button class="btn btn-delete" onclick="eliminarCompraOrden('${c.id}')">Eliminar</button>
 </td>
 `;
 
@@ -1226,6 +1242,7 @@ tr.innerHTML=`
 <td>
 <button class="btn btn-approve" onclick="aprobarPagoMNBE('${p.id}')">Aprobar MNBE</button>
 <button class="btn btn-reject" onclick="rechazarPagoMNBE('${p.id}')">Rechazar</button>
+<button class="btn btn-delete" onclick="eliminarPagoMNBE('${p.id}')">Eliminar</button>
 </td>
 `;
 
@@ -1237,7 +1254,7 @@ async function aprobarPagoMNBE(id){
 const pago=pagosMNBEGlobal.find(p => String(p.id) === String(id));
 
 if(!pago){
-mostrarError("No se encontró el pago MNBE seleccionado.");
+mostrarError("No se encontrÃ³ el pago MNBE seleccionado.");
 return;
 }
 
@@ -1251,17 +1268,17 @@ return;
 const profesional=obtenerProfesionalPorId(pago.profesional_id);
 
 if(!profesional){
-mostrarError("No se encontró el profesional asociado a este pago MNBE.");
+mostrarError("No se encontrÃ³ el profesional asociado a este pago MNBE.");
 return;
 }
 
 const confirmar=confirm(
-"¿Aprobar acceso Biblioteca MNBE?\n\n" +
+"Â¿Aprobar acceso Biblioteca MNBE?\n\n" +
 "Profesional: " + (pago.nombre_profesional || profesional.nombre || "-") + "\n" +
 "Email: " + (pago.email || profesional.email || "-") + "\n" +
-"Código Transbank: " + (pago.codigo_pago || "-") + "\n" +
+"CÃ³digo Transbank: " + (pago.codigo_pago || "-") + "\n" +
 "Monto: " + formatoPeso(Number(pago.monto || 49000)) + "\n\n" +
-"Esto activará acceso_mnbe en el perfil profesional."
+"Esto activarÃ¡ acceso_mnbe en el perfil profesional."
 );
 
 if(!confirmar) return;
@@ -1295,7 +1312,7 @@ mostrarError("Error al aprobar pago MNBE: " + error.message);
 }
 
 async function rechazarPagoMNBE(id){
-const confirmar=confirm("¿Seguro que deseas rechazar este pago MNBE?");
+const confirmar=confirm("Â¿Seguro que deseas rechazar este pago MNBE?");
 if(!confirmar) return;
 
 try{
@@ -1319,12 +1336,12 @@ async function alternarMNBEProfesional(profesionalId, activar){
 const profesional=obtenerProfesionalPorId(profesionalId);
 
 if(!profesional){
-mostrarError("No se encontró el profesional.");
+mostrarError("No se encontrÃ³ el profesional.");
 return;
 }
 
 const confirmar=confirm(
-(activar ? "¿Activar" : "¿Desactivar") + " Biblioteca MNBE para " + profesional.nombre + "?"
+(activar ? "Â¿Activar" : "Â¿Desactivar") + " Biblioteca MNBE para " + profesional.nombre + "?"
 );
 
 if(!confirmar) return;
@@ -1364,7 +1381,7 @@ const ordenes=Number(p.ordenes_disponibles || 0);
 
 const option=document.createElement("option");
 option.value=p.id;
-option.textContent=`${nombre} - ${email} - ${ordenes} órdenes`;
+option.textContent=`${nombre} - ${email} - ${ordenes} Ã³rdenes`;
 select.appendChild(option);
 });
 }
@@ -1395,6 +1412,7 @@ tr.innerHTML=`
 <td><span class="badge ${estado}">${s.estado || "pendiente"}</span></td>
 <td>
 <button class="btn btn-main" onclick="seleccionarSolicitudMedica('paciente','${s.id}')">Resolver</button>
+<button class="btn btn-delete" onclick="eliminarSolicitudPaciente('${s.id}')">Eliminar</button>
 </td>
 `;
 
@@ -1440,8 +1458,9 @@ tr.innerHTML=`
 <td>
 <button class="btn btn-approve" onclick="cambiarEstadoProfesional('${p.id}','aprobado')">Aprobar</button>
 <button class="btn btn-reject" onclick="cambiarEstadoProfesional('${p.id}','rechazado')">Rechazar</button>
-<button class="btn btn-orders" onclick="asignarOrdenesRapido('${p.id}')">+ Órdenes</button>
+<button class="btn btn-orders" onclick="asignarOrdenesRapido('${p.id}')">+ Ãrdenes</button>
 ${p.acceso_mnbe ? `<button class="btn btn-mnbe-off" onclick="alternarMNBEProfesional('${p.id}',false)">Desactivar MNBE</button>` : `<button class="btn btn-mnbe" onclick="alternarMNBEProfesional('${p.id}',true)">Activar MNBE</button>`}
+${estado === "rechazado" || estado === "rechazada" ? `<button class="btn btn-delete" onclick="eliminarProfesionalRechazado('${p.id}')">Eliminar rechazado</button>` : ``}
 </td>
 `;
 
@@ -1481,7 +1500,7 @@ async function aprobarCompra(id){
 const compra=comprasGlobal.find(c => String(c.id) === String(id));
 
 if(!compra){
-mostrarError("No se encontró la compra seleccionada.");
+mostrarError("No se encontrÃ³ la compra seleccionada.");
 return;
 }
 
@@ -1495,7 +1514,7 @@ return;
 const profesional=obtenerProfesionalPorId(compra.profesional_id);
 
 if(!profesional){
-mostrarError("No se encontró el profesional asociado a esta compra.");
+mostrarError("No se encontrÃ³ el profesional asociado a esta compra.");
 return;
 }
 
@@ -1504,10 +1523,10 @@ const saldoActual=Number(profesional.ordenes_disponibles || 0);
 const nuevoSaldo=saldoActual + cantidad;
 
 const confirmar=confirm(
-"¿Aprobar esta compra?\n\n" +
+"Â¿Aprobar esta compra?\n\n" +
 "Profesional: " + profesional.nombre + "\n" +
 "Plan: " + (compra.plan || "-") + "\n" +
-"Órdenes a cargar: " + cantidad + "\n" +
+"Ãrdenes a cargar: " + cantidad + "\n" +
 "Saldo actual: " + saldoActual + "\n" +
 "Nuevo saldo: " + nuevoSaldo
 );
@@ -1529,7 +1548,7 @@ const {error:updateCompraError}=await supabaseClient
 
 if(updateCompraError) throw updateCompraError;
 
-mostrarOk("Compra aprobada y órdenes cargadas correctamente.");
+mostrarOk("Compra aprobada y Ã³rdenes cargadas correctamente.");
 await cargarDashboard();
 
 }catch(error){
@@ -1539,7 +1558,7 @@ mostrarError("Error al aprobar compra: " + error.message);
 }
 
 async function rechazarCompra(id){
-const confirmar=confirm("¿Seguro que deseas rechazar esta compra?");
+const confirmar=confirm("Â¿Seguro que deseas rechazar esta compra?");
 if(!confirmar) return;
 
 try{
@@ -1560,7 +1579,7 @@ mostrarError("Error al rechazar compra: " + error.message);
 }
 
 async function cambiarEstadoProfesional(id,nuevoEstado){
-const confirmar=confirm("¿Seguro que deseas cambiar este profesional a estado: " + nuevoEstado + "?");
+const confirmar=confirm("Â¿Seguro que deseas cambiar este profesional a estado: " + nuevoEstado + "?");
 if(!confirmar) return;
 
 try{
@@ -1591,14 +1610,14 @@ return;
 }
 
 if(!cantidad || cantidad <= 0){
-mostrarError("Debes ingresar una cantidad válida de órdenes.");
+mostrarError("Debes ingresar una cantidad vÃ¡lida de Ã³rdenes.");
 return;
 }
 
 const profesional=obtenerProfesionalPorId(profesionalId);
 
 if(!profesional){
-mostrarError("No se encontró el profesional seleccionado.");
+mostrarError("No se encontrÃ³ el profesional seleccionado.");
 return;
 }
 
@@ -1606,7 +1625,7 @@ const saldoActual=Number(profesional.ordenes_disponibles || 0);
 const nuevoSaldo=saldoActual + cantidad;
 
 const confirmar=confirm(
-"Asignar " + cantidad + " órdenes a " + profesional.nombre + "?\n\n" +
+"Asignar " + cantidad + " Ã³rdenes a " + profesional.nombre + "?\n\n" +
 "Saldo actual: " + saldoActual + "\n" +
 "Nuevo saldo: " + nuevoSaldo + "\n\n" +
 "Motivo: " + (motivo || "Sin motivo")
@@ -1622,7 +1641,7 @@ const {error}=await supabaseClient
 
 if(error) throw error;
 
-mostrarOk("Órdenes asignadas correctamente. Nuevo saldo: " + nuevoSaldo);
+mostrarOk("Ãrdenes asignadas correctamente. Nuevo saldo: " + nuevoSaldo);
 
 document.getElementById("cantidadOrdenes").value="";
 document.getElementById("motivoOrdenes").value="";
@@ -1632,7 +1651,7 @@ await cargarDashboard();
 
 }catch(error){
 console.error(error);
-mostrarError("Error al asignar órdenes: " + error.message);
+mostrarError("Error al asignar Ã³rdenes: " + error.message);
 }
 }
 
@@ -1640,28 +1659,28 @@ async function asignarOrdenesRapido(profesionalId){
 const profesional=obtenerProfesionalPorId(profesionalId);
 
 if(!profesional){
-mostrarError("No se encontró el profesional.");
+mostrarError("No se encontrÃ³ el profesional.");
 return;
 }
 
-const cantidadTexto=prompt("¿Cuántas órdenes deseas agregar a " + profesional.nombre + "?");
+const cantidadTexto=prompt("Â¿CuÃ¡ntas Ã³rdenes deseas agregar a " + profesional.nombre + "?");
 
 if(cantidadTexto === null) return;
 
 const cantidad=Number(cantidadTexto);
 
 if(!cantidad || cantidad <= 0){
-mostrarError("Cantidad inválida.");
+mostrarError("Cantidad invÃ¡lida.");
 return;
 }
 
-const motivo=prompt("Motivo de la asignación:", "Pago manual / Transbank caído") || "";
+const motivo=prompt("Motivo de la asignaciÃ³n:", "Pago manual / Transbank caÃ­do") || "";
 
 const saldoActual=Number(profesional.ordenes_disponibles || 0);
 const nuevoSaldo=saldoActual + cantidad;
 
 const confirmar=confirm(
-"Confirmar asignación\n\n" +
+"Confirmar asignaciÃ³n\n\n" +
 "Profesional: " + profesional.nombre + "\n" +
 "Cantidad: " + cantidad + "\n" +
 "Saldo actual: " + saldoActual + "\n" +
@@ -1679,18 +1698,209 @@ const {error}=await supabaseClient
 
 if(error) throw error;
 
-mostrarOk("Órdenes asignadas correctamente. Nuevo saldo: " + nuevoSaldo);
+mostrarOk("Ãrdenes asignadas correctamente. Nuevo saldo: " + nuevoSaldo);
 await cargarDashboard();
 
 }catch(error){
 console.error(error);
-mostrarError("Error al asignar órdenes: " + error.message);
+mostrarError("Error al asignar Ã³rdenes: " + error.message);
 }
 }
 
+
+async function eliminarSolicitudPaciente(id){
+const confirmar=confirm("Â¿Eliminar esta solicitud de paciente particular? Esta accion no se puede deshacer.");
+if(!confirmar) return;
+
+try{
+const {error}=await supabaseClient
+.from("solicitudes_pacientes")
+.delete()
+.eq("id",id);
+
+if(error) throw error;
+
+mostrarOk("Solicitud de paciente eliminada correctamente.");
+await cargarDashboard();
+
+}catch(error){
+console.error(error);
+mostrarError("Error al eliminar solicitud de paciente: " + error.message);
+}
+}
+
+async function eliminarPacientesAntiguos30Dias(){
+const confirmar=confirm("Â¿Eliminar solicitudes de pacientes particulares con mas de 30 dias? Esta accion no se puede deshacer.");
+if(!confirmar) return;
+
+const fechaLimite=new Date();
+fechaLimite.setDate(fechaLimite.getDate()-30);
+
+try{
+const {error}=await supabaseClient
+.from("solicitudes_pacientes")
+.delete()
+.lt("created_at",fechaLimite.toISOString());
+
+if(error) throw error;
+
+mostrarOk("Solicitudes de pacientes antiguas eliminadas correctamente.");
+await cargarDashboard();
+
+}catch(error){
+console.error(error);
+mostrarError("Error al eliminar solicitudes antiguas: " + error.message);
+}
+}
+
+async function eliminarProfesionalRechazado(id){
+const profesional=profesionalesGlobal.find(p=>String(p.id)===String(id));
+
+if(!profesional){
+mostrarError("No se encontro el profesional.");
+return;
+}
+
+const estado=(profesional.estado || "").toLowerCase();
+
+if(estado!=="rechazado" && estado!=="rechazada"){
+mostrarError("Solo se pueden eliminar profesionales rechazados. Los activos/aprobados se mantienen.");
+return;
+}
+
+const confirmar=confirm("Â¿Eliminar definitivamente al profesional rechazado: " + (profesional.nombre || profesional.email || id) + "?");
+if(!confirmar) return;
+
+try{
+const {error}=await supabaseClient
+.from("profesionales")
+.delete()
+.eq("id",id);
+
+if(error) throw error;
+
+mostrarOk("Profesional rechazado eliminado correctamente.");
+await cargarDashboard();
+
+}catch(error){
+console.error(error);
+mostrarError("Error al eliminar profesional rechazado: " + error.message);
+}
+}
+
+async function eliminarProfesionalesRechazados(){
+const confirmar=confirm("Â¿Eliminar TODOS los profesionales rechazados? Los aprobados/activos no se tocaran.");
+if(!confirmar) return;
+
+try{
+const {error}=await supabaseClient
+.from("profesionales")
+.delete()
+.in("estado",["rechazado","rechazada"]);
+
+if(error) throw error;
+
+mostrarOk("Profesionales rechazados eliminados correctamente.");
+await cargarDashboard();
+
+}catch(error){
+console.error(error);
+mostrarError("Error al eliminar profesionales rechazados: " + error.message);
+}
+}
+
+async function eliminarCompraOrden(id){
+const confirmar=confirm("Â¿Eliminar esta compra/venta de ordenes? Esto quitara el registro del contador de ventas.");
+if(!confirmar) return;
+
+try{
+const {error}=await supabaseClient
+.from("compras_ordenes")
+.delete()
+.eq("id",id);
+
+if(error) throw error;
+
+mostrarOk("Compra eliminada correctamente.");
+await cargarDashboard();
+
+}catch(error){
+console.error(error);
+mostrarError("Error al eliminar compra: " + error.message);
+}
+}
+
+async function eliminarPagoMNBE(id){
+const confirmar=confirm("Â¿Eliminar este pago MNBE? Esto quitara el registro del contador de ventas.");
+if(!confirmar) return;
+
+try{
+const {error}=await supabaseClient
+.from("pagos_mnbe")
+.delete()
+.eq("id",id);
+
+if(error) throw error;
+
+mostrarOk("Pago MNBE eliminado correctamente.");
+await cargarDashboard();
+
+}catch(error){
+console.error(error);
+mostrarError("Error al eliminar pago MNBE: " + error.message);
+}
+}
+
+async function eliminarVentasPrueba(){
+const texto=prompt('Para resetear ventas de prueba escribe: RESETEAR VENTAS');
+
+if(texto !== "RESETEAR VENTAS"){
+mostrarError("Accion cancelada. No se escribio la frase de confirmacion.");
+return;
+}
+
+try{
+mostrarInfo("Reseteando ventas de prueba...");
+
+const r1=await supabaseClient
+.from("compras_ordenes")
+.delete()
+.neq("id","00000000-0000-0000-0000-000000000000");
+
+if(r1.error) throw r1.error;
+
+const r2=await supabaseClient
+.from("pagos_mnbe")
+.delete()
+.neq("id","00000000-0000-0000-0000-000000000000");
+
+if(r2.error) throw r2.error;
+
+/*
+Las solicitudes de pacientes particulares se mantienen, pero su monto se deja en 0
+para que no sigan sumando en Total ventas del dia/mes.
+Si quieres borrar solicitudes de pacientes, usa el boton individual o el boton de 30 dias.
+*/
+const r3=await supabaseClient
+.from("solicitudes_pacientes")
+.update({monto:0})
+.neq("id","00000000-0000-0000-0000-000000000000");
+
+if(r3.error) throw r3.error;
+
+mostrarOk("Ventas de prueba reseteadas. Compras y pagos MNBE eliminados; montos de pacientes en 0.");
+await cargarDashboard();
+
+}catch(error){
+console.error(error);
+mostrarError("Error al resetear ventas: " + error.message);
+}
+}
+
+
 function exportarSolicitudesMedicasExcel(){
 if(!solicitudesMedicasGlobal || solicitudesMedicasGlobal.length===0){
-alert("No hay solicitudes médicas para exportar.");
+alert("No hay solicitudes mÃ©dicas para exportar.");
 return;
 }
 
@@ -1719,7 +1929,7 @@ alert("No hay pagos MNBE para exportar.");
 return;
 }
 
-let csv="Fecha,Profesional,Email,Codigo Transbank,Monto,Estado\n";
+let csv="Fecha,Profesional,Email,Comprobante / Pago,Monto,Estado\n";
 
 pagosMNBEGlobal.forEach(p=>{
 const profesional=obtenerProfesionalPorId(p.profesional_id);
@@ -1763,7 +1973,7 @@ alert("No hay solicitudes de pacientes para exportar.");
 return;
 }
 
-let csv="Fecha,Paciente,RUT,Correo,Telefono,Examenes,Motivo,Codigo Transbank,Monto,Estado\n";
+let csv="Fecha,Paciente,RUT,Correo,Telefono,Examenes,Motivo,Comprobante / Pago,Monto,Estado\n";
 
 solicitudesPacientesGlobal.forEach(s=>{
 csv += `"${limpiarCSV(s.created_at ? new Date(s.created_at).toLocaleDateString("es-CL") : "-")}",`;
@@ -1787,7 +1997,7 @@ alert("No hay datos para exportar.");
 return;
 }
 
-let csv="Fecha,Paciente,RUT,Profesional,Examenes,Monto,Estado,Codigo Transbank\n";
+let csv="Fecha,Paciente,RUT,Profesional,Examenes,Monto,Estado,Comprobante / Pago\n";
 
 solicitudesGlobal.forEach(s=>{
 csv += `"${limpiarCSV(s.created_at ? new Date(s.created_at).toLocaleDateString("es-CL") : "-")}",`;
