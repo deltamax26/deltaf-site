@@ -1,4 +1,4 @@
-const CACHE_NAME = "deltaf-cache-v1";
+const CACHE_NAME = "deltaf-cache-v2";
 
 const APP_SHELL = [
   "/",
@@ -7,6 +7,8 @@ const APP_SHELL = [
   "/pacientes.html",
   "/registro-profesional.html",
   "/img/logo-deltaf.png",
+  "/img/icon-192.png",
+  "/img/icon-512.png",
   "/manifest.json"
 ];
 
