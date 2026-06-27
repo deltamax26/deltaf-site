@@ -55,6 +55,10 @@ th{background:#e0f2fe;color:#075985;}
 .field div{white-space:pre-wrap;}
 .actions-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px;margin-top:20px;}
 .origin{font-weight:bold;padding:6px 10px;border-radius:8px;display:inline-block;}
+.section-toggle{float:right;background:#0f766e;color:white;border:none;border-radius:8px;padding:8px 12px;font-weight:bold;cursor:pointer;}
+.section-content{clear:both;margin-top:15px;}
+.section.collapsed .section-content{display:none;}
+.section h2{cursor:pointer;}
 .origin-prof{background:#dbeafe;color:#1e40af;}
 .origin-pac{background:#f3e8ff;color:#6b21a8;}
 @media(max-width:900px){.form-grid{grid-template-columns:1fr;}}
@@ -95,7 +99,9 @@ Usar solo para datos de prueba. Los profesionales aprobados se mantienen. Los pr
 
 <button class="btn btn-delete" onclick="eliminarProfesionalesRechazados()">Eliminar profesionales rechazados</button>
 <button class="btn btn-delete" onclick="eliminarPacientesAntiguos30Dias()">Eliminar solicitudes de pacientes con mas de 30 dias</button>
-<button class="btn btn-delete" onclick="eliminarVentasPrueba()">Resetear ventas de prueba / dejar contador en cero</button>
+<button class="btn btn-delete" onclick="resetearVentasDia()">Resetear ventas del dia</button>
+<button class="btn btn-delete" onclick="resetearVentasMes()">Resetear ventas del mes</button>
+<button class="btn btn-delete" onclick="resetearTodasLasVentas()">Resetear TODAS las ventas</button>
 <button class="btn btn-reload" onclick="cargarDashboard()">Actualizar panel</button>
 </div>
 
@@ -481,7 +487,7 @@ if(errorOrdenesMedicas) throw errorOrdenesMedicas;
 
 solicitudesGlobal=solicitudes||[];
 solicitudesPacientesGlobal=pacientes||[];
-profesionalesGlobal=profesionales||[];
+profesionalesGlobal=(profesionales||[]).filter(p => (p.estado || '').toLowerCase() !== 'eliminado');
 comprasGlobal=compras||[];
 pagosMNBEGlobal=pagosMNBE||[];
 ordenesMedicasGlobal=ordenesMedicas||[];
@@ -1030,7 +1036,59 @@ content:pdf.base64
 
 mostrarOk("Solicitud aprobada correctamente. Se genero PDF y se envio correo al paciente.");
 cerrarDetalleMedico();
-await cargarDashboard();
+await 
+function inicializarSeccionesDesplegables(){
+document.querySelectorAll(".section").forEach((section,index)=>{
+if(section.dataset.readyToggle==="1") return;
+
+const h2=section.querySelector("h2");
+if(!h2) return;
+
+const nodes=[];
+let n=h2.nextSibling;
+while(n){
+const next=n.nextSibling;
+nodes.push(n);
+n=next;
+}
+
+const content=document.createElement("div");
+content.className="section-content";
+
+nodes.forEach(node=>content.appendChild(node));
+section.appendChild(content);
+
+const btn=document.createElement("button");
+btn.className="section-toggle";
+btn.type="button";
+btn.textContent=index===0 ? "Ocultar" : "Mostrar";
+h2.appendChild(btn);
+
+if(index>0){
+section.classList.add("collapsed");
+}
+
+function alternar(){
+section.classList.toggle("collapsed");
+btn.textContent=section.classList.contains("collapsed") ? "Mostrar" : "Ocultar";
+}
+
+btn.addEventListener("click",function(e){
+e.stopPropagation();
+alternar();
+});
+
+h2.addEventListener("click",function(e){
+if(e.target===btn) return;
+alternar();
+});
+
+section.dataset.readyToggle="1";
+});
+}
+
+inicializarSeccionesDesplegables();
+cargarDashboard();
 
 }catch(error){
 console.error(error);
@@ -1098,7 +1156,59 @@ crearHtmlRechazo(ordenActual,edit.observaciones)
 
 mostrarOk("Solicitud rechazada correctamente y correo enviado.");
 cerrarDetalleMedico();
-await cargarDashboard();
+await 
+function inicializarSeccionesDesplegables(){
+document.querySelectorAll(".section").forEach((section,index)=>{
+if(section.dataset.readyToggle==="1") return;
+
+const h2=section.querySelector("h2");
+if(!h2) return;
+
+const nodes=[];
+let n=h2.nextSibling;
+while(n){
+const next=n.nextSibling;
+nodes.push(n);
+n=next;
+}
+
+const content=document.createElement("div");
+content.className="section-content";
+
+nodes.forEach(node=>content.appendChild(node));
+section.appendChild(content);
+
+const btn=document.createElement("button");
+btn.className="section-toggle";
+btn.type="button";
+btn.textContent=index===0 ? "Ocultar" : "Mostrar";
+h2.appendChild(btn);
+
+if(index>0){
+section.classList.add("collapsed");
+}
+
+function alternar(){
+section.classList.toggle("collapsed");
+btn.textContent=section.classList.contains("collapsed") ? "Mostrar" : "Ocultar";
+}
+
+btn.addEventListener("click",function(e){
+e.stopPropagation();
+alternar();
+});
+
+h2.addEventListener("click",function(e){
+if(e.target===btn) return;
+alternar();
+});
+
+section.dataset.readyToggle="1";
+});
+}
+
+inicializarSeccionesDesplegables();
+cargarDashboard();
 
 }catch(error){
 console.error(error);
@@ -1167,7 +1277,59 @@ crearHtmlModificacion(ordenActual,edit.observaciones)
 
 mostrarOk("Modificacion solicitada correctamente y correo enviado.");
 cerrarDetalleMedico();
-await cargarDashboard();
+await 
+function inicializarSeccionesDesplegables(){
+document.querySelectorAll(".section").forEach((section,index)=>{
+if(section.dataset.readyToggle==="1") return;
+
+const h2=section.querySelector("h2");
+if(!h2) return;
+
+const nodes=[];
+let n=h2.nextSibling;
+while(n){
+const next=n.nextSibling;
+nodes.push(n);
+n=next;
+}
+
+const content=document.createElement("div");
+content.className="section-content";
+
+nodes.forEach(node=>content.appendChild(node));
+section.appendChild(content);
+
+const btn=document.createElement("button");
+btn.className="section-toggle";
+btn.type="button";
+btn.textContent=index===0 ? "Ocultar" : "Mostrar";
+h2.appendChild(btn);
+
+if(index>0){
+section.classList.add("collapsed");
+}
+
+function alternar(){
+section.classList.toggle("collapsed");
+btn.textContent=section.classList.contains("collapsed") ? "Mostrar" : "Ocultar";
+}
+
+btn.addEventListener("click",function(e){
+e.stopPropagation();
+alternar();
+});
+
+h2.addEventListener("click",function(e){
+if(e.target===btn) return;
+alternar();
+});
+
+section.dataset.readyToggle="1";
+});
+}
+
+inicializarSeccionesDesplegables();
+cargarDashboard();
 
 }catch(error){
 console.error(error);
@@ -1305,7 +1467,59 @@ const {error:updatePagoError}=await supabaseClient
 if(updatePagoError) throw updatePagoError;
 
 mostrarOk("Biblioteca MNBE activada correctamente para el profesional.");
-await cargarDashboard();
+await 
+function inicializarSeccionesDesplegables(){
+document.querySelectorAll(".section").forEach((section,index)=>{
+if(section.dataset.readyToggle==="1") return;
+
+const h2=section.querySelector("h2");
+if(!h2) return;
+
+const nodes=[];
+let n=h2.nextSibling;
+while(n){
+const next=n.nextSibling;
+nodes.push(n);
+n=next;
+}
+
+const content=document.createElement("div");
+content.className="section-content";
+
+nodes.forEach(node=>content.appendChild(node));
+section.appendChild(content);
+
+const btn=document.createElement("button");
+btn.className="section-toggle";
+btn.type="button";
+btn.textContent=index===0 ? "Ocultar" : "Mostrar";
+h2.appendChild(btn);
+
+if(index>0){
+section.classList.add("collapsed");
+}
+
+function alternar(){
+section.classList.toggle("collapsed");
+btn.textContent=section.classList.contains("collapsed") ? "Mostrar" : "Ocultar";
+}
+
+btn.addEventListener("click",function(e){
+e.stopPropagation();
+alternar();
+});
+
+h2.addEventListener("click",function(e){
+if(e.target===btn) return;
+alternar();
+});
+
+section.dataset.readyToggle="1";
+});
+}
+
+inicializarSeccionesDesplegables();
+cargarDashboard();
 
 }catch(error){
 console.error(error);
@@ -1326,7 +1540,59 @@ const {error}=await supabaseClient
 if(error) throw error;
 
 mostrarOk("Pago MNBE rechazado correctamente.");
-await cargarDashboard();
+await 
+function inicializarSeccionesDesplegables(){
+document.querySelectorAll(".section").forEach((section,index)=>{
+if(section.dataset.readyToggle==="1") return;
+
+const h2=section.querySelector("h2");
+if(!h2) return;
+
+const nodes=[];
+let n=h2.nextSibling;
+while(n){
+const next=n.nextSibling;
+nodes.push(n);
+n=next;
+}
+
+const content=document.createElement("div");
+content.className="section-content";
+
+nodes.forEach(node=>content.appendChild(node));
+section.appendChild(content);
+
+const btn=document.createElement("button");
+btn.className="section-toggle";
+btn.type="button";
+btn.textContent=index===0 ? "Ocultar" : "Mostrar";
+h2.appendChild(btn);
+
+if(index>0){
+section.classList.add("collapsed");
+}
+
+function alternar(){
+section.classList.toggle("collapsed");
+btn.textContent=section.classList.contains("collapsed") ? "Mostrar" : "Ocultar";
+}
+
+btn.addEventListener("click",function(e){
+e.stopPropagation();
+alternar();
+});
+
+h2.addEventListener("click",function(e){
+if(e.target===btn) return;
+alternar();
+});
+
+section.dataset.readyToggle="1";
+});
+}
+
+inicializarSeccionesDesplegables();
+cargarDashboard();
 
 }catch(error){
 console.error(error);
@@ -1364,7 +1630,59 @@ const {error}=await supabaseClient
 if(error) throw error;
 
 mostrarOk(activar ? "Biblioteca MNBE activada." : "Biblioteca MNBE desactivada.");
-await cargarDashboard();
+await 
+function inicializarSeccionesDesplegables(){
+document.querySelectorAll(".section").forEach((section,index)=>{
+if(section.dataset.readyToggle==="1") return;
+
+const h2=section.querySelector("h2");
+if(!h2) return;
+
+const nodes=[];
+let n=h2.nextSibling;
+while(n){
+const next=n.nextSibling;
+nodes.push(n);
+n=next;
+}
+
+const content=document.createElement("div");
+content.className="section-content";
+
+nodes.forEach(node=>content.appendChild(node));
+section.appendChild(content);
+
+const btn=document.createElement("button");
+btn.className="section-toggle";
+btn.type="button";
+btn.textContent=index===0 ? "Ocultar" : "Mostrar";
+h2.appendChild(btn);
+
+if(index>0){
+section.classList.add("collapsed");
+}
+
+function alternar(){
+section.classList.toggle("collapsed");
+btn.textContent=section.classList.contains("collapsed") ? "Mostrar" : "Ocultar";
+}
+
+btn.addEventListener("click",function(e){
+e.stopPropagation();
+alternar();
+});
+
+h2.addEventListener("click",function(e){
+if(e.target===btn) return;
+alternar();
+});
+
+section.dataset.readyToggle="1";
+});
+}
+
+inicializarSeccionesDesplegables();
+cargarDashboard();
 
 }catch(error){
 console.error(error);
@@ -1551,7 +1869,59 @@ const {error:updateCompraError}=await supabaseClient
 if(updateCompraError) throw updateCompraError;
 
 mostrarOk("Compra aprobada y ordenes cargadas correctamente.");
-await cargarDashboard();
+await 
+function inicializarSeccionesDesplegables(){
+document.querySelectorAll(".section").forEach((section,index)=>{
+if(section.dataset.readyToggle==="1") return;
+
+const h2=section.querySelector("h2");
+if(!h2) return;
+
+const nodes=[];
+let n=h2.nextSibling;
+while(n){
+const next=n.nextSibling;
+nodes.push(n);
+n=next;
+}
+
+const content=document.createElement("div");
+content.className="section-content";
+
+nodes.forEach(node=>content.appendChild(node));
+section.appendChild(content);
+
+const btn=document.createElement("button");
+btn.className="section-toggle";
+btn.type="button";
+btn.textContent=index===0 ? "Ocultar" : "Mostrar";
+h2.appendChild(btn);
+
+if(index>0){
+section.classList.add("collapsed");
+}
+
+function alternar(){
+section.classList.toggle("collapsed");
+btn.textContent=section.classList.contains("collapsed") ? "Mostrar" : "Ocultar";
+}
+
+btn.addEventListener("click",function(e){
+e.stopPropagation();
+alternar();
+});
+
+h2.addEventListener("click",function(e){
+if(e.target===btn) return;
+alternar();
+});
+
+section.dataset.readyToggle="1";
+});
+}
+
+inicializarSeccionesDesplegables();
+cargarDashboard();
 
 }catch(error){
 console.error(error);
@@ -1572,7 +1942,59 @@ const {error}=await supabaseClient
 if(error) throw error;
 
 mostrarOk("Compra rechazada correctamente.");
-await cargarDashboard();
+await 
+function inicializarSeccionesDesplegables(){
+document.querySelectorAll(".section").forEach((section,index)=>{
+if(section.dataset.readyToggle==="1") return;
+
+const h2=section.querySelector("h2");
+if(!h2) return;
+
+const nodes=[];
+let n=h2.nextSibling;
+while(n){
+const next=n.nextSibling;
+nodes.push(n);
+n=next;
+}
+
+const content=document.createElement("div");
+content.className="section-content";
+
+nodes.forEach(node=>content.appendChild(node));
+section.appendChild(content);
+
+const btn=document.createElement("button");
+btn.className="section-toggle";
+btn.type="button";
+btn.textContent=index===0 ? "Ocultar" : "Mostrar";
+h2.appendChild(btn);
+
+if(index>0){
+section.classList.add("collapsed");
+}
+
+function alternar(){
+section.classList.toggle("collapsed");
+btn.textContent=section.classList.contains("collapsed") ? "Mostrar" : "Ocultar";
+}
+
+btn.addEventListener("click",function(e){
+e.stopPropagation();
+alternar();
+});
+
+h2.addEventListener("click",function(e){
+if(e.target===btn) return;
+alternar();
+});
+
+section.dataset.readyToggle="1";
+});
+}
+
+inicializarSeccionesDesplegables();
+cargarDashboard();
 
 }catch(error){
 console.error(error);
@@ -1593,7 +2015,59 @@ const {error}=await supabaseClient
 if(error) throw error;
 
 mostrarOk("Profesional actualizado correctamente.");
-await cargarDashboard();
+await 
+function inicializarSeccionesDesplegables(){
+document.querySelectorAll(".section").forEach((section,index)=>{
+if(section.dataset.readyToggle==="1") return;
+
+const h2=section.querySelector("h2");
+if(!h2) return;
+
+const nodes=[];
+let n=h2.nextSibling;
+while(n){
+const next=n.nextSibling;
+nodes.push(n);
+n=next;
+}
+
+const content=document.createElement("div");
+content.className="section-content";
+
+nodes.forEach(node=>content.appendChild(node));
+section.appendChild(content);
+
+const btn=document.createElement("button");
+btn.className="section-toggle";
+btn.type="button";
+btn.textContent=index===0 ? "Ocultar" : "Mostrar";
+h2.appendChild(btn);
+
+if(index>0){
+section.classList.add("collapsed");
+}
+
+function alternar(){
+section.classList.toggle("collapsed");
+btn.textContent=section.classList.contains("collapsed") ? "Mostrar" : "Ocultar";
+}
+
+btn.addEventListener("click",function(e){
+e.stopPropagation();
+alternar();
+});
+
+h2.addEventListener("click",function(e){
+if(e.target===btn) return;
+alternar();
+});
+
+section.dataset.readyToggle="1";
+});
+}
+
+inicializarSeccionesDesplegables();
+cargarDashboard();
 
 }catch(error){
 console.error(error);
@@ -1649,7 +2123,59 @@ document.getElementById("cantidadOrdenes").value="";
 document.getElementById("motivoOrdenes").value="";
 document.getElementById("profesionalAsignar").value="";
 
-await cargarDashboard();
+await 
+function inicializarSeccionesDesplegables(){
+document.querySelectorAll(".section").forEach((section,index)=>{
+if(section.dataset.readyToggle==="1") return;
+
+const h2=section.querySelector("h2");
+if(!h2) return;
+
+const nodes=[];
+let n=h2.nextSibling;
+while(n){
+const next=n.nextSibling;
+nodes.push(n);
+n=next;
+}
+
+const content=document.createElement("div");
+content.className="section-content";
+
+nodes.forEach(node=>content.appendChild(node));
+section.appendChild(content);
+
+const btn=document.createElement("button");
+btn.className="section-toggle";
+btn.type="button";
+btn.textContent=index===0 ? "Ocultar" : "Mostrar";
+h2.appendChild(btn);
+
+if(index>0){
+section.classList.add("collapsed");
+}
+
+function alternar(){
+section.classList.toggle("collapsed");
+btn.textContent=section.classList.contains("collapsed") ? "Mostrar" : "Ocultar";
+}
+
+btn.addEventListener("click",function(e){
+e.stopPropagation();
+alternar();
+});
+
+h2.addEventListener("click",function(e){
+if(e.target===btn) return;
+alternar();
+});
+
+section.dataset.readyToggle="1";
+});
+}
+
+inicializarSeccionesDesplegables();
+cargarDashboard();
 
 }catch(error){
 console.error(error);
@@ -1701,7 +2227,59 @@ const {error}=await supabaseClient
 if(error) throw error;
 
 mostrarOk("Ordenes asignadas correctamente. Nuevo saldo: " + nuevoSaldo);
-await cargarDashboard();
+await 
+function inicializarSeccionesDesplegables(){
+document.querySelectorAll(".section").forEach((section,index)=>{
+if(section.dataset.readyToggle==="1") return;
+
+const h2=section.querySelector("h2");
+if(!h2) return;
+
+const nodes=[];
+let n=h2.nextSibling;
+while(n){
+const next=n.nextSibling;
+nodes.push(n);
+n=next;
+}
+
+const content=document.createElement("div");
+content.className="section-content";
+
+nodes.forEach(node=>content.appendChild(node));
+section.appendChild(content);
+
+const btn=document.createElement("button");
+btn.className="section-toggle";
+btn.type="button";
+btn.textContent=index===0 ? "Ocultar" : "Mostrar";
+h2.appendChild(btn);
+
+if(index>0){
+section.classList.add("collapsed");
+}
+
+function alternar(){
+section.classList.toggle("collapsed");
+btn.textContent=section.classList.contains("collapsed") ? "Mostrar" : "Ocultar";
+}
+
+btn.addEventListener("click",function(e){
+e.stopPropagation();
+alternar();
+});
+
+h2.addEventListener("click",function(e){
+if(e.target===btn) return;
+alternar();
+});
+
+section.dataset.readyToggle="1";
+});
+}
+
+inicializarSeccionesDesplegables();
+cargarDashboard();
 
 }catch(error){
 console.error(error);
@@ -1723,7 +2301,59 @@ const {error}=await supabaseClient
 if(error) throw error;
 
 mostrarOk("Solicitud de paciente eliminada correctamente.");
-await cargarDashboard();
+await 
+function inicializarSeccionesDesplegables(){
+document.querySelectorAll(".section").forEach((section,index)=>{
+if(section.dataset.readyToggle==="1") return;
+
+const h2=section.querySelector("h2");
+if(!h2) return;
+
+const nodes=[];
+let n=h2.nextSibling;
+while(n){
+const next=n.nextSibling;
+nodes.push(n);
+n=next;
+}
+
+const content=document.createElement("div");
+content.className="section-content";
+
+nodes.forEach(node=>content.appendChild(node));
+section.appendChild(content);
+
+const btn=document.createElement("button");
+btn.className="section-toggle";
+btn.type="button";
+btn.textContent=index===0 ? "Ocultar" : "Mostrar";
+h2.appendChild(btn);
+
+if(index>0){
+section.classList.add("collapsed");
+}
+
+function alternar(){
+section.classList.toggle("collapsed");
+btn.textContent=section.classList.contains("collapsed") ? "Mostrar" : "Ocultar";
+}
+
+btn.addEventListener("click",function(e){
+e.stopPropagation();
+alternar();
+});
+
+h2.addEventListener("click",function(e){
+if(e.target===btn) return;
+alternar();
+});
+
+section.dataset.readyToggle="1";
+});
+}
+
+inicializarSeccionesDesplegables();
+cargarDashboard();
 
 }catch(error){
 console.error(error);
@@ -1747,7 +2377,59 @@ const {error}=await supabaseClient
 if(error) throw error;
 
 mostrarOk("Solicitudes de pacientes antiguas eliminadas correctamente.");
-await cargarDashboard();
+await 
+function inicializarSeccionesDesplegables(){
+document.querySelectorAll(".section").forEach((section,index)=>{
+if(section.dataset.readyToggle==="1") return;
+
+const h2=section.querySelector("h2");
+if(!h2) return;
+
+const nodes=[];
+let n=h2.nextSibling;
+while(n){
+const next=n.nextSibling;
+nodes.push(n);
+n=next;
+}
+
+const content=document.createElement("div");
+content.className="section-content";
+
+nodes.forEach(node=>content.appendChild(node));
+section.appendChild(content);
+
+const btn=document.createElement("button");
+btn.className="section-toggle";
+btn.type="button";
+btn.textContent=index===0 ? "Ocultar" : "Mostrar";
+h2.appendChild(btn);
+
+if(index>0){
+section.classList.add("collapsed");
+}
+
+function alternar(){
+section.classList.toggle("collapsed");
+btn.textContent=section.classList.contains("collapsed") ? "Mostrar" : "Ocultar";
+}
+
+btn.addEventListener("click",function(e){
+e.stopPropagation();
+alternar();
+});
+
+h2.addEventListener("click",function(e){
+if(e.target===btn) return;
+alternar();
+});
+
+section.dataset.readyToggle="1";
+});
+}
+
+inicializarSeccionesDesplegables();
+cargarDashboard();
 
 }catch(error){
 console.error(error);
@@ -1782,7 +2464,59 @@ const {error}=await supabaseClient
 if(error) throw error;
 
 mostrarOk("Profesional rechazado eliminado correctamente.");
-await cargarDashboard();
+await 
+function inicializarSeccionesDesplegables(){
+document.querySelectorAll(".section").forEach((section,index)=>{
+if(section.dataset.readyToggle==="1") return;
+
+const h2=section.querySelector("h2");
+if(!h2) return;
+
+const nodes=[];
+let n=h2.nextSibling;
+while(n){
+const next=n.nextSibling;
+nodes.push(n);
+n=next;
+}
+
+const content=document.createElement("div");
+content.className="section-content";
+
+nodes.forEach(node=>content.appendChild(node));
+section.appendChild(content);
+
+const btn=document.createElement("button");
+btn.className="section-toggle";
+btn.type="button";
+btn.textContent=index===0 ? "Ocultar" : "Mostrar";
+h2.appendChild(btn);
+
+if(index>0){
+section.classList.add("collapsed");
+}
+
+function alternar(){
+section.classList.toggle("collapsed");
+btn.textContent=section.classList.contains("collapsed") ? "Mostrar" : "Ocultar";
+}
+
+btn.addEventListener("click",function(e){
+e.stopPropagation();
+alternar();
+});
+
+h2.addEventListener("click",function(e){
+if(e.target===btn) return;
+alternar();
+});
+
+section.dataset.readyToggle="1";
+});
+}
+
+inicializarSeccionesDesplegables();
+cargarDashboard();
 
 }catch(error){
 console.error(error);
@@ -1803,7 +2537,59 @@ const {error}=await supabaseClient
 if(error) throw error;
 
 mostrarOk("Profesionales rechazados eliminados correctamente.");
-await cargarDashboard();
+await 
+function inicializarSeccionesDesplegables(){
+document.querySelectorAll(".section").forEach((section,index)=>{
+if(section.dataset.readyToggle==="1") return;
+
+const h2=section.querySelector("h2");
+if(!h2) return;
+
+const nodes=[];
+let n=h2.nextSibling;
+while(n){
+const next=n.nextSibling;
+nodes.push(n);
+n=next;
+}
+
+const content=document.createElement("div");
+content.className="section-content";
+
+nodes.forEach(node=>content.appendChild(node));
+section.appendChild(content);
+
+const btn=document.createElement("button");
+btn.className="section-toggle";
+btn.type="button";
+btn.textContent=index===0 ? "Ocultar" : "Mostrar";
+h2.appendChild(btn);
+
+if(index>0){
+section.classList.add("collapsed");
+}
+
+function alternar(){
+section.classList.toggle("collapsed");
+btn.textContent=section.classList.contains("collapsed") ? "Mostrar" : "Ocultar";
+}
+
+btn.addEventListener("click",function(e){
+e.stopPropagation();
+alternar();
+});
+
+h2.addEventListener("click",function(e){
+if(e.target===btn) return;
+alternar();
+});
+
+section.dataset.readyToggle="1";
+});
+}
+
+inicializarSeccionesDesplegables();
+cargarDashboard();
 
 }catch(error){
 console.error(error);
@@ -1824,7 +2610,59 @@ const {error}=await supabaseClient
 if(error) throw error;
 
 mostrarOk("Compra eliminada correctamente.");
-await cargarDashboard();
+await 
+function inicializarSeccionesDesplegables(){
+document.querySelectorAll(".section").forEach((section,index)=>{
+if(section.dataset.readyToggle==="1") return;
+
+const h2=section.querySelector("h2");
+if(!h2) return;
+
+const nodes=[];
+let n=h2.nextSibling;
+while(n){
+const next=n.nextSibling;
+nodes.push(n);
+n=next;
+}
+
+const content=document.createElement("div");
+content.className="section-content";
+
+nodes.forEach(node=>content.appendChild(node));
+section.appendChild(content);
+
+const btn=document.createElement("button");
+btn.className="section-toggle";
+btn.type="button";
+btn.textContent=index===0 ? "Ocultar" : "Mostrar";
+h2.appendChild(btn);
+
+if(index>0){
+section.classList.add("collapsed");
+}
+
+function alternar(){
+section.classList.toggle("collapsed");
+btn.textContent=section.classList.contains("collapsed") ? "Mostrar" : "Ocultar";
+}
+
+btn.addEventListener("click",function(e){
+e.stopPropagation();
+alternar();
+});
+
+h2.addEventListener("click",function(e){
+if(e.target===btn) return;
+alternar();
+});
+
+section.dataset.readyToggle="1";
+});
+}
+
+inicializarSeccionesDesplegables();
+cargarDashboard();
 
 }catch(error){
 console.error(error);
@@ -1845,7 +2683,59 @@ const {error}=await supabaseClient
 if(error) throw error;
 
 mostrarOk("Pago MNBE eliminado correctamente.");
-await cargarDashboard();
+await 
+function inicializarSeccionesDesplegables(){
+document.querySelectorAll(".section").forEach((section,index)=>{
+if(section.dataset.readyToggle==="1") return;
+
+const h2=section.querySelector("h2");
+if(!h2) return;
+
+const nodes=[];
+let n=h2.nextSibling;
+while(n){
+const next=n.nextSibling;
+nodes.push(n);
+n=next;
+}
+
+const content=document.createElement("div");
+content.className="section-content";
+
+nodes.forEach(node=>content.appendChild(node));
+section.appendChild(content);
+
+const btn=document.createElement("button");
+btn.className="section-toggle";
+btn.type="button";
+btn.textContent=index===0 ? "Ocultar" : "Mostrar";
+h2.appendChild(btn);
+
+if(index>0){
+section.classList.add("collapsed");
+}
+
+function alternar(){
+section.classList.toggle("collapsed");
+btn.textContent=section.classList.contains("collapsed") ? "Mostrar" : "Ocultar";
+}
+
+btn.addEventListener("click",function(e){
+e.stopPropagation();
+alternar();
+});
+
+h2.addEventListener("click",function(e){
+if(e.target===btn) return;
+alternar();
+});
+
+section.dataset.readyToggle="1";
+});
+}
+
+inicializarSeccionesDesplegables();
+cargarDashboard();
 
 }catch(error){
 console.error(error);
@@ -1853,56 +2743,151 @@ mostrarError("Error al eliminar pago MNBE: " + error.message);
 }
 }
 
-async function eliminarVentasPrueba(){
-const texto=prompt('Para resetear ventas de prueba escribe exactamente: RESETEAR VENTAS');
 
-if(texto !== "RESETEAR VENTAS"){
+async function resetearVentasPorRango(tipo){
+let mensaje="";
+let desde=null;
+let hasta=null;
+
+if(tipo==="dia"){
+mensaje="Resetear ventas del DIA actual?";
+const hoy=new Date();
+desde=new Date(hoy.getFullYear(),hoy.getMonth(),hoy.getDate(),0,0,0);
+hasta=new Date(hoy.getFullYear(),hoy.getMonth(),hoy.getDate()+1,0,0,0);
+}
+
+if(tipo==="mes"){
+mensaje="Resetear ventas del MES actual?";
+const hoy=new Date();
+desde=new Date(hoy.getFullYear(),hoy.getMonth(),1,0,0,0);
+hasta=new Date(hoy.getFullYear(),hoy.getMonth()+1,1,0,0,0);
+}
+
+if(tipo==="todo"){
+mensaje="Resetear TODAS las ventas registradas?";
+}
+
+const texto=prompt(mensaje + "\\n\\nPara confirmar escribe: RESETEAR");
+
+if(texto !== "RESETEAR"){
 mostrarError("Accion cancelada. No se escribio la frase de confirmacion.");
 return;
 }
 
 try{
-mostrarInfo("Reseteando ventas de prueba...");
+mostrarInfo("Reseteando ventas...");
+
+async function aplicarFiltro(query){
+if(tipo==="todo") return query;
+return query.gte("created_at",desde.toISOString()).lt("created_at",hasta.toISOString());
+}
 
 /*
-IMPORTANTE:
-No usamos .neq("id","0000...") porque algunas tablas tienen id bigint y otras uuid.
-Con .not("id","is",null) Supabase elimina/actualiza todos los registros sin provocar error de tipo.
+No borramos solicitudes clinicas ni profesionales.
+Solo dejamos montos en 0 y eliminamos registros de compra/pago usados como venta.
 */
 
-const r1=await supabaseClient
-.from("compras_ordenes")
-.delete()
-.not("id","is",null);
+let q1=supabaseClient.from("solicitudes_pacientes").update({monto:0}).not("id","is",null);
+q1=await aplicarFiltro(q1);
+if(q1.error) throw q1.error;
 
-if(r1.error) throw r1.error;
+let q2=supabaseClient.from("solicitudes").update({monto:0, valor:0}).not("id","is",null);
+q2=await aplicarFiltro(q2);
+if(q2.error){
+/* Si la tabla solicitudes no tiene alguna columna, intentamos solo monto */
+let q2b=supabaseClient.from("solicitudes").update({monto:0}).not("id","is",null);
+q2b=await aplicarFiltro(q2b);
+if(q2b.error){
+let q2c=supabaseClient.from("solicitudes").update({valor:0}).not("id","is",null);
+q2c=await aplicarFiltro(q2c);
+if(q2c.error) console.warn("No se pudo resetear tabla solicitudes:", q2c.error);
+}
+}
 
-const r2=await supabaseClient
-.from("pagos_mnbe")
-.delete()
-.not("id","is",null);
+let q3=supabaseClient.from("compras_ordenes").delete().not("id","is",null);
+q3=await aplicarFiltro(q3);
+if(q3.error) throw q3.error;
 
-if(r2.error) throw r2.error;
+let q4=supabaseClient.from("pagos_mnbe").delete().not("id","is",null);
+q4=await aplicarFiltro(q4);
+if(q4.error) throw q4.error;
 
-/*
-Las solicitudes de pacientes particulares se mantienen, pero su monto se deja en 0
-para que no sigan sumando en Total ventas del dia/mes.
-Si quieres borrar solicitudes de pacientes, usa el boton individual o el boton de 30 dias.
-*/
-const r3=await supabaseClient
-.from("solicitudes_pacientes")
-.update({monto:0})
-.not("id","is",null);
+mostrarOk("Ventas reseteadas correctamente.");
+await 
+function inicializarSeccionesDesplegables(){
+document.querySelectorAll(".section").forEach((section,index)=>{
+if(section.dataset.readyToggle==="1") return;
 
-if(r3.error) throw r3.error;
+const h2=section.querySelector("h2");
+if(!h2) return;
 
-mostrarOk("Ventas de prueba reseteadas. Compras y pagos MNBE eliminados; montos de pacientes en 0.");
-await cargarDashboard();
+const nodes=[];
+let n=h2.nextSibling;
+while(n){
+const next=n.nextSibling;
+nodes.push(n);
+n=next;
+}
+
+const content=document.createElement("div");
+content.className="section-content";
+
+nodes.forEach(node=>content.appendChild(node));
+section.appendChild(content);
+
+const btn=document.createElement("button");
+btn.className="section-toggle";
+btn.type="button";
+btn.textContent=index===0 ? "Ocultar" : "Mostrar";
+h2.appendChild(btn);
+
+if(index>0){
+section.classList.add("collapsed");
+}
+
+function alternar(){
+section.classList.toggle("collapsed");
+btn.textContent=section.classList.contains("collapsed") ? "Mostrar" : "Ocultar";
+}
+
+btn.addEventListener("click",function(e){
+e.stopPropagation();
+alternar();
+});
+
+h2.addEventListener("click",function(e){
+if(e.target===btn) return;
+alternar();
+});
+
+section.dataset.readyToggle="1";
+});
+}
+
+inicializarSeccionesDesplegables();
+cargarDashboard();
 
 }catch(error){
 console.error(error);
 mostrarError("Error al resetear ventas: " + error.message);
 }
+}
+
+function resetearVentasDia(){
+resetearVentasPorRango("dia");
+}
+
+function resetearVentasMes(){
+resetearVentasPorRango("mes");
+}
+
+function resetearTodasLasVentas(){
+resetearVentasPorRango("todo");
+}
+
+/* Compatibilidad con boton anterior si quedara cacheado */
+async function eliminarVentasPrueba(){
+resetearTodasLasVentas();
 }
 
 
@@ -2036,6 +3021,58 @@ await supabaseClient.auth.signOut();
 window.location.href="login.html";
 }
 
+
+function inicializarSeccionesDesplegables(){
+document.querySelectorAll(".section").forEach((section,index)=>{
+if(section.dataset.readyToggle==="1") return;
+
+const h2=section.querySelector("h2");
+if(!h2) return;
+
+const nodes=[];
+let n=h2.nextSibling;
+while(n){
+const next=n.nextSibling;
+nodes.push(n);
+n=next;
+}
+
+const content=document.createElement("div");
+content.className="section-content";
+
+nodes.forEach(node=>content.appendChild(node));
+section.appendChild(content);
+
+const btn=document.createElement("button");
+btn.className="section-toggle";
+btn.type="button";
+btn.textContent=index===0 ? "Ocultar" : "Mostrar";
+h2.appendChild(btn);
+
+if(index>0){
+section.classList.add("collapsed");
+}
+
+function alternar(){
+section.classList.toggle("collapsed");
+btn.textContent=section.classList.contains("collapsed") ? "Mostrar" : "Ocultar";
+}
+
+btn.addEventListener("click",function(e){
+e.stopPropagation();
+alternar();
+});
+
+h2.addEventListener("click",function(e){
+if(e.target===btn) return;
+alternar();
+});
+
+section.dataset.readyToggle="1";
+});
+}
+
+inicializarSeccionesDesplegables();
 cargarDashboard();
 </script>
 
