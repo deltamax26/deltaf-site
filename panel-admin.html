@@ -487,7 +487,7 @@ if(errorOrdenesMedicas) throw errorOrdenesMedicas;
 
 solicitudesGlobal=solicitudes||[];
 solicitudesPacientesGlobal=pacientes||[];
-profesionalesGlobal=(profesionales||[]).filter(p => (p.estado || '').toLowerCase() !== 'eliminado');
+profesionalesGlobal=(profesionales||[]).filter(p => !['eliminado','eliminada','eliminar','borrado','borrada'].includes((p.estado || '').toLowerCase()));
 comprasGlobal=compras||[];
 pagosMNBEGlobal=pagosMNBE||[];
 ordenesMedicasGlobal=ordenesMedicas||[];
@@ -2452,71 +2452,34 @@ mostrarError("Solo se pueden eliminar profesionales rechazados. Los activos/apro
 return;
 }
 
-const confirmar=confirm("Eliminar definitivamente al profesional rechazado: " + (profesional.nombre || profesional.email || id) + "?");
+const confirmar=confirm("Eliminar/ocultar al profesional rechazado: " + (profesional.nombre || profesional.email || id) + "?\\n\\nLos profesionales aprobados no se tocaran.");
 if(!confirmar) return;
 
 try{
-const {error}=await supabaseClient
+mostrarInfo("Eliminando/ocultando profesional rechazado...");
+
+/*
+Primero lo marcamos como eliminado. Esto funciona aunque Supabase no permita borrar fisicamente
+por relaciones internas o restricciones de la base de datos.
+*/
+const ocultar=await supabaseClient
 .from("profesionales")
-.delete()
+.update({estado:"eliminado"})
 .eq("id",id);
 
-if(error) throw error;
+if(ocultar.error) throw ocultar.error;
 
-mostrarOk("Profesional rechazado eliminado correctamente.");
-await 
-function inicializarSeccionesDesplegables(){
-document.querySelectorAll(".section").forEach((section,index)=>{
-if(section.dataset.readyToggle==="1") return;
+/* Luego intentamos borrar registros de prueba relacionados. Si alguno falla, no detenemos el proceso. */
+await supabaseClient.from("compras_ordenes").delete().eq("profesional_id",id);
+await supabaseClient.from("pagos_mnbe").delete().eq("profesional_id",id);
+await supabaseClient.from("ordenes").delete().eq("profesional_id",id);
+await supabaseClient.from("fichas_clinicas").delete().eq("profesional_id",id);
 
-const h2=section.querySelector("h2");
-if(!h2) return;
+/* Intento final de borrado fisico. Si falla, ya quedo oculto. */
+await supabaseClient.from("profesionales").delete().eq("id",id);
 
-const nodes=[];
-let n=h2.nextSibling;
-while(n){
-const next=n.nextSibling;
-nodes.push(n);
-n=next;
-}
-
-const content=document.createElement("div");
-content.className="section-content";
-
-nodes.forEach(node=>content.appendChild(node));
-section.appendChild(content);
-
-const btn=document.createElement("button");
-btn.className="section-toggle";
-btn.type="button";
-btn.textContent=index===0 ? "Ocultar" : "Mostrar";
-h2.appendChild(btn);
-
-if(index>0){
-section.classList.add("collapsed");
-}
-
-function alternar(){
-section.classList.toggle("collapsed");
-btn.textContent=section.classList.contains("collapsed") ? "Mostrar" : "Ocultar";
-}
-
-btn.addEventListener("click",function(e){
-e.stopPropagation();
-alternar();
-});
-
-h2.addEventListener("click",function(e){
-if(e.target===btn) return;
-alternar();
-});
-
-section.dataset.readyToggle="1";
-});
-}
-
-inicializarSeccionesDesplegables();
-cargarDashboard();
+mostrarOk("Profesional rechazado eliminado/ocultado correctamente.");
+await cargarDashboard();
 
 }catch(error){
 console.error(error);
@@ -2525,71 +2488,43 @@ mostrarError("Error al eliminar profesional rechazado: " + error.message);
 }
 
 async function eliminarProfesionalesRechazados(){
-const confirmar=confirm("Eliminar TODOS los profesionales rechazados? Los aprobados/activos no se tocaran.");
+const rechazados=profesionalesGlobal.filter(p=>{
+const e=(p.estado || "").toLowerCase();
+return e==="rechazado" || e==="rechazada";
+});
+
+if(rechazados.length===0){
+mostrarOk("No hay profesionales rechazados para eliminar.");
+return;
+}
+
+const confirmar=confirm("Eliminar/ocultar " + rechazados.length + " profesional(es) rechazado(s)?\\n\\nLos aprobados/activos no se tocaran.");
 if(!confirmar) return;
 
 try{
-const {error}=await supabaseClient
+mostrarInfo("Eliminando/ocultando profesionales rechazados...");
+
+const ids=rechazados.map(p=>p.id);
+
+/* Primero ocultamos todos. Es lo mas seguro y evita que sigan apareciendo si el borrado fisico falla. */
+const ocultar=await supabaseClient
 .from("profesionales")
-.delete()
-.in("estado",["rechazado","rechazada"]);
+.update({estado:"eliminado"})
+.in("id",ids);
 
-if(error) throw error;
+if(ocultar.error) throw ocultar.error;
 
-mostrarOk("Profesionales rechazados eliminados correctamente.");
-await 
-function inicializarSeccionesDesplegables(){
-document.querySelectorAll(".section").forEach((section,index)=>{
-if(section.dataset.readyToggle==="1") return;
-
-const h2=section.querySelector("h2");
-if(!h2) return;
-
-const nodes=[];
-let n=h2.nextSibling;
-while(n){
-const next=n.nextSibling;
-nodes.push(n);
-n=next;
+/* Intentamos limpiar registros relacionados sin bloquear el proceso si algo falla. */
+for(const id of ids){
+await supabaseClient.from("compras_ordenes").delete().eq("profesional_id",id);
+await supabaseClient.from("pagos_mnbe").delete().eq("profesional_id",id);
+await supabaseClient.from("ordenes").delete().eq("profesional_id",id);
+await supabaseClient.from("fichas_clinicas").delete().eq("profesional_id",id);
+await supabaseClient.from("profesionales").delete().eq("id",id);
 }
 
-const content=document.createElement("div");
-content.className="section-content";
-
-nodes.forEach(node=>content.appendChild(node));
-section.appendChild(content);
-
-const btn=document.createElement("button");
-btn.className="section-toggle";
-btn.type="button";
-btn.textContent=index===0 ? "Ocultar" : "Mostrar";
-h2.appendChild(btn);
-
-if(index>0){
-section.classList.add("collapsed");
-}
-
-function alternar(){
-section.classList.toggle("collapsed");
-btn.textContent=section.classList.contains("collapsed") ? "Mostrar" : "Ocultar";
-}
-
-btn.addEventListener("click",function(e){
-e.stopPropagation();
-alternar();
-});
-
-h2.addEventListener("click",function(e){
-if(e.target===btn) return;
-alternar();
-});
-
-section.dataset.readyToggle="1";
-});
-}
-
-inicializarSeccionesDesplegables();
-cargarDashboard();
+mostrarOk("Profesionales rechazados eliminados/ocultados correctamente.");
+await cargarDashboard();
 
 }catch(error){
 console.error(error);
@@ -2777,95 +2712,39 @@ return;
 try{
 mostrarInfo("Reseteando ventas...");
 
-async function aplicarFiltro(query){
+function rango(query){
 if(tipo==="todo") return query;
 return query.gte("created_at",desde.toISOString()).lt("created_at",hasta.toISOString());
 }
 
+async function intentar(nombreTabla,payload){
+let q=supabaseClient.from(nombreTabla).update(payload).not("id","is",null);
+q=rango(q);
+const res=await q;
+if(res.error){
+console.warn("No se pudo resetear " + nombreTabla, res.error);
+}
+}
+
 /*
-No borramos solicitudes clinicas ni profesionales.
-Solo dejamos montos en 0 y eliminamos registros de compra/pago usados como venta.
+Reseteo real:
+No eliminamos filas, dejamos los montos en 0. Asi el contador queda en cero aunque la fila siga existiendo.
+Esto cubre ventas de pacientes, compras profesionales, pagos MNBE, ordenes y resumen administrativo.
 */
+await intentar("solicitudes_pacientes",{monto:0});
+await intentar("compras_ordenes",{monto:0});
+await intentar("pagos_mnbe",{monto:0});
+await intentar("ordenes",{monto:0, valor:0});
+await intentar("solicitudes",{monto:0, valor:0});
 
-let q1=supabaseClient.from("solicitudes_pacientes").update({monto:0}).not("id","is",null);
-q1=await aplicarFiltro(q1);
-if(q1.error) throw q1.error;
+/* Si alguna tabla no acepta valor/monto juntos, intentamos columnas por separado */
+await intentar("ordenes",{monto:0});
+await intentar("ordenes",{valor:0});
+await intentar("solicitudes",{monto:0});
+await intentar("solicitudes",{valor:0});
 
-let q2=supabaseClient.from("solicitudes").update({monto:0, valor:0}).not("id","is",null);
-q2=await aplicarFiltro(q2);
-if(q2.error){
-/* Si la tabla solicitudes no tiene alguna columna, intentamos solo monto */
-let q2b=supabaseClient.from("solicitudes").update({monto:0}).not("id","is",null);
-q2b=await aplicarFiltro(q2b);
-if(q2b.error){
-let q2c=supabaseClient.from("solicitudes").update({valor:0}).not("id","is",null);
-q2c=await aplicarFiltro(q2c);
-if(q2c.error) console.warn("No se pudo resetear tabla solicitudes:", q2c.error);
-}
-}
-
-let q3=supabaseClient.from("compras_ordenes").delete().not("id","is",null);
-q3=await aplicarFiltro(q3);
-if(q3.error) throw q3.error;
-
-let q4=supabaseClient.from("pagos_mnbe").delete().not("id","is",null);
-q4=await aplicarFiltro(q4);
-if(q4.error) throw q4.error;
-
-mostrarOk("Ventas reseteadas correctamente.");
-await 
-function inicializarSeccionesDesplegables(){
-document.querySelectorAll(".section").forEach((section,index)=>{
-if(section.dataset.readyToggle==="1") return;
-
-const h2=section.querySelector("h2");
-if(!h2) return;
-
-const nodes=[];
-let n=h2.nextSibling;
-while(n){
-const next=n.nextSibling;
-nodes.push(n);
-n=next;
-}
-
-const content=document.createElement("div");
-content.className="section-content";
-
-nodes.forEach(node=>content.appendChild(node));
-section.appendChild(content);
-
-const btn=document.createElement("button");
-btn.className="section-toggle";
-btn.type="button";
-btn.textContent=index===0 ? "Ocultar" : "Mostrar";
-h2.appendChild(btn);
-
-if(index>0){
-section.classList.add("collapsed");
-}
-
-function alternar(){
-section.classList.toggle("collapsed");
-btn.textContent=section.classList.contains("collapsed") ? "Mostrar" : "Ocultar";
-}
-
-btn.addEventListener("click",function(e){
-e.stopPropagation();
-alternar();
-});
-
-h2.addEventListener("click",function(e){
-if(e.target===btn) return;
-alternar();
-});
-
-section.dataset.readyToggle="1";
-});
-}
-
-inicializarSeccionesDesplegables();
-cargarDashboard();
+mostrarOk("Ventas reseteadas correctamente. Los registros se mantienen, pero sus montos quedaron en 0.");
+await cargarDashboard();
 
 }catch(error){
 console.error(error);
