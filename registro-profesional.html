@@ -2,6 +2,7 @@
 <html lang="es">
 <head>
 <meta charset="UTF-8">
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 <title>Registro Profesional | DeltaF</title>
@@ -82,6 +83,10 @@ border-radius:10px;
 font-size:1rem;
 }
 
+textarea{
+resize:vertical;
+}
+
 button{
 background:#2563eb;
 color:white;
@@ -133,9 +138,52 @@ color:#991b1b;
 border:1px solid #fca5a5;
 }
 
+.profession-box{
+background:#f8fafc;
+border:1px solid #e2e8f0;
+border-radius:14px;
+padding:18px;
+margin-bottom:15px;
+}
+
+.profession-box h3{
+color:#2563eb;
+font-size:1rem;
+margin-bottom:14px;
+}
+
+.btn-secondary{
+background:#0f766e;
+margin-top:10px;
+}
+
+.btn-secondary:hover{
+background:#115e59;
+}
+
+.btn-danger{
+background:#dc2626;
+margin-top:10px;
+}
+
+.btn-danger:hover{
+background:#b91c1c;
+}
+
+.help-text{
+font-size:13px;
+color:#64748b;
+margin-top:6px;
+line-height:1.5;
+}
+
 @media(max-width:768px){
 .form-grid{
 grid-template-columns:1fr;
+}
+
+.full{
+grid-column:auto;
 }
 }
 </style>
@@ -182,53 +230,73 @@ Complete sus antecedentes para solicitar acceso a la plataforma DeltaF.
 <input id="fechaNacimiento" type="date">
 </div>
 
-<div>
-<label for="profesion">Profesión</label>
-<select id="profesion" required>
+<div class="full">
+<label>Profesiones y registros</label>
+<p class="help-text">
+Puedes agregar mas de una profesion. Si una profesion no tiene Registro SIS, escribe "No aplica".
+</p>
+
+<div id="profesionesContainer">
+
+<div class="profession-box profesion-item">
+<h3>Profesion 1</h3>
+
+<label>Profesion</label>
+<select class="profesionSelect" required>
 <option value="">Seleccione</option>
 <option value="Nutricionista">Nutricionista</option>
 <option value="Enfermero(a)">Enfermero(a)</option>
-<option value="Kinesiólogo(a)">Kinesiólogo(a)</option>
-<option value="Fonoaudiólogo(a)">Fonoaudiólogo(a)</option>
+<option value="Kinesiologo(a)">Kinesiologo(a)</option>
+<option value="Fonoaudiologo(a)">Fonoaudiologo(a)</option>
 <option value="Terapeuta Ocupacional">Terapeuta Ocupacional</option>
 <option value="Acupunturista">Acupunturista</option>
 <option value="Naturopata">Naturopata</option>
+<option value="Medico">Medico</option>
+<option value="Psicologo(a)">Psicologo(a)</option>
+<option value="Tecnologo Medico">Tecnologo Medico</option>
+<option value="Otro">Otro</option>
 </select>
+
+<label style="margin-top:12px;">Otra profesion / detalle</label>
+<input class="otraProfesion" type="text" placeholder="Completar solo si seleccionas Otro">
+
+<label style="margin-top:12px;">Registro SIS / Superintendencia</label>
+<input class="registroSisInput" type="text" placeholder="Ej: 123456 o No aplica" required>
+</div>
+
+</div>
+
+<button type="button" class="btn-secondary" onclick="agregarProfesion()">+ Agregar otra profesion</button>
 </div>
 
 <div>
-<label for="registroSis">N° Registro Superintendencia</label>
-<input id="registroSis" type="text" required>
-</div>
-
-<div>
-<label for="email">Correo Electrónico</label>
+<label for="email">Correo Electronico</label>
 <input id="email" type="email" required>
 </div>
 
 <div>
-<label for="telefono">Teléfono</label>
+<label for="telefono">Telefono</label>
 <input id="telefono" type="tel" required>
 </div>
 
 <div class="full">
-<label for="direccion">Dirección</label>
+<label for="direccion">Direccion</label>
 <input id="direccion" type="text">
 </div>
 
 <div>
-<label for="password">Contraseña</label>
+<label for="password">Contrasena</label>
 <input id="password" type="password" required minlength="6">
 </div>
 
 <div>
-<label for="confirmarPassword">Confirmar Contraseña</label>
+<label for="confirmarPassword">Confirmar Contrasena</label>
 <input id="confirmarPassword" type="password" required minlength="6">
 </div>
 
 <div class="full">
-<label for="informacionAdicional">Información Adicional</label>
-<textarea id="informacionAdicional" rows="5"></textarea>
+<label for="informacionAdicional">Informacion Adicional</label>
+<textarea id="informacionAdicional" rows="5" placeholder="Puedes agregar antecedentes, links, institucion de egreso, diplomados u otra informacion relevante."></textarea>
 </div>
 
 <div class="full">
@@ -240,18 +308,18 @@ Complete sus antecedentes para solicitar acceso a la plataforma DeltaF.
 </form>
 
 <div class="notice">
-<strong>Proceso de Validación:</strong>
+<strong>Proceso de Validacion:</strong>
 <br><br>
-Su solicitud será revisada por DeltaF.
+Su solicitud sera revisada por DeltaF.
 <br><br>
-Para ser aprobado deberá acreditar:
+Para ser aprobado debera acreditar:
 <ul style="margin-top:10px; margin-left:20px;">
-<li>Identidad válida.</li>
-<li>Profesión declarada.</li>
+<li>Identidad valida.</li>
+<li>Profesion o profesiones declaradas.</li>
 <li>Registro vigente cuando corresponda.</li>
 </ul>
 <br>
-Una vez aprobado recibirá un correo de confirmación para acceder a la plataforma.
+Una vez aprobado recibira un correo de confirmacion para acceder a la plataforma.
 </div>
 
 </div>
@@ -267,6 +335,7 @@ const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 const form = document.getElementById("registroProfesionalForm");
 const mensaje = document.getElementById("mensaje");
 const btnRegistro = document.getElementById("btnRegistro");
+const profesionesContainer = document.getElementById("profesionesContainer");
 
 function mostrarMensaje(texto, tipo){
 mensaje.textContent = texto;
@@ -283,24 +352,124 @@ return String(texto)
 .replace(/'/g, "&#039;");
 }
 
+function agregarProfesion(){
+const total = document.querySelectorAll(".profesion-item").length + 1;
+
+const div = document.createElement("div");
+div.className = "profession-box profesion-item";
+
+div.innerHTML = `
+<h3>Profesion ${total}</h3>
+
+<label>Profesion</label>
+<select class="profesionSelect" required>
+<option value="">Seleccione</option>
+<option value="Nutricionista">Nutricionista</option>
+<option value="Enfermero(a)">Enfermero(a)</option>
+<option value="Kinesiologo(a)">Kinesiologo(a)</option>
+<option value="Fonoaudiologo(a)">Fonoaudiologo(a)</option>
+<option value="Terapeuta Ocupacional">Terapeuta Ocupacional</option>
+<option value="Acupunturista">Acupunturista</option>
+<option value="Naturopata">Naturopata</option>
+<option value="Medico">Medico</option>
+<option value="Psicologo(a)">Psicologo(a)</option>
+<option value="Tecnologo Medico">Tecnologo Medico</option>
+<option value="Otro">Otro</option>
+</select>
+
+<label style="margin-top:12px;">Otra profesion / detalle</label>
+<input class="otraProfesion" type="text" placeholder="Completar solo si seleccionas Otro">
+
+<label style="margin-top:12px;">Registro SIS / Superintendencia</label>
+<input class="registroSisInput" type="text" placeholder="Ej: 123456 o No aplica" required>
+
+<button type="button" class="btn-danger" onclick="eliminarProfesion(this)">Eliminar esta profesion</button>
+`;
+
+profesionesContainer.appendChild(div);
+}
+
+function eliminarProfesion(btn){
+const total = document.querySelectorAll(".profesion-item").length;
+
+if(total <= 1){
+mostrarMensaje("Debe existir al menos una profesion.", "error");
+return;
+}
+
+btn.closest(".profesion-item").remove();
+renumerarProfesiones();
+}
+
+function renumerarProfesiones(){
+document.querySelectorAll(".profesion-item").forEach((item,index)=>{
+const titulo = item.querySelector("h3");
+if(titulo) titulo.textContent = "Profesion " + (index + 1);
+});
+}
+
+function obtenerProfesionesYRegistros(){
+const items = Array.from(document.querySelectorAll(".profesion-item"));
+const lista = [];
+
+items.forEach(item=>{
+const select = item.querySelector(".profesionSelect");
+const otra = item.querySelector(".otraProfesion");
+const registro = item.querySelector(".registroSisInput");
+
+let profesion = select.value.trim();
+
+if(profesion === "Otro"){
+profesion = otra.value.trim();
+}
+
+const registroSis = registro.value.trim();
+
+if(profesion){
+lista.push({
+profesion: profesion,
+registro_sis: registroSis || "No aplica"
+});
+}
+});
+
+return lista;
+}
+
+function resumenProfesiones(lista){
+return lista.map(item => item.profesion).join(" / ");
+}
+
+function resumenRegistros(lista){
+return lista.map(item => item.profesion + ": " + (item.registro_sis || "No aplica")).join(" | ");
+}
+
+function detalleProfesionesHtml(lista){
+return lista.map(item => {
+return "<p><strong>" + limpiarHtml(item.profesion) + ":</strong> " + limpiarHtml(item.registro_sis || "No aplica") + "</p>";
+}).join("");
+}
+
 async function enviarCorreoAvisoRegistroProfesional(datos){
 const html = `
 <div style="font-family:Arial,sans-serif;color:#1e293b;line-height:1.5;">
   <h2 style="color:#2563eb;">Nuevo registro profesional en DeltaF</h2>
 
-  <p>Un nuevo profesional solicitó acceso a la plataforma DeltaF.</p>
+  <p>Un nuevo profesional solicito acceso a la plataforma DeltaF.</p>
 
   <h3>Datos del profesional</h3>
   <p><strong>Nombre:</strong> ${limpiarHtml(datos.nombreCompleto)}</p>
   <p><strong>RUT:</strong> ${limpiarHtml(datos.rut)}</p>
   <p><strong>Fecha de nacimiento:</strong> ${limpiarHtml(datos.fechaNacimiento)}</p>
-  <p><strong>Profesión:</strong> ${limpiarHtml(datos.profesion)}</p>
-  <p><strong>Registro SIS:</strong> ${limpiarHtml(datos.registroSis)}</p>
-  <p><strong>Email:</strong> ${limpiarHtml(datos.email)}</p>
-  <p><strong>Teléfono:</strong> ${limpiarHtml(datos.telefono)}</p>
-  <p><strong>Dirección:</strong> ${limpiarHtml(datos.direccion)}</p>
 
-  <h3>Información adicional</h3>
+  <h3>Profesiones y registros</h3>
+  ${detalleProfesionesHtml(datos.profesionesRegistros)}
+
+  <p><strong>Email:</strong> ${limpiarHtml(datos.email)}</p>
+  <p><strong>Telefono:</strong> ${limpiarHtml(datos.telefono)}</p>
+  <p><strong>Direccion:</strong> ${limpiarHtml(datos.direccion)}</p>
+
+  <h3>Informacion adicional</h3>
   <p>${limpiarHtml(datos.informacionAdicional).replaceAll("\\n","<br>")}</p>
 
   <hr>
@@ -313,7 +482,7 @@ const html = `
   </p>
 
   <p style="font-size:12px;color:#64748b;">
-    Notificación automática generada por DeltaF.
+    Notificacion automatica generada por DeltaF.
   </p>
 </div>
 `;
@@ -360,8 +529,6 @@ const nombre = document.getElementById("nombre").value.trim();
 const apellidos = document.getElementById("apellidos").value.trim();
 const rut = document.getElementById("rut").value.trim();
 const fechaNacimiento = document.getElementById("fechaNacimiento").value;
-const profesion = document.getElementById("profesion").value;
-const registroSis = document.getElementById("registroSis").value.trim();
 const email = document.getElementById("email").value.trim().toLowerCase();
 const telefono = document.getElementById("telefono").value.trim();
 const direccion = document.getElementById("direccion").value.trim();
@@ -369,15 +536,26 @@ const password = document.getElementById("password").value;
 const confirmarPassword = document.getElementById("confirmarPassword").value;
 const informacionAdicional = document.getElementById("informacionAdicional").value.trim();
 
+const profesionesRegistros = obtenerProfesionesYRegistros();
+const profesionResumen = resumenProfesiones(profesionesRegistros);
+const registrosResumen = resumenRegistros(profesionesRegistros);
+
+if(profesionesRegistros.length === 0){
+mostrarMensaje("Debes ingresar al menos una profesion.", "error");
+btnRegistro.disabled = false;
+btnRegistro.textContent = "Solicitar Registro";
+return;
+}
+
 if(password !== confirmarPassword){
-mostrarMensaje("Las contraseñas no coinciden.", "error");
+mostrarMensaje("Las contrasenas no coinciden.", "error");
 btnRegistro.disabled = false;
 btnRegistro.textContent = "Solicitar Registro";
 return;
 }
 
 if(password.length < 6){
-mostrarMensaje("La contraseña debe tener al menos 6 caracteres.", "error");
+mostrarMensaje("La contrasena debe tener al menos 6 caracteres.", "error");
 btnRegistro.disabled = false;
 btnRegistro.textContent = "Solicitar Registro";
 return;
@@ -395,18 +573,26 @@ throw authError;
 
 const nombreCompleto = nombre + " " + apellidos;
 
+const infoExtra = 
+"Fecha nacimiento: " + (fechaNacimiento || "-") + "\\n" +
+"Direccion: " + (direccion || "-") + "\\n" +
+"Profesiones y registros:\\n" +
+profesionesRegistros.map(item => "- " + item.profesion + " | Registro SIS: " + (item.registro_sis || "No aplica")).join("\\n") +
+"\\n\\nInformacion adicional:\\n" + (informacionAdicional || "-");
+
 const { error: insertError } = await supabaseClient
 .from("profesionales")
 .insert([
 {
 nombre: nombreCompleto,
 rut: rut,
-profesion: profesion,
-registro_sis: registroSis,
+profesion: profesionResumen,
+registro_sis: registrosResumen,
 telefono: telefono,
 email: email,
 estado: "pendiente",
-ordenes_disponibles: 0
+ordenes_disponibles: 0,
+informacion_adicional: infoExtra
 }
 ]);
 
@@ -418,16 +604,43 @@ await enviarCorreoAvisoRegistroProfesional({
 nombreCompleto: nombreCompleto,
 rut: rut,
 fechaNacimiento: fechaNacimiento || "-",
-profesion: profesion,
-registroSis: registroSis,
+profesionesRegistros: profesionesRegistros,
 email: email,
 telefono: telefono,
 direccion: direccion || "-",
 informacionAdicional: informacionAdicional || "-"
 });
 
-mostrarMensaje("Solicitud enviada correctamente. DeltaF revisará sus antecedentes y le contactará por correo.", "success");
+mostrarMensaje("Solicitud enviada correctamente. DeltaF revisara sus antecedentes y le contactara por correo.", "success");
 form.reset();
+
+profesionesContainer.innerHTML = `
+<div class="profession-box profesion-item">
+<h3>Profesion 1</h3>
+
+<label>Profesion</label>
+<select class="profesionSelect" required>
+<option value="">Seleccione</option>
+<option value="Nutricionista">Nutricionista</option>
+<option value="Enfermero(a)">Enfermero(a)</option>
+<option value="Kinesiologo(a)">Kinesiologo(a)</option>
+<option value="Fonoaudiologo(a)">Fonoaudiologo(a)</option>
+<option value="Terapeuta Ocupacional">Terapeuta Ocupacional</option>
+<option value="Acupunturista">Acupunturista</option>
+<option value="Naturopata">Naturopata</option>
+<option value="Medico">Medico</option>
+<option value="Psicologo(a)">Psicologo(a)</option>
+<option value="Tecnologo Medico">Tecnologo Medico</option>
+<option value="Otro">Otro</option>
+</select>
+
+<label style="margin-top:12px;">Otra profesion / detalle</label>
+<input class="otraProfesion" type="text" placeholder="Completar solo si seleccionas Otro">
+
+<label style="margin-top:12px;">Registro SIS / Superintendencia</label>
+<input class="registroSisInput" type="text" placeholder="Ej: 123456 o No aplica" required>
+</div>
+`;
 
 }catch(error){
 console.error(error);
