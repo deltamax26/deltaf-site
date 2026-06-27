@@ -2,9 +2,17 @@
 <html lang="es">
 <head>
 <meta charset="UTF-8">
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>DeltaF | Plataforma de Solicitud de Exámenes</title>
+<title>DeltaF | Plataforma de Solicitud de Examenes</title>
+
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#2563eb">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="DeltaF">
+<link rel="apple-touch-icon" href="img/icon-192.png">
 
 <style>
 *{
@@ -22,6 +30,58 @@ body{
 background:#f8fafc;
 color:#1e293b;
 line-height:1.6;
+}
+
+.install-banner{
+display:none;
+position:fixed;
+bottom:18px;
+left:18px;
+right:18px;
+background:white;
+box-shadow:0 10px 30px rgba(0,0,0,.18);
+border-radius:16px;
+padding:18px;
+z-index:2000;
+border:1px solid #dbeafe;
+}
+
+.install-banner strong{
+color:#2563eb;
+display:block;
+margin-bottom:6px;
+}
+
+.install-banner p{
+font-size:.95rem;
+color:#475569;
+margin-bottom:12px;
+}
+
+.install-actions{
+display:flex;
+gap:10px;
+flex-wrap:wrap;
+}
+
+.install-btn{
+background:#2563eb;
+color:white;
+border:none;
+padding:12px 16px;
+border-radius:10px;
+font-weight:800;
+cursor:pointer;
+}
+
+.close-install{
+background:#e2e8f0;
+color:#334155;
+border:none;
+padding:12px 16px;
+border-radius:10px;
+font-weight:800;
+cursor:pointer;
 }
 
 nav{
@@ -117,6 +177,11 @@ background:#16a34a;
 color:white;
 }
 
+.hero-btn.dark{
+background:#0f172a;
+color:white;
+}
+
 .section{
 max-width:1200px;
 margin:auto;
@@ -199,6 +264,24 @@ text-decoration:none;
 display:inline-block;
 }
 
+.pwa-box{
+background:#eff6ff;
+border-left:5px solid #2563eb;
+border-radius:16px;
+padding:25px;
+margin-top:25px;
+text-align:left;
+}
+
+.pwa-box h3{
+color:#2563eb;
+margin-bottom:10px;
+}
+
+.pwa-box ol{
+margin-left:20px;
+}
+
 .footer{
 margin-top:80px;
 background:linear-gradient(135deg,#0f172a,#1e293b);
@@ -251,6 +334,10 @@ gap:15px;
 justify-content:center;
 }
 
+header{
+margin-top:135px;
+}
+
 header h1{
 font-size:2rem;
 }
@@ -259,11 +346,26 @@ font-size:2rem;
 grid-template-columns:1fr;
 text-align:center;
 }
+
+.install-actions button{
+width:100%;
+}
 }
 </style>
 </head>
 
 <body>
+
+<div id="installBanner" class="install-banner">
+<strong>Instalar DeltaF en tu telefono</strong>
+<p>
+Puedes agregar DeltaF a la pantalla de inicio y usarlo como aplicacion.
+</p>
+<div class="install-actions">
+<button id="installBtn" class="install-btn">Instalar DeltaF</button>
+<button id="closeInstall" class="close-install">Cerrar</button>
+</div>
+</div>
 
 <nav>
 <div class="nav-logo">
@@ -274,7 +376,8 @@ text-align:center;
 <a href="#">Inicio</a>
 <a href="#profesional">Profesionales</a>
 <a href="pacientes.html">Pacientes</a>
-<a href="login.html">Iniciar Sesión</a>
+<a href="login.html">Iniciar Sesion</a>
+<a href="#app">App</a>
 <a href="#contacto">Contacto</a>
 </div>
 </nav>
@@ -284,19 +387,23 @@ text-align:center;
 <img src="img/logo-deltaf.png" alt="DeltaF">
 </div>
 
-<h1>Facilitamos el acceso a exámenes clínicos en minutos</h1>
+<h1>Facilitamos el acceso a examenes clinicos en minutos</h1>
 
 <p>
-Conectamos profesionales de la salud y pacientes con un proceso simple, rápido y seguro para la solicitud y gestión de exámenes clínicos SIN LIMITE DE EXAMENES NI COSTOS ADICIONALES.
+Conectamos profesionales de la salud y pacientes con un proceso simple, rapido y seguro para la solicitud y gestion de examenes clinicos SIN LIMITE DE EXAMENES NI COSTOS ADICIONALES.
 </p>
 
 <div class="hero-buttons">
 <a href="#profesional" class="hero-btn">
-🩺 SOY PROFESIONAL
+SOY PROFESIONAL
 </a>
 
 <a href="pacientes.html" class="hero-btn green">
-👤 SOY PACIENTE · ORDEN $3.990
+SOY PACIENTE - ORDEN $3.990
+</a>
+
+<a href="#app" class="hero-btn dark">
+INSTALAR APP
 </a>
 </div>
 </header>
@@ -310,32 +417,32 @@ Conectamos profesionales de la salud y pacientes con un proceso simple, rápido 
 <ul>
 <li>Nutricionistas</li>
 <li>Enfermeros(as)</li>
-<li>Kinesiólogos(as)</li>
-<li>Fonoaudiólogos(as)</li>
+<li>Kinesiologos(as)</li>
+<li>Fonoaudiologos(as)</li>
 <li>Terapeutas Ocupacionales</li>
 <li>Acupunturistas</li>
-<li>Naturópatas</li>
+<li>Naturopatas</li>
 </ul>
 </div>
 
 <div class="card">
 <h3>Orden Individual</h3>
 <div class="price">$2.990</div>
-<p>Solicitud de orden médica para exámenes clínicos o imagenológicos.</p>
+<p>Solicitud de orden medica para examenes clinicos o imagenologicos.</p>
 <a href="login.html" class="card-btn">Ingresar</a>
 </div>
 
 <div class="card">
 <h3>Pack Profesional</h3>
 <div class="price">5 x $11.990</div>
-<p>Ideal para profesionales que solicitan órdenes de forma frecuente.</p>
-<a href="comprar-ordenes.html" class="card-btn">Comprar órdenes</a>
+<p>Ideal para profesionales que solicitan ordenes de forma frecuente.</p>
+<a href="comprar-ordenes.html" class="card-btn">Comprar ordenes</a>
 </div>
 
 <div class="card">
 <h3>Registro Profesional</h3>
 <p>
-Crea tu cuenta profesional y solicita validación para comenzar a usar DeltaF.
+Crea tu cuenta profesional y solicita validacion para comenzar a usar DeltaF.
 </p>
 <a href="registro-profesional.html" class="card-btn">Registrarme</a>
 </div>
@@ -347,9 +454,9 @@ Crea tu cuenta profesional y solicita validación para comenzar a usar DeltaF.
 
 <div class="cards">
 <div class="card">
-<h3>Orden médica online</h3>
+<h3>Orden medica online</h3>
 <div class="price">$3.990</div>
-<p>Valor promocional fijo por solicitud de orden médica de exámenes.</p>
+<p>Valor promocional fijo por solicitud de orden medica de examenes.</p>
 <a href="pacientes.html" class="card-btn green">Solicitar orden</a>
 </div>
 
@@ -357,16 +464,16 @@ Crea tu cuenta profesional y solicita validación para comenzar a usar DeltaF.
 <h3>Proceso</h3>
 <ul>
 <li>Realiza el pago por Transbank.</li>
-<li>Completa tus datos y exámenes solicitados.</li>
-<li>El médico revisa la solicitud.</li>
+<li>Completa tus datos y examenes solicitados.</li>
+<li>El medico revisa la solicitud.</li>
 <li>Recibe tu orden en PDF si corresponde.</li>
 </ul>
 </div>
 
 <div class="card">
-<h3>Validación</h3>
+<h3>Validacion</h3>
 <p>
-Cada orden puede verificarse mediante código de validación DeltaF.
+Cada orden puede verificarse mediante codigo de validacion DeltaF.
 </p>
 </div>
 </div>
@@ -376,11 +483,59 @@ Cada orden puede verificarse mediante código de validación DeltaF.
 <h2>Acceso Plataforma</h2>
 
 <div class="form-box">
-<p>Ingresa a tu cuenta profesional para solicitar órdenes o revisar tus solicitudes.</p>
+<p>Ingresa a tu cuenta profesional para solicitar ordenes o revisar tus solicitudes.</p>
 <br>
 <a href="login.html" class="submit-btn">
 Ingresar a DeltaF
 </a>
+</div>
+</section>
+
+<section id="app" class="section">
+<h2>DeltaF como aplicacion</h2>
+
+<div class="cards">
+<div class="card">
+<h3>Para profesionales</h3>
+<p>
+Instala DeltaF en tu telefono para acceder rapido a solicitudes, biblioteca MNBE, ficha clinica y futuro modulo de agenda.
+</p>
+<a href="login.html" class="card-btn">Entrar al panel</a>
+</div>
+
+<div class="card">
+<h3>Para pacientes</h3>
+<p>
+Accede desde tu telefono para solicitar ordenes, recibir indicaciones y en el futuro agendar con profesionales.
+</p>
+<a href="pacientes.html" class="card-btn green">Ir a pacientes</a>
+</div>
+
+<div class="card">
+<h3>Instalacion</h3>
+<p>
+En Android puede aparecer el boton Instalar. En iPhone debes usar Compartir y luego Agregar a pantalla de inicio.
+</p>
+</div>
+</div>
+
+<div class="pwa-box">
+<h3>Como instalar en iPhone</h3>
+<ol>
+<li>Abre DeltaF desde Safari.</li>
+<li>Toca el boton Compartir.</li>
+<li>Selecciona Agregar a pantalla de inicio.</li>
+<li>Confirma con Agregar.</li>
+</ol>
+</div>
+
+<div class="pwa-box">
+<h3>Como instalar en Android</h3>
+<ol>
+<li>Abre DeltaF desde Chrome.</li>
+<li>Toca Instalar DeltaF si aparece el aviso.</li>
+<li>Si no aparece, abre el menu de Chrome y selecciona Agregar a pantalla principal.</li>
+</ol>
 </div>
 </section>
 
@@ -389,7 +544,7 @@ Ingresar a DeltaF
 
 <div class="form-box">
 <p>
-Para consultas comerciales o soporte, escríbenos a:
+Para consultas comerciales o soporte, escribenos a:
 </p>
 <br>
 <a href="mailto:contactodeltaf@gmail.com" class="submit-btn">
@@ -404,7 +559,7 @@ contactodeltaf@gmail.com
 <div class="footer-brand">
 <img src="img/logo-deltaf.png" alt="DeltaF">
 <p>
-Tecnología para facilitar el acceso a exámenes clínicos y apoyar el seguimiento terapéutico de los pacientes.
+Tecnologia para facilitar el acceso a examenes clinicos y apoyar el seguimiento terapeutico de los pacientes.
 </p>
 </div>
 
@@ -413,7 +568,8 @@ Tecnología para facilitar el acceso a exámenes clínicos y apoyar el seguimien
 <a href="#">Inicio</a>
 <a href="#profesional">Profesionales</a>
 <a href="pacientes.html">Pacientes</a>
-<a href="login.html">Iniciar Sesión</a>
+<a href="login.html">Iniciar Sesion</a>
+<a href="#app">Instalar App</a>
 </div>
 
 <div class="footer-column">
@@ -428,17 +584,61 @@ www.deltaf.site
 
 <div class="footer-column">
 <h3>Legal</h3>
-<a href="privacidad.html">Política de Privacidad</a>
-<a href="terminos.html">Términos y Condiciones</a>
+<a href="privacidad.html">Politica de Privacidad</a>
+<a href="terminos.html">Terminos y Condiciones</a>
 <a href="consentimiento.html">Consentimiento de Datos</a>
 </div>
 
 </div>
 
 <div class="footer-bottom">
-© 2026 DeltaF. Todos los derechos reservados.
+Â© 2026 DeltaF. Todos los derechos reservados.
 </div>
 </footer>
+
+<script>
+let deferredPrompt = null;
+const installBanner = document.getElementById("installBanner");
+const installBtn = document.getElementById("installBtn");
+const closeInstall = document.getElementById("closeInstall");
+
+if("serviceWorker" in navigator){
+window.addEventListener("load", function(){
+navigator.serviceWorker.register("service-worker.js")
+.then(function(registration){
+console.log("Service Worker registrado:", registration.scope);
+})
+.catch(function(error){
+console.log("Error registrando Service Worker:", error);
+});
+});
+}
+
+window.addEventListener("beforeinstallprompt", function(event){
+event.preventDefault();
+deferredPrompt = event;
+installBanner.style.display = "block";
+});
+
+installBtn.addEventListener("click", async function(){
+if(!deferredPrompt){
+alert("En iPhone usa Compartir y luego Agregar a pantalla de inicio.");
+return;
+}
+
+deferredPrompt.prompt();
+
+const result = await deferredPrompt.userChoice;
+console.log("Resultado instalacion:", result.outcome);
+
+deferredPrompt = null;
+installBanner.style.display = "none";
+});
+
+closeInstall.addEventListener("click", function(){
+installBanner.style.display = "none";
+});
+</script>
 
 </body>
 </html>
