@@ -2,6 +2,7 @@
 <html lang="es">
 <head>
 <meta charset="UTF-8">
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 <title>Pacientes | DeltaF</title>
@@ -64,46 +65,46 @@ summary{font-weight:900;color:#2563eb;cursor:pointer;font-size:1.05rem;}
 
 <section class="hero">
 <img src="./img/logo-deltaf.png" alt="DeltaF">
-<h1>Solicita tu orden mÃ©dica de exÃ¡menes online</h1>
-<p>DeltaF permite gestionar solicitudes de exÃ¡menes clÃ­nicos e imagenolÃ³gicos de forma simple, segura y validada por mÃ©dico autorizador.</p>
+<h1>Solicita tu orden medica de examenes online</h1>
+<p>DeltaF permite gestionar solicitudes de examenes clinicos e imagenologicos de forma simple, segura y validada por medico autorizador.</p>
 </section>
 
 <div class="container">
 
 <div class="price-card">
-<div class="badge">PROMOCIÃN ONLINE</div>
-<h2>Orden mÃ©dica de exÃ¡menes</h2>
+<div class="badge">PROMOCION ONLINE</div>
+<h2>Orden medica de examenes</h2>
 <div class="price">$4.990</div>
-<p>Valor fijo promocional por solicitud de orden mÃ©dica.</p>
+<p>Valor fijo promocional por solicitud de orden medica.</p>
 </div>
 
 <div class="grid">
 <div class="card">
-<h3>Â¿CÃ³mo funciona?</h3>
+<h3>Como funciona?</h3>
 <ul>
 <li>Pagas el valor promocional.</li>
-<li>Guarda el cÃ³digo de autorizaciÃ³n Transbank.</li>
-<li>Registra tus datos y exÃ¡menes solicitados.</li>
-<li>El mÃ©dico revisa la solicitud.</li>
+<li>Guarda el codigo de autorizacion Transbank.</li>
+<li>Registra tus datos y examenes solicitados.</li>
+<li>El medico revisa la solicitud.</li>
 <li>Si corresponde, se emite la orden en PDF.</li>
 </ul>
 </div>
 
 <div class="card">
-<h3>Â¿QuÃ© puedes solicitar?</h3>
-<p>ExÃ¡menes de laboratorio, perfiles generales, controles metabÃ³licos, hormonales, vitaminas, radiografÃ­as y otros exÃ¡menes segÃºn evaluaciÃ³n mÃ©dica.</p>
+<h3>Que puedes solicitar?</h3>
+<p>Examenes de laboratorio, perfiles generales, controles metabolicos, hormonales, vitaminas, radiografias y otros examenes segun evaluacion medica.</p>
 </div>
 
 <div class="card">
 <h3>Importante</h3>
-<p>La emisiÃ³n de la orden queda sujeta a revisiÃ³n mÃ©dica. Si la solicitud requiere aclaraciÃ³n, DeltaF podrÃ¡ solicitar informaciÃ³n adicional.</p>
+<p>La emision de la orden queda sujeta a revision medica. Si la solicitud requiere aclaracion, DeltaF podra solicitar informacion adicional.</p>
 </div>
 </div>
 
 <div class="form-card">
 
 <h2>Solicitar Orden</h2>
-<p class="subtitle">Primero realiza el pago en Transbank. Luego ingresa el cÃ³digo de autorizaciÃ³n para habilitar el envÃ­o de tu solicitud.</p>
+<p class="subtitle">Primero realiza el pago en Transbank. Luego ingresa el codigo de autorizacion para habilitar el envio de tu solicitud.</p>
 
 <div id="mensaje" class="message"></div>
 
@@ -112,14 +113,14 @@ Pagar $4.990 en Transbank
 </a>
 
 <div class="alerta-pago">
-â ï¸ IMPORTANTE: Antes de cerrar Transbank, guarda o captura el cÃ³digo de autorizaciÃ³n de tu pago.
+IMPORTANTE: IMPORTANTE: Antes de cerrar Transbank, guarda o captura el codigo de autorizacion de tu pago.
 <br><br>
-Sin este cÃ³digo no podrÃ¡s enviar tu solicitud para revisiÃ³n mÃ©dica.
+Sin este codigo no podras enviar tu solicitud para revision medica.
 </div>
 
 <form id="pacienteForm">
 
-<label>CÃ³digo de autorizaciÃ³n Transbank *</label>
+<label>Codigo de autorizacion Transbank *</label>
 <input
 id="comprobante"
 type="text"
@@ -130,7 +131,7 @@ placeholder="Ej: 123456"
 oninput="validarCodigoTransbank()">
 
 <p class="codigo-ayuda">
-Ingresa el cÃ³digo de autorizaciÃ³n entregado por Transbank. El botÃ³n de envÃ­o se habilitarÃ¡ Ãºnicamente despuÃ©s de ingresarlo.
+Ingresa el codigo de autorizacion entregado por Transbank. El boton de envio se habilitara unicamente despues de ingresarlo.
 </p>
 
 <hr class="separador">
@@ -143,34 +144,34 @@ Ingresa el cÃ³digo de autorizaciÃ³n entregado por Transbank. El botÃ³n de 
 <label>RUT</label>
 <input id="rutPaciente" type="text" required>
 
-<label>Correo electrÃ³nico</label>
+<label>Correo electronico</label>
 <input id="correoPaciente" type="email" required>
 
-<label>TelÃ©fono</label>
+<label>Telefono</label>
 <input id="telefonoPaciente" type="text" required>
 
 <div class="exam-box">
-<h3>Selecciona tus exÃ¡menes</h3>
+<h3>Selecciona tus examenes</h3>
 
 <label>Buscar examen</label>
 <input id="buscarExamen" type="text" placeholder="Ejemplo: TSH, insulina, hemograma, vitamina D...">
 
 <details open>
-<summary>BioquÃ­micos</summary>
+<summary>Bioquimicos</summary>
 <div class="checkbox-grid">
-<label class="checkbox-item"><input type="checkbox" value="Ãcido Ãºrico" class="examen"> Ãcido Ãºrico</label>
-<label class="checkbox-item"><input type="checkbox" value="AlbÃºmina" class="examen"> AlbÃºmina</label>
+<label class="checkbox-item"><input type="checkbox" value="Acido urico" class="examen"> Acido urico</label>
+<label class="checkbox-item"><input type="checkbox" value="Albumina" class="examen"> Albumina</label>
 <label class="checkbox-item"><input type="checkbox" value="Amilasa" class="examen"> Amilasa</label>
 <label class="checkbox-item"><input type="checkbox" value="Bilirrubina total y directa" class="examen"> Bilirrubina total y directa</label>
 <label class="checkbox-item"><input type="checkbox" value="Calcio" class="examen"> Calcio</label>
-<label class="checkbox-item"><input type="checkbox" value="Calcio iÃ³nico" class="examen"> Calcio iÃ³nico</label>
+<label class="checkbox-item"><input type="checkbox" value="Calcio ionico" class="examen"> Calcio ionico</label>
 <label class="checkbox-item"><input type="checkbox" value="Colesterol HDL" class="examen"> Colesterol HDL</label>
 <label class="checkbox-item"><input type="checkbox" value="Creatinina" class="examen"> Creatinina</label>
 <label class="checkbox-item"><input type="checkbox" value="Curva de Insulina" class="examen"> Curva de Insulina</label>
 <label class="checkbox-item"><input type="checkbox" value="Curva de Tolerancia a la Glucosa" class="examen"> Curva de Tolerancia a la Glucosa</label>
-<label class="checkbox-item"><input type="checkbox" value="Electrolitos plasmÃ¡ticos" class="examen"> Electrolitos plasmÃ¡ticos</label>
+<label class="checkbox-item"><input type="checkbox" value="Electrolitos plasmaticos" class="examen"> Electrolitos plasmaticos</label>
 <label class="checkbox-item"><input type="checkbox" value="Fosfatasas alcalinas" class="examen"> Fosfatasas alcalinas</label>
-<label class="checkbox-item"><input type="checkbox" value="FÃ³sforo" class="examen"> FÃ³sforo</label>
+<label class="checkbox-item"><input type="checkbox" value="Fosforo" class="examen"> Fosforo</label>
 <label class="checkbox-item"><input type="checkbox" value="GGT" class="examen"> GGT</label>
 <label class="checkbox-item"><input type="checkbox" value="Glicemia" class="examen"> Glicemia</label>
 <label class="checkbox-item"><input type="checkbox" value="Glicemia post prandial" class="examen"> Glicemia post prandial</label>
@@ -180,11 +181,11 @@ Ingresa el cÃ³digo de autorizaciÃ³n entregado por Transbank. El botÃ³n de 
 <label class="checkbox-item"><input type="checkbox" value="Insulina post carga glucosa" class="examen"> Insulina post carga glucosa</label>
 <label class="checkbox-item"><input type="checkbox" value="Lipasa" class="examen"> Lipasa</label>
 <label class="checkbox-item"><input type="checkbox" value="Magnesio" class="examen"> Magnesio</label>
-<label class="checkbox-item"><input type="checkbox" value="Perfil BioquÃ­mico" class="examen"> Perfil BioquÃ­mico</label>
-<label class="checkbox-item"><input type="checkbox" value="Perfil HepÃ¡tico" class="examen"> Perfil HepÃ¡tico</label>
-<label class="checkbox-item"><input type="checkbox" value="Perfil LipÃ­dico" class="examen"> Perfil LipÃ­dico</label>
+<label class="checkbox-item"><input type="checkbox" value="Perfil Bioquimico" class="examen"> Perfil Bioquimico</label>
+<label class="checkbox-item"><input type="checkbox" value="Perfil Hepatico" class="examen"> Perfil Hepatico</label>
+<label class="checkbox-item"><input type="checkbox" value="Perfil Lipidico" class="examen"> Perfil Lipidico</label>
 <label class="checkbox-item"><input type="checkbox" value="Perfil Renal" class="examen"> Perfil Renal</label>
-<label class="checkbox-item"><input type="checkbox" value="ProteÃ­nas totales" class="examen"> ProteÃ­nas totales</label>
+<label class="checkbox-item"><input type="checkbox" value="Proteinas totales" class="examen"> Proteinas totales</label>
 <label class="checkbox-item"><input type="checkbox" value="Uremia" class="examen"> Uremia</label>
 </div>
 </details>
@@ -224,7 +225,7 @@ Ingresa el cÃ³digo de autorizaciÃ³n entregado por Transbank. El botÃ³n de 
 </details>
 
 <details>
-<summary>Perfil AndrogÃ©nico</summary>
+<summary>Perfil Androgenico</summary>
 <div class="checkbox-grid">
 <label class="checkbox-item"><input type="checkbox" value="Androstenediona" class="examen"> Androstenediona</label>
 <label class="checkbox-item"><input type="checkbox" value="SHBG" class="examen"> SHBG</label>
@@ -234,13 +235,13 @@ Ingresa el cÃ³digo de autorizaciÃ³n entregado por Transbank. El botÃ³n de 
 </details>
 
 <details>
-<summary>HematolÃ³gicos</summary>
+<summary>Hematologicos</summary>
 <div class="checkbox-grid">
-<label class="checkbox-item"><input type="checkbox" value="Ãcido fÃ³lico" class="examen"> Ãcido fÃ³lico</label>
+<label class="checkbox-item"><input type="checkbox" value="Acido folico" class="examen"> Acido folico</label>
 <label class="checkbox-item"><input type="checkbox" value="Ferremia - TIBC" class="examen"> Ferremia - TIBC</label>
 <label class="checkbox-item"><input type="checkbox" value="Ferritina" class="examen"> Ferritina</label>
-<label class="checkbox-item"><input type="checkbox" value="Fierro sÃ©rico" class="examen"> Fierro sÃ©rico</label>
-<label class="checkbox-item"><input type="checkbox" value="Grupo sanguÃ­neo ABO y RH" class="examen"> Grupo sanguÃ­neo ABO y RH</label>
+<label class="checkbox-item"><input type="checkbox" value="Fierro serico" class="examen"> Fierro serico</label>
+<label class="checkbox-item"><input type="checkbox" value="Grupo sanguineo ABO y RH" class="examen"> Grupo sanguineo ABO y RH</label>
 <label class="checkbox-item"><input type="checkbox" value="Hematocrito" class="examen"> Hematocrito</label>
 <label class="checkbox-item"><input type="checkbox" value="Hemoglobina" class="examen"> Hemoglobina</label>
 <label class="checkbox-item"><input type="checkbox" value="Hemograma / VHS" class="examen"> Hemograma / VHS</label>
@@ -268,25 +269,25 @@ Ingresa el cÃ³digo de autorizaciÃ³n entregado por Transbank. El botÃ³n de 
 </details>
 
 <details>
-<summary>InmunolÃ³gicos</summary>
+<summary>Inmunologicos</summary>
 <div class="checkbox-grid">
 <label class="checkbox-item"><input type="checkbox" value="Anticuerpos antitransglutaminasa" class="examen"> Anticuerpos antitransglutaminasa</label>
 <label class="checkbox-item"><input type="checkbox" value="ANA" class="examen"> ANA</label>
 <label class="checkbox-item"><input type="checkbox" value="ENA" class="examen"> ENA</label>
 <label class="checkbox-item"><input type="checkbox" value="Complemento C3-C4" class="examen"> Complemento C3-C4</label>
 <label class="checkbox-item"><input type="checkbox" value="Factor reumatoideo" class="examen"> Factor reumatoideo</label>
-<label class="checkbox-item"><input type="checkbox" value="HomocisteÃ­na" class="examen"> HomocisteÃ­na</label>
+<label class="checkbox-item"><input type="checkbox" value="Homocisteina" class="examen"> Homocisteina</label>
 <label class="checkbox-item"><input type="checkbox" value="IgA, IgG, IgM" class="examen"> IgA, IgG, IgM</label>
 <label class="checkbox-item"><input type="checkbox" value="IgA secretora" class="examen"> IgA secretora</label>
-<label class="checkbox-item"><input type="checkbox" value="IgE especÃ­fica" class="examen"> IgE especÃ­fica</label>
+<label class="checkbox-item"><input type="checkbox" value="IgE especifica" class="examen"> IgE especifica</label>
 <label class="checkbox-item"><input type="checkbox" value="IgE total" class="examen"> IgE total</label>
 <label class="checkbox-item"><input type="checkbox" value="PCR" class="examen"> PCR</label>
-<label class="checkbox-item"><input type="checkbox" value="ProteÃ­na C ultrasensible" class="examen"> ProteÃ­na C ultrasensible</label>
+<label class="checkbox-item"><input type="checkbox" value="Proteina C ultrasensible" class="examen"> Proteina C ultrasensible</label>
 </div>
 </details>
 
 <details>
-<summary>SerolÃ³gicos</summary>
+<summary>Serologicos</summary>
 <div class="checkbox-grid">
 <label class="checkbox-item"><input type="checkbox" value="Antigliadinas IgA-IgG" class="examen"> Antigliadinas IgA-IgG</label>
 <label class="checkbox-item"><input type="checkbox" value="ASLO" class="examen"> ASLO</label>
@@ -298,7 +299,7 @@ Ingresa el cÃ³digo de autorizaciÃ³n entregado por Transbank. El botÃ³n de 
 <label class="checkbox-item"><input type="checkbox" value="Herpes simple 1 y 2 IgG" class="examen"> Herpes simple 1 y 2 IgG</label>
 <label class="checkbox-item"><input type="checkbox" value="HIV" class="examen"> HIV</label>
 <label class="checkbox-item"><input type="checkbox" value="HTLV-1" class="examen"> HTLV-1</label>
-<label class="checkbox-item"><input type="checkbox" value="PÃ©ptido C" class="examen"> PÃ©ptido C</label>
+<label class="checkbox-item"><input type="checkbox" value="Peptido C" class="examen"> Peptido C</label>
 <label class="checkbox-item"><input type="checkbox" value="RPR" class="examen"> RPR</label>
 <label class="checkbox-item"><input type="checkbox" value="Toxoplasmosis IgG-IgM" class="examen"> Toxoplasmosis IgG-IgM</label>
 <label class="checkbox-item"><input type="checkbox" value="VDRL" class="examen"> VDRL</label>
@@ -310,7 +311,7 @@ Ingresa el cÃ³digo de autorizaciÃ³n entregado por Transbank. El botÃ³n de 
 <div class="checkbox-grid">
 <label class="checkbox-item"><input type="checkbox" value="Clostridium difficile" class="examen"> Clostridium difficile</label>
 <label class="checkbox-item"><input type="checkbox" value="Coprocultivo" class="examen"> Coprocultivo</label>
-<label class="checkbox-item"><input type="checkbox" value="CoproparasitolÃ³gico seriado" class="examen"> CoproparasitolÃ³gico seriado</label>
+<label class="checkbox-item"><input type="checkbox" value="Coproparasitologico seriado" class="examen"> Coproparasitologico seriado</label>
 <label class="checkbox-item"><input type="checkbox" value="Helicobacter pylori deposiciones" class="examen"> Helicobacter pylori</label>
 <label class="checkbox-item"><input type="checkbox" value="Hemorragias ocultas" class="examen"> Hemorragias ocultas</label>
 <label class="checkbox-item"><input type="checkbox" value="Leucocitos fecales" class="examen"> Leucocitos fecales</label>
@@ -334,7 +335,7 @@ Ingresa el cÃ³digo de autorizaciÃ³n entregado por Transbank. El botÃ³n de 
 </details>
 
 <details>
-<summary>MicrobiolÃ³gicos</summary>
+<summary>Microbiologicos</summary>
 <div class="checkbox-grid">
 <label class="checkbox-item"><input type="checkbox" value="Chlamidias" class="examen"> Chlamidias</label>
 <label class="checkbox-item"><input type="checkbox" value="Cultivo corriente" class="examen"> Cultivo corriente</label>
@@ -347,54 +348,54 @@ Ingresa el cÃ³digo de autorizaciÃ³n entregado por Transbank. El botÃ³n de 
 </details>
 
 <details>
-<summary>RadiografÃ­as</summary>
+<summary>Radiografias</summary>
 <div class="checkbox-grid">
-<label class="checkbox-item"><input type="checkbox" value="RadiografÃ­a de TÃ³rax" class="examen"> RadiografÃ­a de TÃ³rax</label>
-<label class="checkbox-item"><input type="checkbox" value="RadiografÃ­a Columna Cervical" class="examen"> RX Columna Cervical</label>
-<label class="checkbox-item"><input type="checkbox" value="RadiografÃ­a Columna Lumbar" class="examen"> RX Columna Lumbar</label>
-<label class="checkbox-item"><input type="checkbox" value="RadiografÃ­a de Pelvis" class="examen"> RX Pelvis</label>
-<label class="checkbox-item"><input type="checkbox" value="RadiografÃ­a de Hombro" class="examen"> RX Hombro</label>
-<label class="checkbox-item"><input type="checkbox" value="RadiografÃ­a de Rodilla" class="examen"> RX Rodilla</label>
-<label class="checkbox-item"><input type="checkbox" value="RadiografÃ­a de Tobillo" class="examen"> RX Tobillo</label>
-<label class="checkbox-item"><input type="checkbox" value="RadiografÃ­a de Pie" class="examen"> RX Pie</label>
+<label class="checkbox-item"><input type="checkbox" value="Radiografia de Torax" class="examen"> Radiografia de Torax</label>
+<label class="checkbox-item"><input type="checkbox" value="Radiografia Columna Cervical" class="examen"> RX Columna Cervical</label>
+<label class="checkbox-item"><input type="checkbox" value="Radiografia Columna Lumbar" class="examen"> RX Columna Lumbar</label>
+<label class="checkbox-item"><input type="checkbox" value="Radiografia de Pelvis" class="examen"> RX Pelvis</label>
+<label class="checkbox-item"><input type="checkbox" value="Radiografia de Hombro" class="examen"> RX Hombro</label>
+<label class="checkbox-item"><input type="checkbox" value="Radiografia de Rodilla" class="examen"> RX Rodilla</label>
+<label class="checkbox-item"><input type="checkbox" value="Radiografia de Tobillo" class="examen"> RX Tobillo</label>
+<label class="checkbox-item"><input type="checkbox" value="Radiografia de Pie" class="examen"> RX Pie</label>
 </div>
 </details>
 
 </div>
 
-<label>Otros exÃ¡menes solicitados</label>
-<textarea id="examenesSolicitados" rows="5" placeholder="Escribe aquÃ­ cualquier examen que no aparezca en la lista."></textarea>
+<label>Otros examenes solicitados</label>
+<textarea id="examenesSolicitados" rows="5" placeholder="Escribe aqui cualquier examen que no aparezca en la lista."></textarea>
 
 <label>Motivo de la solicitud / antecedentes relevantes</label>
-<textarea id="motivo" rows="5" placeholder="Ej: control preventivo, seguimiento, sÃ­ntomas, indicaciÃ³n profesional, etc."></textarea>
+<textarea id="motivo" rows="5" placeholder="Ej: control preventivo, seguimiento, sintomas, indicacion profesional, etc."></textarea>
 
 <div class="legal-box">
 <label>
 <input type="checkbox" required>
 Acepto la
-<a href="privacidad.html" target="_blank">PolÃ­tica de Privacidad</a>,
+<a href="privacidad.html" target="_blank">Politica de Privacidad</a>,
 los
-<a href="terminos.html" target="_blank">TÃ©rminos y Condiciones</a>
+<a href="terminos.html" target="_blank">Terminos y Condiciones</a>
 y el
 <a href="consentimiento.html" target="_blank">Consentimiento para Tratamiento de Datos de Salud</a>.
 </label>
 </div>
 
 <button id="btnEnviar" type="submit" class="btn" disabled>
-Primero ingresa el cÃ³digo Transbank
+Primero ingresa el codigo Transbank
 </button>
 
 </form>
 
 <div class="notice">
-<strong>Nota:</strong> El pago no garantiza emisiÃ³n automÃ¡tica de la orden. Toda solicitud serÃ¡ revisada por un mÃ©dico autorizador.
+<strong>Nota:</strong> El pago no garantiza emision automatica de la orden. Toda solicitud sera revisada por un medico autorizador.
 </div>
 
 </div>
 </div>
 
 <footer class="footer">
-DeltaF Â· Profesional y Seguro
+DeltaF - Profesional y Seguro
 </footer>
 
 <script>
@@ -429,10 +430,10 @@ const codigo = document.getElementById("comprobante").value.trim();
 
 if(codigo.length >= 6){
 btnEnviar.disabled = false;
-btnEnviar.textContent = "Enviar solicitud para revisiÃ³n mÃ©dica";
+btnEnviar.textContent = "Enviar solicitud para revision medica";
 }else{
 btnEnviar.disabled = true;
-btnEnviar.textContent = "Primero ingresa el cÃ³digo Transbank";
+btnEnviar.textContent = "Primero ingresa el codigo Transbank";
 }
 }
 
@@ -451,7 +452,7 @@ const seleccionados = Array.from(document.querySelectorAll(".examen:checked")).m
 const otros = document.getElementById("examenesSolicitados").value.trim();
 
 if(otros){
-seleccionados.push("Otros exÃ¡menes manuales: " + otros);
+seleccionados.push("Otros examenes manuales: " + otros);
 }
 
 return seleccionados.join(", ");
@@ -468,22 +469,22 @@ subject:"Nueva solicitud de paciente DeltaF",
 html:`
 <div style="font-family:Arial,sans-serif;color:#1e293b;line-height:1.5;">
 <h2 style="color:#2563eb;">Nueva solicitud de paciente</h2>
-<p>Se ha recibido una nueva solicitud de exÃ¡menes desde el formulario de pacientes DeltaF.</p>
+<p>Se ha recibido una nueva solicitud de examenes desde el formulario de pacientes DeltaF.</p>
 <h3>Datos del paciente</h3>
 <p><strong>Nombre:</strong> ${limpiarHtml(datos.nombrePaciente)}</p>
 <p><strong>RUT:</strong> ${limpiarHtml(datos.rutPaciente)}</p>
 <p><strong>Correo:</strong> ${limpiarHtml(datos.correoPaciente)}</p>
-<p><strong>TelÃ©fono:</strong> ${limpiarHtml(datos.telefonoPaciente)}</p>
-<h3>ExÃ¡menes solicitados</h3>
+<p><strong>Telefono:</strong> ${limpiarHtml(datos.telefonoPaciente)}</p>
+<h3>Examenes solicitados</h3>
 <p>${limpiarHtml(datos.examenesSolicitados)}</p>
 <h3>Motivo / antecedentes</h3>
 <p>${limpiarHtml(datos.motivo || "Sin antecedentes registrados.")}</p>
 <h3>Pago</h3>
-<p><strong>CÃ³digo autorizaciÃ³n Transbank:</strong> ${limpiarHtml(datos.comprobante)}</p>
+<p><strong>Codigo autorizacion Transbank:</strong> ${limpiarHtml(datos.comprobante)}</p>
 <p><strong>Monto:</strong> $4.990</p>
-<p>Revisar esta solicitud en el panel mÃ©dico DeltaF.</p>
+<p>Revisar esta solicitud en el panel medico DeltaF.</p>
 <hr>
-<p style="font-size:12px;color:#64748b;">DeltaF - NotificaciÃ³n automÃ¡tica</p>
+<p style="font-size:12px;color:#64748b;">DeltaF - Notificacion automatica</p>
 </div>
 `
 })
@@ -504,20 +505,20 @@ subject:"Solicitud recibida DeltaF",
 html:`
 <div style="font-family:Arial,sans-serif;color:#1e293b;line-height:1.5;">
 <h2 style="color:#2563eb;">Solicitud recibida</h2>
-<p>Hola ${limpiarHtml(datos.nombrePaciente)}, recibimos tu solicitud de exÃ¡menes.</p>
-<p>El mÃ©dico autorizador revisarÃ¡ los antecedentes y, si corresponde, recibirÃ¡s la orden mÃ©dica en PDF en este mismo correo.</p>
-<h3>ExÃ¡menes solicitados</h3>
+<p>Hola ${limpiarHtml(datos.nombrePaciente)}, recibimos tu solicitud de examenes.</p>
+<p>El medico autorizador revisara los antecedentes y, si corresponde, recibiras la orden medica en PDF en este mismo correo.</p>
+<h3>Examenes solicitados</h3>
 <p>${limpiarHtml(datos.examenesSolicitados)}</p>
-<p><strong>CÃ³digo Transbank registrado:</strong> ${limpiarHtml(datos.comprobante)}</p>
-<p><strong>Estado actual:</strong> Pendiente de revisiÃ³n mÃ©dica.</p>
+<p><strong>Codigo Transbank registrado:</strong> ${limpiarHtml(datos.comprobante)}</p>
+<p><strong>Estado actual:</strong> Pendiente de revision medica.</p>
 <hr>
-<p style="font-size:12px;color:#64748b;">DeltaF - Plataforma de solicitudes de exÃ¡menes.</p>
+<p style="font-size:12px;color:#64748b;">DeltaF - Plataforma de solicitudes de examenes.</p>
 </div>
 `
 })
 });
 }catch(error){
-console.log("No se pudo enviar confirmaciÃ³n al paciente:", error);
+console.log("No se pudo enviar confirmacion al paciente:", error);
 }
 }
 
@@ -536,16 +537,16 @@ const motivo = document.getElementById("motivo").value.trim();
 const comprobante = document.getElementById("comprobante").value.trim();
 
 if(comprobante.length < 6){
-mostrarMensaje("Debes ingresar el cÃ³digo de autorizaciÃ³n Transbank para enviar la solicitud.", "error");
+mostrarMensaje("Debes ingresar el codigo de autorizacion Transbank para enviar la solicitud.", "error");
 btnEnviar.disabled = true;
-btnEnviar.textContent = "Primero ingresa el cÃ³digo Transbank";
+btnEnviar.textContent = "Primero ingresa el codigo Transbank";
 return;
 }
 
 if(!examenesSolicitados){
 mostrarMensaje("Debes seleccionar o escribir al menos un examen.", "error");
 btnEnviar.disabled = false;
-btnEnviar.textContent = "Enviar solicitud para revisiÃ³n mÃ©dica";
+btnEnviar.textContent = "Enviar solicitud para revision medica";
 return;
 }
 
@@ -579,7 +580,7 @@ comprobante
 await enviarCorreoAdmin(datosSolicitud);
 await enviarCorreoConfirmacionPaciente(datosSolicitud);
 
-mostrarMensaje("Solicitud enviada correctamente. DeltaF revisarÃ¡ la solicitud mÃ©dica.", "success");
+mostrarMensaje("Solicitud enviada correctamente. DeltaF revisara la solicitud medica.", "success");
 form.reset();
 validarCodigoTransbank();
 
