@@ -1854,7 +1854,7 @@ mostrarError("Error al eliminar pago MNBE: " + error.message);
 }
 
 async function eliminarVentasPrueba(){
-const texto=prompt('Para resetear ventas de prueba escribe: RESETEAR VENTAS');
+const texto=prompt('Para resetear ventas de prueba escribe exactamente: RESETEAR VENTAS');
 
 if(texto !== "RESETEAR VENTAS"){
 mostrarError("Accion cancelada. No se escribio la frase de confirmacion.");
@@ -1864,17 +1864,23 @@ return;
 try{
 mostrarInfo("Reseteando ventas de prueba...");
 
+/*
+IMPORTANTE:
+No usamos .neq("id","0000...") porque algunas tablas tienen id bigint y otras uuid.
+Con .not("id","is",null) Supabase elimina/actualiza todos los registros sin provocar error de tipo.
+*/
+
 const r1=await supabaseClient
 .from("compras_ordenes")
 .delete()
-.neq("id","00000000-0000-0000-0000-000000000000");
+.not("id","is",null);
 
 if(r1.error) throw r1.error;
 
 const r2=await supabaseClient
 .from("pagos_mnbe")
 .delete()
-.neq("id","00000000-0000-0000-0000-000000000000");
+.not("id","is",null);
 
 if(r2.error) throw r2.error;
 
@@ -1886,7 +1892,7 @@ Si quieres borrar solicitudes de pacientes, usa el boton individual o el boton d
 const r3=await supabaseClient
 .from("solicitudes_pacientes")
 .update({monto:0})
-.neq("id","00000000-0000-0000-0000-000000000000");
+.not("id","is",null);
 
 if(r3.error) throw r3.error;
 
