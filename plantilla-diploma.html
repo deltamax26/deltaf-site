@@ -1,0 +1,355 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Plantilla Diploma Delta</title>
+
+<style>
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  background: #e8e8e8;
+  font-family: Arial, sans-serif;
+  color: #071713;
+}
+
+.panel {
+  max-width: 1180px;
+  margin: 18px auto;
+  background: #ffffff;
+  padding: 18px;
+  border-radius: 12px;
+  box-shadow: 0 8px 24px rgba(0,0,0,.14);
+}
+
+.panel h2 {
+  margin: 0 0 12px;
+  color: #00351f;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+}
+
+.campo {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  font-size: 13px;
+}
+
+.campo label {
+  font-weight: 700;
+}
+
+.campo input,
+.campo select {
+  width: 100%;
+  padding: 9px 10px;
+  border: 1px solid #cccccc;
+  border-radius: 8px;
+  font-size: 14px;
+}
+
+.acciones {
+  margin-top: 14px;
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+button {
+  border: 0;
+  border-radius: 8px;
+  padding: 10px 14px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.btn-verde {
+  background: #00351f;
+  color: #ffffff;
+}
+
+.btn-dorado {
+  background: #b38428;
+  color: #ffffff;
+}
+
+.btn-gris {
+  background: #eeeeee;
+  color: #222222;
+}
+
+.hoja-wrap {
+  width: 100%;
+  overflow-x: auto;
+  padding-bottom: 30px;
+}
+
+.hoja {
+  position: relative;
+  width: 1536px;
+  height: 1024px;
+  margin: 20px auto;
+  background: #f7eed8;
+  box-shadow: 0 8px 28px rgba(0,0,0,.22);
+  overflow: hidden;
+}
+
+.fondo {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.texto {
+  position: absolute;
+  z-index: 2;
+  text-align: center;
+  color: #071713;
+  font-family: Georgia, "Times New Roman", serif;
+  outline: none;
+  line-height: 1.1;
+}
+
+.texto:focus {
+  background: rgba(255,255,255,.55);
+  box-shadow: 0 0 0 2px rgba(179,132,40,.45);
+  border-radius: 4px;
+}
+
+#tituloDocumento {
+  left: 330px;
+  top: 400px;
+  width: 875px;
+  font-size: 58px;
+  font-weight: 700;
+  letter-spacing: 6px;
+  color: #00351f;
+  text-transform: uppercase;
+}
+
+#nombreAlumno {
+  left: 360px;
+  top: 535px;
+  width: 810px;
+  font-family: "Snell Roundhand", "Zapfino", "Brush Script MT", cursive;
+  font-size: 64px;
+  color: #050505;
+}
+
+#rutAlumno {
+  left: 570px;
+  top: 650px;
+  width: 390px;
+  font-size: 25px;
+}
+
+#programa {
+  left: 430px;
+  top: 735px;
+  width: 685px;
+  font-size: 30px;
+  font-weight: 700;
+}
+
+#documentoOtorgado {
+  left: 590px;
+  top: 792px;
+  width: 420px;
+  font-size: 24px;
+  font-weight: 700;
+}
+
+#registro {
+  left: 805px;
+  top: 858px;
+  width: 245px;
+  font-size: 22px;
+}
+
+#fecha {
+  left: 625px;
+  top: 915px;
+  width: 375px;
+  font-size: 22px;
+}
+
+#cveFea {
+  left: 1185px;
+  top: 908px;
+  width: 250px;
+  font-size: 23px;
+  font-weight: 700;
+  text-align: left;
+}
+
+@media (max-width: 900px) {
+  .grid {
+    grid-template-columns: 1fr;
+  }
+
+  .hoja {
+    transform: scale(.72);
+    transform-origin: top left;
+    margin-left: 10px;
+    margin-bottom: -250px;
+  }
+}
+
+@media print {
+  body {
+    background: #ffffff;
+  }
+
+  .panel {
+    display: none;
+  }
+
+  .hoja-wrap {
+    padding: 0;
+    overflow: visible;
+  }
+
+  .hoja {
+    margin: 0;
+    width: 297mm;
+    height: 210mm;
+    box-shadow: none;
+  }
+
+  @page {
+    size: A4 landscape;
+    margin: 0;
+  }
+}
+</style>
+</head>
+
+<body>
+
+<section class="panel">
+  <h2>Plantilla Diploma Delta</h2>
+
+  <div class="grid">
+    <div class="campo">
+      <label>Tipo de documento principal</label>
+      <select id="inputTituloDocumento">
+        <option>DIPLOMA</option>
+        <option>CURSO</option>
+        <option>CERTIFICADO</option>
+        <option>TÃTULO PROFESIONAL</option>
+        <option>DIPLOMADO</option>
+        <option>ESPECIALIDAD</option>
+      </select>
+    </div>
+
+    <div class="campo">
+      <label>Nombre completo</label>
+      <input id="inputNombreAlumno" value="Nombre Completo del Estudiante">
+    </div>
+
+    <div class="campo">
+      <label>CÃ©dula de Identidad NÂ°</label>
+      <input id="inputRutAlumno" value="12.345.678-9">
+    </div>
+
+    <div class="campo">
+      <label>Carrera / Curso / Diplomado</label>
+      <input id="inputPrograma" value="Nombre de la Carrera, Curso o Diplomado">
+    </div>
+
+    <div class="campo">
+      <label>Documento otorgado</label>
+      <input id="inputDocumentoOtorgado" value="TÃ­tulo Profesional">
+    </div>
+
+    <div class="campo">
+      <label>Registro Institucional NÂ°</label>
+      <input id="inputRegistro" value="">
+    </div>
+
+    <div class="campo">
+      <label>Fecha de emisiÃ³n</label>
+      <input id="inputFecha" value="____ de __________ de 20__">
+    </div>
+
+    <div class="campo">
+      <label>CVE FEA</label>
+      <input id="inputCveFea" value="">
+    </div>
+  </div>
+
+  <div class="acciones">
+    <button class="btn-verde" onclick="actualizarDiploma()">Actualizar diploma</button>
+    <button class="btn-dorado" onclick="window.print()">Imprimir / guardar PDF</button>
+    <button class="btn-gris" onclick="limpiar()">Limpiar</button>
+  </div>
+</section>
+
+<div class="hoja-wrap">
+  <main class="hoja">
+    <img class="fondo" src="img/diploma-base.png" alt="Diploma base Delta">
+
+    <div id="tituloDocumento" class="texto" contenteditable="true">DIPLOMA</div>
+    <div id="nombreAlumno" class="texto" contenteditable="true">Nombre Completo del Estudiante</div>
+    <div id="rutAlumno" class="texto" contenteditable="true">12.345.678-9</div>
+    <div id="programa" class="texto" contenteditable="true">Nombre de la Carrera, Curso o Diplomado</div>
+    <div id="documentoOtorgado" class="texto" contenteditable="true">TÃ­tulo Profesional</div>
+    <div id="registro" class="texto" contenteditable="true"></div>
+    <div id="fecha" class="texto" contenteditable="true">____ de __________ de 20__</div>
+    <div id="cveFea" class="texto" contenteditable="true"></div>
+  </main>
+</div>
+
+<script>
+function actualizarDiploma() {
+  document.getElementById("tituloDocumento").innerText =
+    document.getElementById("inputTituloDocumento").value;
+
+  document.getElementById("nombreAlumno").innerText =
+    document.getElementById("inputNombreAlumno").value;
+
+  document.getElementById("rutAlumno").innerText =
+    document.getElementById("inputRutAlumno").value;
+
+  document.getElementById("programa").innerText =
+    document.getElementById("inputPrograma").value;
+
+  document.getElementById("documentoOtorgado").innerText =
+    document.getElementById("inputDocumentoOtorgado").value;
+
+  document.getElementById("registro").innerText =
+    document.getElementById("inputRegistro").value;
+
+  document.getElementById("fecha").innerText =
+    document.getElementById("inputFecha").value;
+
+  document.getElementById("cveFea").innerText =
+    document.getElementById("inputCveFea").value;
+}
+
+function limpiar() {
+  document.getElementById("inputNombreAlumno").value = "";
+  document.getElementById("inputRutAlumno").value = "";
+  document.getElementById("inputPrograma").value = "";
+  document.getElementById("inputDocumentoOtorgado").value = "";
+  document.getElementById("inputRegistro").value = "";
+  document.getElementById("inputFecha").value = "";
+  document.getElementById("inputCveFea").value = "";
+  actualizarDiploma();
+}
+</script>
+
+</body>
+</html>
