@@ -1,27 +1,747 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Plantilla Diploma - Instituto de Formación Clínica Delta</title>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Plantilla Diploma Delta</title>
+
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600;700;800&family=Great+Vibes&family=Libre+Baskerville:wght@400;700&display=swap');
+
+:root{
+  --verde:#003c27;
+  --verde-oscuro:#00291c;
+  --dorado:#b8892e;
+  --dorado-oscuro:#8a641d;
+  --azul:#061735;
+  --papel:#f7efd8;
+  --tinta:#0a1d18;
+}
+
+*{box-sizing:border-box;}
+
+body{
+  margin:0;
+  background:#e9e9e9;
+  font-family:'Libre Baskerville', serif;
+  color:var(--tinta);
+}
+
+.panel{
+  width:100%;
+  max-width:1120px;
+  margin:20px auto;
+  padding:18px;
+  background:white;
+  border-radius:12px;
+  box-shadow:0 6px 20px rgba(0,0,0,.12);
+}
+
+.panel h2{
+  margin:0 0 12px;
+  font-family:Arial, sans-serif;
+  color:#123;
+}
+
+.form-grid{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:10px;
+}
+
+.campo{
+  display:flex;
+  flex-direction:column;
+  gap:4px;
+  font-family:Arial, sans-serif;
+  font-size:13px;
+}
+
+.campo label{font-weight:700;}
+
+.campo input,
+.campo select,
+.campo textarea{
+  padding:9px 10px;
+  border:1px solid #cfcfcf;
+  border-radius:8px;
+  font-size:14px;
+}
+
+.campo.full{grid-column:1 / -1;}
+
+.acciones{
+  margin-top:14px;
+  display:flex;
+  gap:10px;
+  flex-wrap:wrap;
+}
+
+button{
+  border:0;
+  border-radius:8px;
+  padding:10px 14px;
+  cursor:pointer;
+  font-weight:700;
+}
+
+.btn-primary{background:var(--verde);color:white;}
+.btn-secondary{background:var(--dorado);color:white;}
+.btn-light{background:#eee;color:#222;}
+
+.hoja{
+  width:1123px;
+  height:794px;
+  margin:20px auto;
+  background:var(--papel);
+  position:relative;
+  overflow:hidden;
+  box-shadow:0 8px 28px rgba(0,0,0,.22);
+}
+
+.diploma{
+  position:absolute;
+  inset:0;
+  padding:26px 34px;
+  background:
+    radial-gradient(circle at 50% 47%, rgba(255,255,255,.56), rgba(255,255,255,.04) 56%, rgba(0,0,0,.025) 100%),
+    repeating-linear-gradient(45deg, rgba(184,137,46,.035) 0, rgba(184,137,46,.035) 1px, transparent 1px, transparent 6px);
+}
+
+.borde-ext{
+  position:absolute;
+  inset:10px;
+  border:8px solid var(--verde);
+  outline:2px solid var(--dorado);
+  outline-offset:-13px;
+}
+
+.borde-int{
+  position:absolute;
+  inset:26px;
+  border:2px solid var(--dorado);
+}
+
+.esquina{
+  position:absolute;
+  width:94px;
+  height:94px;
+  color:var(--dorado-oscuro);
+  font-size:86px;
+  line-height:1;
+  font-family:Georgia, serif;
+  opacity:.95;
+}
+
+.esquina.tl{top:25px;left:31px;transform:rotate(0deg);}
+.esquina.tr{top:25px;right:31px;transform:rotate(90deg);}
+.esquina.bl{bottom:25px;left:31px;transform:rotate(-90deg);}
+.esquina.br{bottom:25px;right:31px;transform:rotate(180deg);}
+
+.esquina::before{content:"â§";}
+
+.diamante{
+  position:absolute;
+  width:13px;
+  height:13px;
+  background:var(--dorado);
+  transform:rotate(45deg);
+}
+
+.diamante.top{top:7px;left:calc(50% - 6px);}
+.diamante.bottom{bottom:7px;left:calc(50% - 6px);}
+.diamante.left{left:24px;top:calc(50% - 6px);}
+.diamante.right{right:24px;top:calc(50% - 6px);}
+
+.marca-agua{
+  position:absolute;
+  left:285px;
+  top:115px;
+  width:560px;
+  height:560px;
+  opacity:.075;
+  border:10px double var(--verde);
+  border-radius:50%;
+}
+
+.marca-agua::before,
+.marca-agua::after{
+  content:"";
+  position:absolute;
+  top:55px;
+  width:160px;
+  height:380px;
+  border-left:18px solid var(--verde);
+  border-radius:50%;
+}
+
+.marca-agua::before{left:115px;transform:rotate(-20deg);}
+.marca-agua::after{right:115px;transform:rotate(20deg);}
+
+.contenido{
+  position:relative;
+  z-index:2;
+  width:100%;
+  height:100%;
+  text-align:center;
+}
+
+.escudo{
+  margin:6px auto 0;
+  width:92px;
+  height:118px;
+  background:linear-gradient(145deg,#005030,#001f17);
+  border:3px solid var(--dorado);
+  border-radius:46px 46px 14px 14px;
+  position:relative;
+  box-shadow:inset 0 0 20px rgba(255,255,255,.18);
+}
+
+.escudo::before{
+  content:"â";
+  position:absolute;
+  color:#e9e9e9;
+  font-size:72px;
+  top:13px;
+  left:20px;
+  text-shadow:0 2px 4px #000;
+}
+
+.laureles{
+  margin:-5px auto 4px;
+  font-size:42px;
+  letter-spacing:8px;
+  color:var(--verde);
+}
+
+.instituto{
+  font-family:'Cinzel', serif;
+  font-size:19px;
+  letter-spacing:2.2px;
+  font-weight:600;
+}
+
+.logo-delta{
+  margin:5px auto 2px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:14px;
+  font-family:'Cinzel', serif;
+  font-size:52px;
+  letter-spacing:13px;
+  color:var(--azul);
+  font-weight:600;
+}
+
+.logo-delta::before,
+.logo-delta::after{
+  content:"";
+  width:54px;
+  height:2px;
+  background:var(--dorado);
+}
+
+.logo-d{
+  display:inline-block;
+  background:linear-gradient(145deg,#005030,#002b1f);
+  color:white;
+  width:49px;
+  height:49px;
+  line-height:49px;
+  letter-spacing:0;
+  margin-right:2px;
+}
+
+.lema{
+  font-family:'Cinzel', serif;
+  font-size:16px;
+  letter-spacing:5px;
+  font-weight:600;
+}
+
+.separador{
+  width:140px;
+  margin:8px auto 13px;
+  height:1px;
+  background:var(--dorado);
+  position:relative;
+}
+
+.separador::after{
+  content:"";
+  width:10px;
+  height:10px;
+  background:var(--dorado);
+  position:absolute;
+  left:65px;
+  top:-5px;
+  transform:rotate(45deg);
+}
+
+.confiere{
+  font-size:18px;
+  margin-bottom:6px;
+}
+
+.titulo-principal{
+  font-family:'Cinzel', serif;
+  font-size:43px;
+  letter-spacing:6px;
+  color:var(--verde-oscuro);
+  font-weight:800;
+  line-height:1.05;
+}
+
+.institucion{
+  margin:8px auto 7px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:16px;
+  font-family:'Cinzel', serif;
+  color:var(--dorado-oscuro);
+  letter-spacing:6px;
+  font-size:18px;
+  font-weight:700;
+}
+
+.institucion::before,
+.institucion::after{
+  content:"";
+  width:70px;
+  height:2px;
+  background:var(--dorado);
+}
+
+.a-text{font-size:17px;margin-bottom:0;}
+
+.nombre{
+  width:650px;
+  margin:0 auto;
+  font-family:'Great Vibes', cursive;
+  font-size:54px;
+  line-height:1.1;
+  border-bottom:2px solid var(--dorado);
+  color:#080808;
+}
+
+.identidad{
+  font-size:17px;
+  margin-top:8px;
+}
+
+.plan{
+  margin-top:12px;
+  font-size:16px;
+}
+
+.programa{
+  width:520px;
+  margin:7px auto 3px;
+  font-size:21px;
+  font-weight:700;
+  border-bottom:1px solid var(--dorado);
+  padding-bottom:3px;
+}
+
+.otorga{
+  font-size:16px;
+  margin-top:5px;
+}
+
+.otorga strong{font-weight:700;}
+
+.sello{
+  position:absolute;
+  right:82px;
+  top:405px;
+  width:208px;
+  height:208px;
+  border-radius:50%;
+  border:6px double rgba(138,100,29,.34);
+  color:rgba(138,100,29,.40);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  text-align:center;
+  font-family:'Cinzel', serif;
+  font-size:17px;
+  transform:rotate(-11deg);
+}
+
+.sello::before{
+  content:"â";
+  font-size:72px;
+  position:absolute;
+  color:rgba(138,100,29,.23);
+}
+
+.sello span{
+  width:150px;
+  line-height:1.25;
+  margin-top:95px;
+  transform:rotate(11deg);
+}
+
+.firma-bloque{
+  position:absolute;
+  left:75px;
+  bottom:103px;
+  width:290px;
+  text-align:center;
+}
+
+.firma{
+  height:55px;
+  font-family:'Great Vibes', cursive;
+  font-size:42px;
+  text-align:left;
+  padding-left:40px;
+}
+
+.linea-firma{
+  height:1px;
+  background:var(--dorado);
+  position:relative;
+}
+
+.linea-firma::after{
+  content:"";
+  position:absolute;
+  left:calc(50% - 5px);
+  top:-5px;
+  width:10px;
+  height:10px;
+  background:var(--dorado);
+  transform:rotate(45deg);
+}
+
+.cargo{
+  margin-top:10px;
+  font-family:'Cinzel', serif;
+  font-size:12px;
+  font-weight:700;
+  letter-spacing:.5px;
+}
+
+.instituto-firma{
+  margin-top:4px;
+  font-size:13px;
+}
+
+.registro{
+  position:absolute;
+  left:415px;
+  bottom:110px;
+  width:300px;
+  font-size:15px;
+  text-align:left;
+}
+
+.registro .linea{
+  display:inline-block;
+  min-width:140px;
+  border-bottom:1px solid #333;
+}
+
+.fecha{
+  margin-top:12px;
+}
+
+.cve-bloque{
+  position:absolute;
+  right:95px;
+  bottom:83px;
+  width:300px;
+  text-align:center;
+}
+
+.cve-linea{
+  height:1px;
+  background:var(--dorado);
+  position:relative;
+  margin-bottom:10px;
+}
+
+.cve-linea::after{
+  content:"";
+  position:absolute;
+  left:calc(50% - 5px);
+  top:-5px;
+  width:10px;
+  height:10px;
+  background:var(--dorado);
+  transform:rotate(45deg);
+}
+
+.delta-science{
+  font-family:'Cinzel', serif;
+  font-size:17px;
+  font-weight:800;
+  letter-spacing:1.5px;
+  color:var(--verde-oscuro);
+}
+
+.cve{
+  margin-top:8px;
+  font-size:20px;
+  font-weight:700;
+}
+
+.cve small{
+  display:block;
+  font-size:9px;
+  margin-top:2px;
+}
+
+.footer{
+  position:absolute;
+  left:220px;
+  right:220px;
+  bottom:28px;
+  border-top:1px solid var(--dorado);
+  padding-top:10px;
+  font-size:12.5px;
+  line-height:1.45;
+}
+
+[contenteditable="true"]{
+  outline:0;
+  border-radius:4px;
+}
+
+[contenteditable="true"]:focus{
+  box-shadow:0 0 0 2px rgba(184,137,46,.45);
+  background:rgba(255,255,255,.35);
+}
+
+@media print{
+  body{background:white;}
+  .panel{display:none;}
+  .hoja{
+    margin:0;
+    box-shadow:none;
+    width:297mm;
+    height:210mm;
+    page-break-after:avoid;
+  }
+  @page{size:A4 landscape;margin:0;}
+}
+</style>
 </head>
+
 <body>
 
-<!--
-ATENCIÓN:
-El código completo de esta plantilla supera el límite de longitud que ChatGPT puede
-entregar en un solo mensaje o generar íntegramente desde este entorno.
+<section class="panel">
+  <h2>Matriz editable de diploma</h2>
 
-Este archivo se creó para que podamos continuar el desarrollo. En la siguiente etapa
-se debe completar con:
-- HTML completo
-- CSS completo
-- Campos editables
-- Generación PDF
-- Variables dinámicas
-- QR/CVE
-- Firma electrónica
--->
+  <div class="form-grid">
+    <div class="campo">
+      <label>TÃ­tulo superior</label>
+      <select id="tipoTitulo">
+        <option>TÃTULO PROFESIONAL</option>
+        <option>DIPLOMA</option>
+        <option>CERTIFICADO</option>
+      </select>
+    </div>
+
+    <div class="campo">
+      <label>Tipo de programa</label>
+      <select id="tipoPrograma">
+        <option>Carrera</option>
+        <option>Curso</option>
+        <option>Diplomado</option>
+      </select>
+    </div>
+
+    <div class="campo">
+      <label>Documento otorgado</label>
+      <select id="documentoOtorgado">
+        <option>TÃ­tulo Profesional</option>
+        <option>Diploma</option>
+        <option>Certificado</option>
+      </select>
+    </div>
+
+    <div class="campo">
+      <label>Nombre estudiante</label>
+      <input id="nombreInput" value="Nombre Apellido Apellido">
+    </div>
+
+    <div class="campo">
+      <label>CÃ©dula de Identidad NÂ°</label>
+      <input id="rutInput" value="12.345.678-9">
+    </div>
+
+    <div class="campo">
+      <label>Nombre Carrera / Curso / Diplomado</label>
+      <input id="programaInput" value="Nombre de la Carrera, Curso o Diplomado">
+    </div>
+
+    <div class="campo">
+      <label>Registro institucional</label>
+      <input id="registroInput" value="">
+    </div>
+
+    <div class="campo">
+      <label>Fecha de emisiÃ³n</label>
+      <input id="fechaInput" value="____ de __________ de 20__">
+    </div>
+
+    <div class="campo">
+      <label>CVE</label>
+      <input id="cveInput" value="">
+    </div>
+
+    <div class="campo full">
+      <label>Firma</label>
+      <input id="firmaInput" value="Manuel">
+    </div>
+  </div>
+
+  <div class="acciones">
+    <button class="btn-primary" onclick="actualizarDiploma()">Actualizar diploma</button>
+    <button class="btn-secondary" onclick="window.print()">Imprimir / Guardar PDF</button>
+    <button class="btn-light" onclick="limpiarCampos()">Limpiar campos</button>
+  </div>
+</section>
+
+<main class="hoja" id="diploma">
+  <div class="diploma">
+    <div class="borde-ext"></div>
+    <div class="borde-int"></div>
+
+    <div class="diamante top"></div>
+    <div class="diamante bottom"></div>
+    <div class="diamante left"></div>
+    <div class="diamante right"></div>
+
+    <div class="esquina tl"></div>
+    <div class="esquina tr"></div>
+    <div class="esquina bl"></div>
+    <div class="esquina br"></div>
+
+    <div class="marca-agua"></div>
+
+    <section class="contenido">
+      <div class="escudo"></div>
+      <div class="laureles">â¦ â¦</div>
+
+      <div class="instituto">INSTITUTO DE FORMACIÃN CLÃNICA</div>
+
+      <div class="logo-delta">
+        <span class="logo-d">D</span><span>ELTA</span>
+      </div>
+
+      <div class="lema">SCIENTIA â¢ INTEGRITAS â¢ HUMANITAS</div>
+      <div class="separador"></div>
+
+      <div class="confiere">Confiere el presente</div>
+
+      <div class="titulo-principal" id="tituloEditable" contenteditable="true">TÃTULO PROFESIONAL</div>
+
+      <div class="institucion">INSTITUCIÃN PRIVADA</div>
+
+      <div class="a-text">a</div>
+
+      <div class="nombre" id="nombreEditable" contenteditable="true">Nombre Apellido Apellido</div>
+
+      <div class="identidad">
+        CÃ©dula de Identidad NÂ°: <span id="rutEditable" contenteditable="true">12.345.678-9</span>
+      </div>
+
+      <div class="separador"></div>
+
+      <div class="plan">
+        por haber aprobado satisfactoriamente el plan de estudios de
+      </div>
+
+      <div class="programa" id="programaEditable" contenteditable="true">Nombre de la Carrera, Curso o Diplomado</div>
+
+      <div class="otorga">
+        otorgÃ¡ndole el <strong id="docEditable" contenteditable="true">Diploma, Certificado o TÃ­tulo Profesional</strong>.
+      </div>
+
+      <div class="sello">
+        <span>INSTITUTO DE FORMACIÃN CLÃNICA<br>DELTA</span>
+      </div>
+
+      <div class="firma-bloque">
+        <div class="firma" id="firmaEditable" contenteditable="true">Manuel</div>
+        <div class="linea-firma"></div>
+        <div class="cargo">REPRESENTANTE Y DIRECTOR ACADÃMICO</div>
+        <div class="instituto-firma">Instituto de FormaciÃ³n ClÃ­nica Delta</div>
+      </div>
+
+      <div class="registro">
+        Registro Institucional NÂ°:
+        <span class="linea" id="registroEditable" contenteditable="true">&nbsp;</span>
+
+        <div class="fecha">
+          Fecha de EmisiÃ³n:
+          <span id="fechaEditable" contenteditable="true">____ de __________ de 20__</span>
+        </div>
+      </div>
+
+      <div class="cve-bloque">
+        <div class="cve-linea"></div>
+        <div class="delta-science">DELTA SCIENCE CHILE</div>
+        <div class="cve">CVE: <span id="cveEditable" contenteditable="true"></span>
+          <small>(CÃDIGO DE VERIFICACIÃN ELECTRÃNICA)</small>
+        </div>
+      </div>
+
+      <div class="footer">
+        Este tÃ­tulo corresponde a una certificaciÃ³n otorgada por una InstituciÃ³n privada.<br>
+        El ejercicio profesional se rige por la normativa sanitaria vigente, incluyendo los requisitos que establece la autoridad competente.
+      </div>
+    </section>
+  </div>
+</main>
+
+<script>
+function actualizarDiploma(){
+  const tipoTitulo = document.getElementById('tipoTitulo').value;
+  const tipoPrograma = document.getElementById('tipoPrograma').value;
+  const documentoOtorgado = document.getElementById('documentoOtorgado').value;
+
+  const nombre = document.getElementById('nombreInput').value;
+  const rut = document.getElementById('rutInput').value;
+  const programa = document.getElementById('programaInput').value;
+  const registro = document.getElementById('registroInput').value;
+  const fecha = document.getElementById('fechaInput').value;
+  const cve = document.getElementById('cveInput').value;
+  const firma = document.getElementById('firmaInput').value;
+
+  document.getElementById('tituloEditable').innerText = tipoTitulo;
+  document.getElementById('nombreEditable').innerText = nombre;
+  document.getElementById('rutEditable').innerText = rut;
+
+  document.getElementById('programaEditable').innerText =
+    tipoPrograma + ' de ' + programa;
+
+  document.getElementById('docEditable').innerText = documentoOtorgado;
+  document.getElementById('registroEditable').innerText = registro || ' ';
+  document.getElementById('fechaEditable').innerText = fecha;
+  document.getElementById('cveEditable').innerText = cve;
+  document.getElementById('firmaEditable').innerText = firma;
+}
+
+function limpiarCampos(){
+  document.getElementById('tipoTitulo').value = 'TÃTULO PROFESIONAL';
+  document.getElementById('tipoPrograma').value = 'Carrera';
+  document.getElementById('documentoOtorgado').value = 'TÃ­tulo Profesional';
+  document.getElementById('nombreInput').value = '';
+  document.getElementById('rutInput').value = '';
+  document.getElementById('programaInput').value = '';
+  document.getElementById('registroInput').value = '';
+  document.getElementById('fechaInput').value = '';
+  document.getElementById('cveInput').value = '';
+  document.getElementById('firmaInput').value = '';
+  actualizarDiploma();
+}
+</script>
 
 </body>
 </html>
