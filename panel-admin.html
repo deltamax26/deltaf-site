@@ -92,88 +92,11 @@ th{background:#e0f2fe;color:#075985;}
 </div>
 
 <div class="section">
-<h2>Registro Academico / Generador de Diplomas</h2>
+<h2>Registro Academico</h2>
 <p style="color:#64748b;margin-bottom:15px;">
-Modulo exclusivo del administrador para emitir titulos, diplomas, certificados o constancias del Instituto de Formacion Clinica Delta. El CVE se ingresa manualmente despues de obtener la Firma Electronica Avanzada.
+Modulo separado para emitir titulos, diplomas, certificados, cursos o constancias del Instituto de Formacion Clinica Delta.
 </p>
-
-<div class="detail-grid">
-<div>
-<label>Nombre completo del estudiante</label>
-<input id="dip_nombre" type="text" placeholder="Ej: Nombre completo del estudiante">
-</div>
-<div>
-<label>N. de identidad / RUT / Pasaporte</label>
-<input id="dip_identidad" type="text" placeholder="Ej: 18.511.044-3">
-</div>
-<div>
-<label>Tipo de documento</label>
-<input id="dip_tipo_documento" type="text" value="Titulo Profesional" list="listaTiposDocumento">
-<datalist id="listaTiposDocumento">
-<option value="Titulo Profesional">
-<option value="Diploma">
-<option value="Certificado">
-<option value="Curso">
-<option value="Constancia">
-</datalist>
-</div>
-<div>
-<label>Descriptor institucional</label>
-<input id="dip_descriptor" type="text" value="Institucional Privado">
-</div>
-<div>
-<label>Carrera / Programa / Curso</label>
-<input id="dip_programa" type="text" value="Medicina Naturopatica">
-</div>
-<div>
-<label>Titulo, diploma o certificacion otorgada</label>
-<input id="dip_titulo_otorgado" type="text" value="Naturopata">
-</div>
-<div>
-<label>Fecha de emision</label>
-<input id="dip_fecha" type="date">
-</div>
-<div>
-<label>CVE Firma Electronica Avanzada</label>
-<input id="dip_cve" type="text" placeholder="Ej: FE808519">
-</div>
-<div>
-<label>Registro Institucional</label>
-<input id="dip_registro" type="text" placeholder="Se genera si lo dejas vacio">
-</div>
-</div>
-
-<label>Texto complementario / observacion interna opcional</label>
-<textarea id="dip_observaciones" placeholder="Ej: Emitido conforme al plan de estudios aprobado por la Direccion Academica."></textarea>
-
-<div class="actions-grid">
-<button class="btn btn-main" onclick="generarYGuardarDiploma()">Generar diploma PDF</button>
-<button class="btn btn-reload" onclick="limpiarFormularioDiploma()">Limpiar formulario</button>
-<button class="btn btn-export" onclick="cargarDiplomasSeguro()">Actualizar diplomas</button>
-</div>
-
-<div id="resultadoDiploma" style="margin-top:15px;"></div>
-
-<h3 style="margin-top:25px;">Diplomas y certificados emitidos</h3>
-<table id="tablaDiplomas">
-<thead>
-<tr>
-<th>Fecha</th>
-<th>Nombre</th>
-<th>Identidad</th>
-<th>Tipo</th>
-<th>Programa</th>
-<th>Otorga</th>
-<th>CVE</th>
-<th>Registro</th>
-<th>Estado</th>
-<th>PDF</th>
-</tr>
-</thead>
-<tbody>
-<tr><td colspan="10">Cargando diplomas...</td></tr>
-</tbody>
-</table>
+<a href="registro-academico.html" class="btn btn-main" style="display:inline-block;text-decoration:none;">Abrir Registro Academico</a>
 </div>
 
 <div class="section">
