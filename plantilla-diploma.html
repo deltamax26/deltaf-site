@@ -310,23 +310,64 @@ button{
 }
 
 @media print{
-  body{background:white}
-  .topbar,.panel,.stage-tools{display:none}
-  .layout{display:block}
-  .stage-wrap{padding:0;overflow:visible}
-  .stage{
-    margin:0;
+
+html,
+body{
     width:297mm;
     height:210mm;
-    box-shadow:none;
-    transform:none!important;
-  }
-  .textbox{
-    border:none!important;
-    background:transparent!important;
-  }
-  .handle{display:none!important}
-  @page{size:A4 landscape;margin:0}
+    margin:0 !important;
+    padding:0 !important;
+    overflow:hidden !important;
+    background:#fff !important;
+}
+
+.topbar,
+.panel,
+.stage-tools{
+    display:none !important;
+}
+
+.layout{
+    display:block !important;
+    width:297mm !important;
+    height:210mm !important;
+    margin:0 !important;
+    padding:0 !important;
+}
+
+.stage-wrap{
+    margin:0 !important;
+    padding:0 !important;
+    overflow:hidden !important;
+}
+
+.stage{
+    position:relative;
+    width:297mm !important;
+    height:210mm !important;
+    margin:0 auto !important;
+    padding:0 !important;
+    box-shadow:none !important;
+    transform:none !important;
+    overflow:hidden !important;
+    page-break-before:avoid !important;
+    page-break-after:avoid !important;
+    page-break-inside:avoid !important;
+}
+
+.textbox{
+    border:none !important;
+    background:transparent !important;
+}
+
+.handle{
+    display:none !important;
+}
+
+@page{
+    size:A4 landscape;
+    margin:0;
+}
 }
 </style>
 </head>
@@ -374,7 +415,7 @@ button{
 
     <div class="campo">
       <label>Texto Cedula</label>
-      <input id="inputTextoCedula" value="Cedula de Identidad NÂ°:">
+      <input id="inputTextoCedula" value="Cedula de Identidad NÃÂ°:">
     </div>
 
     <div class="campo">
@@ -444,7 +485,7 @@ button{
 
       <div id="tituloDocumento" class="textbox" data-key="tituloDocumento"><span>CURSO</span><div class="handle"></div></div>
       <div id="nombreAlumno" class="textbox" data-key="nombreAlumno"><span>Victor Jose Carrero Carrero</span><div class="handle"></div></div>
-      <div id="textoCedula" class="textbox" data-key="textoCedula"><span>Cedula de Identidad NÂ°:</span><div class="handle"></div></div>
+      <div id="textoCedula" class="textbox" data-key="textoCedula"><span>Cedula de Identidad NÃÂ°:</span><div class="handle"></div></div>
       <div id="rutAlumno" class="textbox" data-key="rutAlumno"><span>12.345.678-9</span><div class="handle"></div></div>
       <div id="textoPlan" class="textbox" data-key="textoPlan"><span>por haber aprobado satisfactoriamente el plan de estudios de:</span><div class="handle"></div></div>
       <div id="programa" class="textbox" data-key="programa"><span>Medicina Naturopatica</span><div class="handle"></div></div>
@@ -490,9 +531,9 @@ function setStatus(msg,type="ok"){
 
 function limpiarMojibake(texto){
   return String(texto || "")
-    .replaceAll("ÃÂÃÂ¡","ÃÂ¡").replaceAll("ÃÂÃÂ©","ÃÂ©").replaceAll("ÃÂÃÂ­","ÃÂ­").replaceAll("ÃÂÃÂ³","ÃÂ³").replaceAll("ÃÂÃÂº","ÃÂº")
-    .replaceAll("ÃÂÃÂ±","ÃÂ±").replaceAll("ÃÂÃ¢ÂÂ","ÃÂ")
-    .replaceAll("Ã\x82ÃÂ°","Â°").replaceAll("ÃÂ°","Â°");
+    .replaceAll("ÃÂÃÂÃÂÃÂ¡","ÃÂÃÂ¡").replaceAll("ÃÂÃÂÃÂÃÂ©","ÃÂÃÂ©").replaceAll("ÃÂÃÂÃÂÃÂ­","ÃÂÃÂ­").replaceAll("ÃÂÃÂÃÂÃÂ³","ÃÂÃÂ³").replaceAll("ÃÂÃÂÃÂÃÂº","ÃÂÃÂº")
+    .replaceAll("ÃÂÃÂÃÂÃÂ±","ÃÂÃÂ±").replaceAll("ÃÂÃÂÃÂ¢ÃÂÃÂ","ÃÂÃÂ")
+    .replaceAll("ÃÂ\x82ÃÂÃÂ°","ÃÂ°").replaceAll("ÃÂÃÂ°","ÃÂ°");
 }
 
 function actualizarDiploma(){
@@ -657,6 +698,15 @@ window.addEventListener("load",()=>{
   actualizarDiploma();
   cargarCoordenadas();
 });
+
+window.onbeforeprint = () => {
+  document.body.style.zoom = "100%";
+};
+
+window.onafterprint = () => {
+  document.body.style.zoom = "";
+};
+
 </script>
 
 </body>
