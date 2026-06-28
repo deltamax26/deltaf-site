@@ -92,10 +92,9 @@ th{background:#e0f2fe;color:#075985;}
 </div>
 
 <div class="section">
-<h2>Registro AcadÃ©mico / Generador de Diplomas</h2>
+<h2>Registro Academico / Generador de Diplomas</h2>
 <p style="color:#64748b;margin-bottom:15px;">
-MÃ³dulo exclusivo del administrador para emitir tÃ­tulos, diplomas, certificados o constancias del Instituto de FormaciÃ³n ClÃ­nica Delta.
-El CVE se ingresa manualmente despuÃ©s de obtener la Firma ElectrÃ³nica Avanzada.
+Modulo exclusivo del administrador para emitir titulos, diplomas, certificados o constancias del Instituto de Formacion Clinica Delta. El CVE se ingresa manualmente despues de obtener la Firma Electronica Avanzada.
 </p>
 
 <div class="detail-grid">
@@ -104,14 +103,14 @@ El CVE se ingresa manualmente despuÃ©s de obtener la Firma ElectrÃ³nica Avan
 <input id="dip_nombre" type="text" placeholder="Ej: Nombre completo del estudiante">
 </div>
 <div>
-<label>N.Âº de identidad / RUT / Pasaporte</label>
+<label>N. de identidad / RUT / Pasaporte</label>
 <input id="dip_identidad" type="text" placeholder="Ej: 18.511.044-3">
 </div>
 <div>
 <label>Tipo de documento</label>
-<input id="dip_tipo_documento" type="text" value="TÃ­tulo Profesional" list="listaTiposDocumento">
+<input id="dip_tipo_documento" type="text" value="Titulo Profesional" list="listaTiposDocumento">
 <datalist id="listaTiposDocumento">
-<option value="TÃ­tulo Profesional">
+<option value="Titulo Profesional">
 <option value="Diploma">
 <option value="Certificado">
 <option value="Curso">
@@ -124,28 +123,28 @@ El CVE se ingresa manualmente despuÃ©s de obtener la Firma ElectrÃ³nica Avan
 </div>
 <div>
 <label>Carrera / Programa / Curso</label>
-<input id="dip_programa" type="text" value="Medicina NaturopÃ¡tica">
+<input id="dip_programa" type="text" value="Medicina Naturopatica">
 </div>
 <div>
-<label>TÃ­tulo, diploma o certificaciÃ³n otorgada</label>
-<input id="dip_titulo_otorgado" type="text" value="NaturÃ³pata">
+<label>Titulo, diploma o certificacion otorgada</label>
+<input id="dip_titulo_otorgado" type="text" value="Naturopata">
 </div>
 <div>
-<label>Fecha de emisiÃ³n</label>
+<label>Fecha de emision</label>
 <input id="dip_fecha" type="date">
 </div>
 <div>
-<label>CVE Firma ElectrÃ³nica Avanzada</label>
+<label>CVE Firma Electronica Avanzada</label>
 <input id="dip_cve" type="text" placeholder="Ej: FE808519">
 </div>
 <div>
 <label>Registro Institucional</label>
-<input id="dip_registro" type="text" placeholder="Se genera si lo dejas vacÃ­o">
+<input id="dip_registro" type="text" placeholder="Se genera si lo dejas vacio">
 </div>
 </div>
 
-<label>Texto complementario / observaciÃ³n interna opcional</label>
-<textarea id="dip_observacion" placeholder="Ej: Emitido conforme al plan de estudios aprobado por la DirecciÃ³n AcadÃ©mica."></textarea>
+<label>Texto complementario / observacion interna opcional</label>
+<textarea id="dip_observaciones" placeholder="Ej: Emitido conforme al plan de estudios aprobado por la Direccion Academica."></textarea>
 
 <div class="actions-grid">
 <button class="btn btn-main" onclick="generarYGuardarDiploma()">Generar diploma PDF</button>
@@ -672,7 +671,6 @@ pintarTablaPacientes(solicitudesPacientesGlobal);
 pintarTablaSolicitudes(solicitudesGlobal);
 pintarTablaProfesionales(profesionalesGlobal);
 cargarSelectProfesionales(profesionalesGlobal);
-await cargarDiplomasSeguro(false);
 
 }catch(error){
 console.error(error);
@@ -2224,7 +2222,270 @@ await supabaseClient.auth.signOut();
 window.location.href="login.html";
 }
 
-\n\nfunction obtenerValorDiploma(id){\nreturn (document.getElementById(id)?.value || "").trim();\n}\n\nfunction generarRegistroDiploma(){\nconst year = new Date().getFullYear();\nconst n = String(Date.now()).slice(-6);\nreturn `IFCD-${year}-${n}`;\n}\n\nfunction limpiarFormularioDiploma(){\ndocument.getElementById("dip_nombre").value="";\ndocument.getElementById("dip_identidad").value="";\ndocument.getElementById("dip_tipo_documento").value="TÃ­tulo Profesional";\ndocument.getElementById("dip_descriptor").value="Institucional Privado";\ndocument.getElementById("dip_programa").value="Medicina NaturopÃ¡tica";\ndocument.getElementById("dip_titulo_otorgado").value="NaturÃ³pata";\ndocument.getElementById("dip_fecha").value=fechaHoyChile();\ndocument.getElementById("dip_cve").value="";\ndocument.getElementById("dip_registro").value="";\ndocument.getElementById("dip_observacion").value="";\ndocument.getElementById("resultadoDiploma").innerHTML="";\n}\n\nasync function generarPdfDiploma(datos){\nconst { jsPDF } = window.jspdf;\nconst doc = new jsPDF("l","mm","a4");\n\nconst W = 297;\nconst H = 210;\nconst verde = [22,64,53];\nconst dorado = [186,154,90];\nconst marfil = [248,245,239];\nconst gris = [70,70,70];\n\ndoc.setFillColor(marfil[0],marfil[1],marfil[2]);\ndoc.rect(0,0,W,H,"F");\n\n// Borde fino institucional\ndoc.setDrawColor(verde[0],verde[1],verde[2]);\ndoc.setLineWidth(0.5);\ndoc.rect(10,10,W-20,H-20);\ndoc.setDrawColor(dorado[0],dorado[1],dorado[2]);\ndoc.setLineWidth(0.25);\ndoc.rect(14,14,W-28,H-28);\n\n// Encabezado\ndoc.setTextColor(verde[0],verde[1],verde[2]);\ndoc.setFont("times","bold");\ndoc.setFontSize(16);\ndoc.text("INSTITUTO DE FORMACIÃN CLÃNICA", W/2, 28, {align:"center"});\ndoc.setFontSize(32);\ndoc.text("DELTA", W/2, 43, {align:"center"});\ndoc.setFontSize(9);\ndoc.setTextColor(dorado[0],dorado[1],dorado[2]);\ndoc.text("SCIENTIA â¢ INTEGRITAS â¢ HUMANITAS", W/2, 51, {align:"center"});\n\n// Sello seco simulado\ndoc.setTextColor(218,212,200);\ndoc.setDrawColor(218,212,200);\ndoc.setLineWidth(0.4);\ndoc.circle(240,145,25);\ndoc.circle(240,145,20);\ndoc.setFont("times","bold");\ndoc.setFontSize(14);\ndoc.text("IFCD",240,143,{align:"center"});\ndoc.setFontSize(7);\ndoc.text("SELLO INSTITUCIONAL",240,151,{align:"center"});\n\n// Cuerpo\ndoc.setTextColor(gris[0],gris[1],gris[2]);\ndoc.setFont("times","normal");\ndoc.setFontSize(13);\ndoc.text("El Instituto de FormaciÃ³n ClÃ­nica Delta", W/2, 67, {align:"center"});\ndoc.text("confiere el presente", W/2, 76, {align:"center"});\n\ndoc.setTextColor(verde[0],verde[1],verde[2]);\ndoc.setFont("times","bold");\ndoc.setFontSize(28);\ndoc.text(datos.tipo_documento.toUpperCase(), W/2, 94, {align:"center"});\n\nif(datos.descriptor){\ndoc.setTextColor(dorado[0],dorado[1],dorado[2]);\ndoc.setFontSize(11);\ndoc.text(datos.descriptor.toUpperCase(), W/2, 102, {align:"center"});\n}\n\ndoc.setTextColor(gris[0],gris[1],gris[2]);\ndoc.setFont("times","normal");\ndoc.setFontSize(12);\ndoc.text("a", W/2, 116, {align:"center"});\n\ndoc.setTextColor(25,25,25);\ndoc.setFont("times","bolditalic");\ndoc.setFontSize(25);\ndoc.text(datos.nombre, W/2, 130, {align:"center"});\n\ndoc.setFont("times","normal");\ndoc.setFontSize(10);\ndoc.setTextColor(gris[0],gris[1],gris[2]);\ndoc.text("N.Âº de identidad: " + datos.identidad, W/2, 138, {align:"center"});\n\nconst textoPrograma = "por haber aprobado satisfactoriamente el plan de estudios del programa:";\ndoc.setFontSize(11);\ndoc.text(textoPrograma, W/2, 151, {align:"center"});\n\ndoc.setFont("times","bold");\ndoc.setFontSize(15);\ndoc.setTextColor(verde[0],verde[1],verde[2]);\ndoc.text(datos.programa.toUpperCase(), W/2, 161, {align:"center"});\n\ndoc.setFont("times","normal");\ndoc.setFontSize(11);\ndoc.setTextColor(gris[0],gris[1],gris[2]);\ndoc.text("otorgÃ¡ndole el tÃ­tulo, diploma o certificaciÃ³n de:", W/2, 172, {align:"center"});\n\ndoc.setFont("times","bold");\ndoc.setFontSize(20);\ndoc.setTextColor(verde[0],verde[1],verde[2]);\ndoc.text(datos.titulo_otorgado.toUpperCase(), W/2, 184, {align:"center"});\n\n// Firma y verificaciÃ³n\ndoc.setTextColor(50,50,50);\ndoc.setFont("times","normal");\ndoc.setFontSize(9);\ndoc.text("Fecha de emisiÃ³n: " + datos.fecha_legible, 25, 183);\ndoc.text("Registro Institucional: " + datos.registro_institucional, 25, 190);\ndoc.text("Firmado electrÃ³nicamente", 25, 197);\ndoc.text("CVE: " + datos.cve, 25, 202);\n\ndoc.setDrawColor(90,90,90);\ndoc.line(120,193,190,193);\ndoc.setFont("times","bold");\ndoc.setFontSize(10);\ndoc.text("Representante y Director AcadÃ©mico",155,199,{align:"center"});\n\n// Nota legal pequeÃ±a\nconst nota = "Este tÃ­tulo corresponde a una certificaciÃ³n otorgada por una instituciÃ³n privada de formaciÃ³n. No constituye un grado acadÃ©mico ni un tÃ­tulo profesional oficial reconocido por el Estado de Chile. El ejercicio profesional se rige por la normativa sanitaria vigente, incluyendo los requisitos que establezca la autoridad competente.";\ndoc.setFont("times","normal");\ndoc.setFontSize(6.2);\ndoc.setTextColor(100,100,100);\nconst lineas = doc.splitTextToSize(nota, 250);\ndoc.text(lineas, W/2, 204, {align:"center"});\n\nconst filename = (datos.registro_institucional || "diploma") + ".pdf";\nreturn {\nblob: doc.output("blob"),\nfilename: filename\n};\n}\n\nasync function subirDiplomaStorage(pdfBlob, filename){\nconst {error}=await supabaseClient.storage\n.from(DIPLOMAS_BUCKET)\n.upload(filename, pdfBlob, {contentType:"application/pdf", upsert:true});\n\nif(error) throw error;\n\nconst {data}=supabaseClient.storage\n.from(DIPLOMAS_BUCKET)\n.getPublicUrl(filename);\n\nreturn data.publicUrl;\n}\n\nasync function generarYGuardarDiploma(){\nlimpiarMensajes();\n\nconst datos={\nnombre: obtenerValorDiploma("dip_nombre"),\nidentidad: obtenerValorDiploma("dip_identidad"),\ntipo_documento: obtenerValorDiploma("dip_tipo_documento") || "TÃ­tulo Profesional",\ndescriptor: obtenerValorDiploma("dip_descriptor"),\nprograma: obtenerValorDiploma("dip_programa") || "Medicina NaturopÃ¡tica",\ntitulo_otorgado: obtenerValorDiploma("dip_titulo_otorgado") || "NaturÃ³pata",\nfecha_emision: obtenerValorDiploma("dip_fecha") || fechaHoyChile(),\ncve: obtenerValorDiploma("dip_cve"),\nregistro_institucional: obtenerValorDiploma("dip_registro") || generarRegistroDiploma(),\nobservacion: obtenerValorDiploma("dip_observacion"),\nestado:"emitido"\n};\n\nif(!datos.nombre){ mostrarError("Debes ingresar el nombre completo del estudiante."); return; }\nif(!datos.identidad){ mostrarError("Debes ingresar el nÃºmero de identidad, RUT o pasaporte."); return; }\nif(!datos.cve){ mostrarError("Debes ingresar manualmente el CVE de la Firma ElectrÃ³nica Avanzada."); return; }\n\ndatos.fecha_legible = new Date(datos.fecha_emision + "T12:00:00").toLocaleDateString("es-CL");\n\ndocument.getElementById("dip_registro").value = datos.registro_institucional;\n\ntry{\nmostrarInfo("Generando diploma PDF y guardando en Registro AcadÃ©mico...");\n\nconst pdf = await generarPdfDiploma(datos);\nconst pdfUrl = await subirDiplomaStorage(pdf.blob, pdf.filename);\n\nconst payload={\nnombre_estudiante: datos.nombre,\nnumero_identidad: datos.identidad,\ntipo_documento: datos.tipo_documento,\ndescriptor: datos.descriptor,\nprograma: datos.programa,\ntitulo_otorgado: datos.titulo_otorgado,\nfecha_emision: datos.fecha_emision,\ncve: datos.cve,\nregistro_institucional: datos.registro_institucional,\nobservacion: datos.observacion,\npdf_url: pdfUrl,\nestado: datos.estado\n};\n\nconst {error}=await supabaseClient\n.from("diplomas")\n.insert([payload]);\n\nif(error) throw error;\n\ndocument.getElementById("resultadoDiploma").innerHTML = `\n<div class="success" style="display:block;">\n<strong>Diploma generado correctamente.</strong><br>\nRegistro: ${limpiarTexto(datos.registro_institucional)}<br>\nCVE: ${limpiarTexto(datos.cve)}<br>\n<a href="${pdfUrl}" target="_blank">Descargar PDF</a>\n</div>`;\n\nmostrarOk("Diploma generado y guardado correctamente.");\nawait cargarDiplomasSeguro(false);\n\n}catch(error){\nconsole.error(error);\nmostrarError("Error al generar diploma: " + error.message + ". Verifica que exista la tabla 'diplomas' y el bucket 'diplomas' en Supabase.");\n}\n}\n\nasync function cargarDiplomasSeguro(mostrarMensaje=true){\ntry{\nconst {data,error}=await supabaseClient\n.from("diplomas")\n.select("*")\n.order("created_at",{ascending:false});\n\nif(error) throw error;\n\ndiplomasGlobal=data||[];\npintarTablaDiplomas(diplomasGlobal);\nconst contador=document.getElementById("diplomasEmitidos");\nif(contador) contador.innerText=diplomasGlobal.length;\nif(mostrarMensaje) mostrarOk("Diplomas actualizados.");\n}catch(error){\nconsole.warn("No se pudo cargar diplomas:",error.message);\nconst tbody=document.querySelector("#tablaDiplomas tbody");\nif(tbody){\ntbody.innerHTML=`<tr><td colspan="10">No se pudo cargar la tabla diplomas. Primero crea la tabla y el bucket en Supabase.</td></tr>`;\n}\nconst contador=document.getElementById("diplomasEmitidos");\nif(contador) contador.innerText="0";\n}\n}\n\nfunction pintarTablaDiplomas(diplomas){\nconst tbody=document.querySelector("#tablaDiplomas tbody");\nif(!tbody) return;\ntbody.innerHTML="";\n\nif(!diplomas || diplomas.length===0){\ntbody.innerHTML=`<tr><td colspan="10">No hay diplomas emitidos.</td></tr>`;\nreturn;\n}\n\ndiplomas.forEach(d=>{\nconst estado=(d.estado || "emitido").toLowerCase();\nconst tr=document.createElement("tr");\ntr.innerHTML=`\n<td>${d.fecha_emision ? new Date(d.fecha_emision + "T12:00:00").toLocaleDateString("es-CL") : formatearFecha(d.created_at)}</td>\n<td>${limpiarTexto(d.nombre_estudiante || "-")}</td>\n<td>${limpiarTexto(d.numero_identidad || "-")}</td>\n<td>${limpiarTexto(d.tipo_documento || "-")}</td>\n<td>${limpiarTexto(d.programa || "-")}</td>\n<td>${limpiarTexto(d.titulo_otorgado || "-")}</td>\n<td>${limpiarTexto(d.cve || "-")}</td>\n<td>${limpiarTexto(d.registro_institucional || "-")}</td>\n<td><span class="badge ${estado}">${limpiarTexto(d.estado || "emitido")}</span></td>\n<td>${d.pdf_url ? `<a href="${d.pdf_url}" target="_blank">Descargar</a>` : "-"}</td>\n`;\ntbody.appendChild(tr);\n});\n}\n
+
+function obtenerValorDiploma(id){
+  const el = document.getElementById(id);
+  return el ? String(el.value || "").trim() : "";
+}
+
+function generarRegistroDiploma(){
+  const year = new Date().getFullYear();
+  const n = String(Date.now()).slice(-6);
+  return `IFCD-${year}-${n}`;
+}
+
+function limpiarFormularioDiploma(){
+  document.getElementById("dip_nombre").value="";
+  document.getElementById("dip_identidad").value="";
+  document.getElementById("dip_tipo_documento").value="Titulo Profesional";
+  document.getElementById("dip_descriptor").value="Institucional Privado";
+  document.getElementById("dip_programa").value="Medicina Naturopatica";
+  document.getElementById("dip_titulo_otorgado").value="Naturopata";
+  document.getElementById("dip_fecha").value=fechaHoyChile();
+  document.getElementById("dip_cve").value="";
+  document.getElementById("dip_registro").value="";
+  document.getElementById("dip_observaciones").value="";
+  document.getElementById("resultadoDiploma").innerHTML="";
+}
+
+async function generarPdfDiploma(datos){
+  const { jsPDF } = window.jspdf;
+  const doc = new jsPDF("l","mm","a4");
+
+  const W = 297;
+  const H = 210;
+  const verde = [22,64,53];
+  const dorado = [186,154,90];
+  const marfil = [248,245,239];
+  const gris = [70,70,70];
+
+  doc.setFillColor(marfil[0],marfil[1],marfil[2]);
+  doc.rect(0,0,W,H,"F");
+
+  doc.setDrawColor(verde[0],verde[1],verde[2]);
+  doc.setLineWidth(0.5);
+  doc.rect(10,10,W-20,H-20);
+  doc.setDrawColor(dorado[0],dorado[1],dorado[2]);
+  doc.setLineWidth(0.25);
+  doc.rect(14,14,W-28,H-28);
+
+  doc.setTextColor(verde[0],verde[1],verde[2]);
+  doc.setFont("times","bold");
+  doc.setFontSize(16);
+  doc.text("INSTITUTO DE FORMACION CLINICA", W/2, 28, {align:"center"});
+  doc.setFontSize(32);
+  doc.text("DELTA", W/2, 43, {align:"center"});
+  doc.setFontSize(9);
+  doc.setTextColor(dorado[0],dorado[1],dorado[2]);
+  doc.text("SCIENTIA  -  INTEGRITAS  -  HUMANITAS", W/2, 51, {align:"center"});
+
+  doc.setTextColor(218,212,200);
+  doc.setDrawColor(218,212,200);
+  doc.setLineWidth(0.4);
+  doc.circle(240,145,25);
+  doc.circle(240,145,20);
+  doc.setFont("times","bold");
+  doc.setFontSize(14);
+  doc.text("IFCD",240,143,{align:"center"});
+  doc.setFontSize(7);
+  doc.text("SELLO INSTITUCIONAL",240,151,{align:"center"});
+
+  doc.setTextColor(gris[0],gris[1],gris[2]);
+  doc.setFont("times","normal");
+  doc.setFontSize(13);
+  doc.text("El Instituto de Formacion Clinica Delta", W/2, 67, {align:"center"});
+  doc.text("confiere el presente", W/2, 76, {align:"center"});
+
+  doc.setTextColor(verde[0],verde[1],verde[2]);
+  doc.setFont("times","bold");
+  doc.setFontSize(28);
+  doc.text(datos.tipo_documento.toUpperCase(), W/2, 94, {align:"center"});
+
+  if(datos.descriptor){
+    doc.setTextColor(dorado[0],dorado[1],dorado[2]);
+    doc.setFontSize(11);
+    doc.text(datos.descriptor.toUpperCase(), W/2, 102, {align:"center"});
+  }
+
+  doc.setTextColor(gris[0],gris[1],gris[2]);
+  doc.setFont("times","normal");
+  doc.setFontSize(12);
+  doc.text("a", W/2, 116, {align:"center"});
+
+  doc.setTextColor(25,25,25);
+  doc.setFont("times","bolditalic");
+  doc.setFontSize(25);
+  doc.text(datos.nombre, W/2, 130, {align:"center"});
+
+  doc.setFont("times","normal");
+  doc.setFontSize(10);
+  doc.setTextColor(gris[0],gris[1],gris[2]);
+  doc.text("N. de identidad: " + datos.identidad, W/2, 138, {align:"center"});
+
+  doc.setFontSize(11);
+  doc.text("por haber aprobado satisfactoriamente el plan de estudios del programa:", W/2, 151, {align:"center"});
+
+  doc.setFont("times","bold");
+  doc.setFontSize(15);
+  doc.setTextColor(verde[0],verde[1],verde[2]);
+  doc.text(datos.programa.toUpperCase(), W/2, 161, {align:"center"});
+
+  doc.setFont("times","normal");
+  doc.setFontSize(11);
+  doc.setTextColor(gris[0],gris[1],gris[2]);
+  doc.text("otorgandole el titulo, diploma o certificacion de:", W/2, 172, {align:"center"});
+
+  doc.setFont("times","bold");
+  doc.setFontSize(20);
+  doc.setTextColor(verde[0],verde[1],verde[2]);
+  doc.text(datos.titulo_otorgado.toUpperCase(), W/2, 184, {align:"center"});
+
+  doc.setTextColor(50,50,50);
+  doc.setFont("times","normal");
+  doc.setFontSize(9);
+  doc.text("Fecha de emision: " + datos.fecha_legible, 25, 183);
+  doc.text("Registro Institucional: " + datos.registro_institucional, 25, 190);
+  doc.text("Firmado electronicamente", 25, 197);
+  doc.text("CVE: " + datos.cve, 25, 202);
+
+  doc.setDrawColor(90,90,90);
+  doc.line(120,193,190,193);
+  doc.setFont("times","bold");
+  doc.setFontSize(10);
+  doc.text("Representante y Director Academico",155,199,{align:"center"});
+
+  const nota = "Este titulo corresponde a una certificacion otorgada por una institucion privada de formacion. No constituye un grado academico ni un titulo profesional oficial reconocido por el Estado de Chile. El ejercicio profesional se rige por la normativa sanitaria vigente, incluyendo los requisitos que establezca la autoridad competente.";
+  doc.setFont("times","normal");
+  doc.setFontSize(6.2);
+  doc.setTextColor(100,100,100);
+  const lineas = doc.splitTextToSize(nota, 250);
+  doc.text(lineas, W/2, 204, {align:"center"});
+
+  const filename = (datos.registro_institucional || "diploma") + ".pdf";
+  return { blob: doc.output("blob"), filename: filename };
+}
+
+async function subirDiplomaStorage(pdfBlob, filename){
+  const {error}=await supabaseClient.storage
+    .from(DIPLOMAS_BUCKET)
+    .upload(filename, pdfBlob, {contentType:"application/pdf", upsert:true});
+  if(error) throw error;
+  const {data}=supabaseClient.storage.from(DIPLOMAS_BUCKET).getPublicUrl(filename);
+  return data.publicUrl;
+}
+
+async function generarYGuardarDiploma(){
+  limpiarMensajes();
+
+  const datos={
+    nombre: obtenerValorDiploma("dip_nombre"),
+    identidad: obtenerValorDiploma("dip_identidad"),
+    tipo_documento: obtenerValorDiploma("dip_tipo_documento") || "Titulo Profesional",
+    descriptor: obtenerValorDiploma("dip_descriptor"),
+    programa: obtenerValorDiploma("dip_programa") || "Medicina Naturopatica",
+    titulo_otorgado: obtenerValorDiploma("dip_titulo_otorgado") || "Naturopata",
+    fecha_emision: obtenerValorDiploma("dip_fecha") || fechaHoyChile(),
+    cve: obtenerValorDiploma("dip_cve"),
+    registro_institucional: obtenerValorDiploma("dip_registro") || generarRegistroDiploma(),
+    observaciones: obtenerValorDiploma("dip_observaciones"),
+    estado:"emitido"
+  };
+
+  if(!datos.nombre){ mostrarError("Debes ingresar el nombre completo del estudiante."); return; }
+  if(!datos.identidad){ mostrarError("Debes ingresar el numero de identidad, RUT o pasaporte."); return; }
+  if(!datos.cve){ mostrarError("Debes ingresar manualmente el CVE de la Firma Electronica Avanzada."); return; }
+
+  datos.fecha_legible = new Date(datos.fecha_emision + "T12:00:00").toLocaleDateString("es-CL");
+  document.getElementById("dip_registro").value = datos.registro_institucional;
+
+  try{
+    mostrarInfo("Generando diploma PDF y guardando en Registro Academico...");
+
+    const pdf = await generarPdfDiploma(datos);
+    const pdfUrl = await subirDiplomaStorage(pdf.blob, pdf.filename);
+
+    const payload={
+      nombre_completo: datos.nombre,
+      numero_identidad: datos.identidad,
+      tipo_documento: datos.tipo_documento,
+      programa: datos.programa,
+      titulo_otorgado: datos.titulo_otorgado,
+      fecha_emision: datos.fecha_emision,
+      cve: datos.cve,
+      registro_institucional: datos.registro_institucional,
+      pdf_url: pdfUrl,
+      firmado_por: "Representante y Director Academico",
+      estado: datos.estado,
+      observaciones: datos.observaciones
+    };
+
+    const {error}=await supabaseClient.from("diplomas").insert([payload]);
+    if(error) throw error;
+
+    document.getElementById("resultadoDiploma").innerHTML = `
+    <div class="success" style="display:block;">
+      <strong>Diploma generado correctamente.</strong><br>
+      Registro: ${limpiarTexto(datos.registro_institucional)}<br>
+      CVE: ${limpiarTexto(datos.cve)}<br>
+      <a href="${pdfUrl}" target="_blank">Descargar PDF</a>
+    </div>`;
+
+    mostrarOk("Diploma generado y guardado correctamente.");
+    await cargarDiplomasSeguro(false);
+  }catch(error){
+    console.error(error);
+    mostrarError("Error al generar diploma: " + error.message + ". Verifica que exista la tabla diplomas y el bucket diplomas en Supabase.");
+  }
+}
+
+async function cargarDiplomasSeguro(mostrarMensaje=true){
+  try{
+    const {data,error}=await supabaseClient
+      .from("diplomas")
+      .select("*")
+      .order("created_at",{ascending:false});
+    if(error) throw error;
+    diplomasGlobal=data||[];
+    pintarTablaDiplomas(diplomasGlobal);
+    const contador=document.getElementById("diplomasEmitidos");
+    if(contador) contador.innerText=diplomasGlobal.length;
+    if(mostrarMensaje) mostrarOk("Diplomas actualizados.");
+  }catch(error){
+    console.warn("No se pudo cargar diplomas:",error.message);
+    const tbody=document.querySelector("#tablaDiplomas tbody");
+    if(tbody){ tbody.innerHTML=`<tr><td colspan="10">No se pudo cargar la tabla diplomas. Primero crea la tabla y el bucket en Supabase.</td></tr>`; }
+    const contador=document.getElementById("diplomasEmitidos");
+    if(contador) contador.innerText="0";
+  }
+}
+
+function pintarTablaDiplomas(diplomas){
+  const tbody=document.querySelector("#tablaDiplomas tbody");
+  if(!tbody) return;
+  tbody.innerHTML="";
+  if(!diplomas || diplomas.length===0){
+    tbody.innerHTML=`<tr><td colspan="10">No hay diplomas emitidos.</td></tr>`;
+    return;
+  }
+  diplomas.forEach(d=>{
+    const estado=(d.estado || "emitido").toLowerCase();
+    const nombre = d.nombre_completo || d.nombre_estudiante || "-";
+    const tr=document.createElement("tr");
+    tr.innerHTML=`
+      <td>${d.fecha_emision ? new Date(d.fecha_emision + "T12:00:00").toLocaleDateString("es-CL") : formatearFecha(d.created_at)}</td>
+      <td>${limpiarTexto(nombre)}</td>
+      <td>${limpiarTexto(d.numero_identidad || "-")}</td>
+      <td>${limpiarTexto(d.tipo_documento || "-")}</td>
+      <td>${limpiarTexto(d.programa || "-")}</td>
+      <td>${limpiarTexto(d.titulo_otorgado || "-")}</td>
+      <td>${limpiarTexto(d.cve || "-")}</td>
+      <td>${limpiarTexto(d.registro_institucional || "-")}</td>
+      <td><span class="badge ${estado}">${limpiarTexto(d.estado || "emitido")}</span></td>
+      <td>${d.pdf_url ? `<a href="${d.pdf_url}" target="_blank">Descargar</a>` : "-"}</td>`;
+    tbody.appendChild(tr);
+  });
+}
+
 function inicializarSeccionesDesplegables(){
 document.querySelectorAll(".section").forEach((section,index)=>{
 if(section.dataset.readyToggle==="1") return;
@@ -2270,3 +2531,17 @@ h2.addEventListener("click",function(e){
 if(e.target===btn) return;
 alternar();
 });
+
+section.dataset.readyToggle="1";
+});
+}
+
+const fechaDiplomaInput = document.getElementById("dip_fecha");
+if(fechaDiplomaInput) fechaDiplomaInput.value = fechaHoyChile();
+inicializarSeccionesDesplegables();
+cargarDashboard();
+cargarDiplomasSeguro(false);
+</script>
+
+</body>
+</html>
