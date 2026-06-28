@@ -6,55 +6,47 @@
 <meta http-equiv="Pragma" content="no-cache">
 <meta http-equiv="Expires" content="0">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Plantilla Diploma Delta</title>
+<title>Editor Diploma Delta V5</title>
 
 <style>
 *{box-sizing:border-box}
+
+:root{
+  --verde:#00351f;
+  --dorado:#b38428;
+  --gris:#f4f6f8;
+  --azul:#2563eb;
+}
 
 body{
   margin:0;
   background:#e8e8e8;
   font-family:Arial,sans-serif;
-  color:#071713;
+  color:#0f172a;
 }
 
-.panel{
-  max-width:1180px;
-  margin:18px auto;
-  background:#fff;
-  padding:18px;
-  border-radius:12px;
-  box-shadow:0 8px 24px rgba(0,0,0,.14);
-}
-
-.panel h2{margin:0 0 12px;color:#00351f}
-
-.grid{
-  display:grid;
-  grid-template-columns:repeat(3,1fr);
-  gap:10px;
-}
-
-.campo{
+.topbar{
+  background:linear-gradient(90deg,#001f16,#00351f);
+  color:white;
+  padding:14px 20px;
   display:flex;
-  flex-direction:column;
-  gap:5px;
-  font-size:13px;
+  justify-content:space-between;
+  align-items:center;
+  gap:12px;
 }
 
-.campo label{font-weight:700}
-
-.campo input,
-.campo select{
-  width:100%;
-  padding:9px 10px;
-  border:1px solid #ccc;
-  border-radius:8px;
-  font-size:14px;
+.topbar h1{
+  margin:0;
+  font-size:22px;
 }
 
-.acciones{
-  margin-top:14px;
+.topbar small{
+  display:block;
+  opacity:.85;
+  margin-top:4px;
+}
+
+.top-actions{
   display:flex;
   gap:10px;
   flex-wrap:wrap;
@@ -68,24 +60,107 @@ button{
   cursor:pointer;
 }
 
-.btn-verde{background:#00351f;color:#fff}
-.btn-dorado{background:#b38428;color:#fff}
-.btn-gris{background:#eee;color:#222}
+.btn-verde{background:#0f7a3f;color:#fff}
+.btn-dorado{background:var(--dorado);color:#fff}
+.btn-azul{background:#2563eb;color:#fff}
+.btn-gris{background:#e5e7eb;color:#111827}
+.btn-rojo{background:#dc2626;color:#fff}
 
-.hoja-wrap{
-  width:100%;
-  overflow-x:auto;
-  padding-bottom:30px;
+.layout{
+  display:grid;
+  grid-template-columns:330px 1fr;
+  min-height:calc(100vh - 76px);
 }
 
-.hoja{
+.panel{
+  background:white;
+  border-right:1px solid #d7dde5;
+  padding:16px;
+  overflow:auto;
+}
+
+.panel h2{
+  font-size:15px;
+  margin:10px 0 12px;
+  color:#00351f;
+  text-transform:uppercase;
+}
+
+.campo{
+  margin-bottom:11px;
+}
+
+.campo label{
+  display:block;
+  font-size:12px;
+  font-weight:700;
+  margin-bottom:5px;
+}
+
+.campo input,
+.campo select{
+  width:100%;
+  padding:9px 10px;
+  border:1px solid #cbd5e1;
+  border-radius:8px;
+  font-size:14px;
+}
+
+.help{
+  font-size:12px;
+  line-height:1.45;
+  color:#475569;
+  background:#f8fafc;
+  border:1px solid #e2e8f0;
+  padding:10px;
+  border-radius:8px;
+  margin:12px 0;
+}
+
+.status{
+  display:none;
+  padding:10px;
+  border-radius:8px;
+  margin-top:12px;
+  font-size:13px;
+  font-weight:700;
+}
+
+.status.ok{
+  display:block;
+  background:#dcfce7;
+  color:#166534;
+}
+
+.status.err{
+  display:block;
+  background:#fee2e2;
+  color:#991b1b;
+}
+
+.stage-wrap{
+  padding:18px;
+  overflow:auto;
+}
+
+.stage-tools{
+  display:flex;
+  gap:10px;
+  align-items:center;
+  justify-content:center;
+  margin-bottom:12px;
+  flex-wrap:wrap;
+}
+
+.stage{
   position:relative;
   width:1536px;
   height:1024px;
-  margin:20px auto;
+  margin:0 auto;
   background:#f7eed8;
-  box-shadow:0 8px 28px rgba(0,0,0,.22);
+  box-shadow:0 8px 28px rgba(0,0,0,.24);
   overflow:hidden;
+  transform-origin:top center;
 }
 
 .fondo{
@@ -94,127 +169,148 @@ button{
   width:100%;
   height:100%;
   object-fit:cover;
+  user-select:none;
+  pointer-events:none;
 }
 
-.texto{
+.textbox{
   position:absolute;
-  z-index:2;
+  z-index:5;
+  min-width:40px;
+  min-height:20px;
+  padding:2px 4px;
+  cursor:move;
   text-align:center;
   color:#071713;
   font-family:Georgia,"Times New Roman",serif;
-  outline:none;
-  line-height:1.08;
-  white-space:normal;
+  line-height:1.05;
+  border:1px dashed transparent;
+  user-select:none;
+  white-space:nowrap;
 }
 
-.texto:focus{
-  background:rgba(255,255,255,.55);
-  box-shadow:0 0 0 2px rgba(179,132,40,.45);
-  border-radius:4px;
+.textbox.selected{
+  border:2px dashed var(--azul);
+  background:rgba(255,255,255,.18);
 }
 
-/* COORDENADAS V4 */
+.textbox:hover{
+  border:1px dashed rgba(37,99,235,.8);
+}
 
-/* DIPLOMA / CURSO / CERTIFICADO / TÃTULO PROFESIONAL */
+.handle{
+  position:absolute;
+  width:9px;
+  height:9px;
+  background:var(--azul);
+  border:1px solid white;
+  border-radius:50%;
+  right:-6px;
+  bottom:-6px;
+  display:none;
+}
+
+.textbox.selected .handle{
+  display:block;
+}
+
 #tituloDocumento{
-  left:335px;
-  top:410px;
-  width:865px;
-  font-size:56px;
+  font-size:58px;
   font-weight:700;
   letter-spacing:8px;
   color:#00351f;
   text-transform:uppercase;
 }
 
-/* Nombre completo */
 #nombreAlumno{
-  left:330px;
-  top:535px;
-  width:880px;
   font-family:"Snell Roundhand","Zapfino","Brush Script MT",cursive;
   font-size:58px;
   color:#050505;
 }
 
-/* CÃ©dula / RUT: al lado del rÃ³tulo, no abajo */
 #rutAlumno{
-  left:820px;
-  top:629px;
-  width:260px;
   font-size:23px;
   font-weight:700;
   text-align:left;
 }
 
-/* Programa */
 #programa{
-  left:410px;
-  top:705px;
-  width:720px;
   font-size:28px;
   font-weight:700;
   color:#00351f;
 }
 
-/* Documento otorgado */
 #documentoOtorgado{
-  left:525px;
-  top:755px;
-  width:520px;
   font-size:28px;
   font-weight:700;
   color:#00351f;
 }
 
-/* Registro institucional en lÃ­nea */
-#registro{
-  left:700px;
-  top:851px;
-  width:205px;
+#registro,#fecha{
   font-size:19px;
   text-align:left;
 }
 
-/* Fecha en la misma lÃ­nea que registro */
-#fecha{
-  left:1010px;
-  top:851px;
-  width:300px;
-  font-size:19px;
-  text-align:left;
-}
-
-/* CVE */
 #cveFea{
-  left:1190px;
-  top:905px;
-  width:260px;
   font-size:21px;
   font-weight:700;
   text-align:left;
 }
 
+.guides .vline,
+.guides .hline{
+  position:absolute;
+  background:rgba(37,99,235,.45);
+  z-index:4;
+  pointer-events:none;
+}
+
+.guides .vline{
+  top:0;
+  left:50%;
+  width:1px;
+  height:100%;
+}
+
+.guides .hline{
+  top:50%;
+  left:0;
+  width:100%;
+  height:1px;
+}
+
+.coord{
+  font-size:12px;
+  color:#334155;
+  margin-top:8px;
+  padding:8px;
+  background:#f8fafc;
+  border:1px solid #e2e8f0;
+  border-radius:8px;
+}
+
 @media(max-width:900px){
-  .grid{grid-template-columns:1fr}
-  .hoja{
-    transform:scale(.72);
-    transform-origin:top left;
-    margin-left:10px;
-    margin-bottom:-250px;
-  }
+  .layout{grid-template-columns:1fr}
+  .panel{border-right:0;border-bottom:1px solid #d7dde5}
 }
 
 @media print{
-  body{background:#fff}
-  .panel{display:none}
-  .hoja-wrap{padding:0;overflow:visible}
-  .hoja{
+  body{background:white}
+  .topbar,.panel,.stage-tools{display:none}
+  .layout{display:block}
+  .stage-wrap{padding:0;overflow:visible}
+  .stage{
     margin:0;
     width:297mm;
     height:210mm;
     box-shadow:none;
+    transform:none!important;
   }
+  .textbox{
+    border:none!important;
+    background:transparent!important;
+  }
+  .handle{display:none!important}
   @page{size:A4 landscape;margin:0}
 }
 </style>
@@ -222,10 +318,23 @@ button{
 
 <body>
 
-<section class="panel">
-  <h2>Plantilla Diploma Delta</h2>
+<header class="topbar">
+  <div>
+    <h1>Editor de Diploma Delta V5</h1>
+    <small>Arrastra los textos hasta que calcen perfecto sobre el fondo oficial</small>
+  </div>
+  <div class="top-actions">
+    <button class="btn-verde" onclick="guardarCoordenadas()">Guardar coordenadas</button>
+    <button class="btn-dorado" onclick="window.print()">Imprimir / PDF</button>
+    <button class="btn-gris" onclick="resetearCoordenadas()">Restablecer</button>
+  </div>
+</header>
 
-  <div class="grid">
+<div class="layout">
+
+  <aside class="panel">
+    <h2>Contenido del diploma</h2>
+
     <div class="campo">
       <label>Tipo de documento principal</label>
       <select id="inputTituloDocumento">
@@ -272,85 +381,253 @@ button{
       <label>CVE FEA</label>
       <input id="inputCveFea" value="XXXXX">
     </div>
-  </div>
 
-  <div class="acciones">
-    <button class="btn-verde" onclick="actualizarDiploma()">Actualizar diploma</button>
-    <button class="btn-dorado" onclick="window.print()">Imprimir / guardar PDF</button>
-    <button class="btn-gris" onclick="limpiar()">Limpiar</button>
-  </div>
-</section>
+    <button class="btn-azul" style="width:100%;margin-top:6px;" onclick="actualizarDiploma()">Actualizar textos</button>
 
-<div class="hoja-wrap">
-  <main class="hoja">
-    <img class="fondo" src="img/diploma-base.png?v=20260628-04" alt="Diploma base Delta">
+    <div class="help">
+      <strong>CÃ³mo ajustar:</strong><br>
+      1. Toca o haz clic sobre un texto.<br>
+      2. ArrÃ¡stralo hasta su posiciÃ³n.<br>
+      3. Usa flechas para mover 1 px.<br>
+      4. Usa Shift + flechas para mover 10 px.<br>
+      5. Presiona <strong>Guardar coordenadas</strong>.
+    </div>
 
-    <div id="tituloDocumento" class="texto" contenteditable="true">DIPLOMA</div>
-    <div id="nombreAlumno" class="texto" contenteditable="true">Victor Jose Carrero Carrero</div>
-    <div id="rutAlumno" class="texto" contenteditable="true">12.345.678-9</div>
-    <div id="programa" class="texto" contenteditable="true">Medicina Naturopatica</div>
-    <div id="documentoOtorgado" class="texto" contenteditable="true">Titulo de Naturopata</div>
-    <div id="registro" class="texto" contenteditable="true">123 132 1234</div>
-    <div id="fecha" class="texto" contenteditable="true">28 de junio de 2026</div>
-    <div id="cveFea" class="texto" contenteditable="true">XXXXX</div>
+    <button class="btn-verde" style="width:100%;" onclick="guardarCoordenadas()">Guardar coordenadas</button>
+    <button class="btn-gris" style="width:100%;margin-top:8px;" onclick="cargarCoordenadas()">Cargar guardadas</button>
+    <button class="btn-rojo" style="width:100%;margin-top:8px;" onclick="resetearCoordenadas()">Restablecer todo</button>
+
+    <div id="coordInfo" class="coord">Selecciona un texto para ver coordenadas.</div>
+    <div id="status" class="status"></div>
+  </aside>
+
+  <main class="stage-wrap">
+    <div class="stage-tools">
+      <button class="btn-gris" onclick="zoomOut()">â Zoom</button>
+      <button class="btn-gris" onclick="zoomReset()">100%</button>
+      <button class="btn-gris" onclick="zoomIn()">+ Zoom</button>
+      <button class="btn-gris" onclick="toggleGuides()">Mostrar/Ocultar guÃ­as</button>
+    </div>
+
+    <section id="stage" class="stage">
+      <img class="fondo" src="img/diploma-base.png?v=20260628-v5" alt="Diploma base Delta">
+
+      <div id="guides" class="guides" style="display:none;">
+        <div class="vline"></div>
+        <div class="hline"></div>
+      </div>
+
+      <div id="tituloDocumento" class="textbox" data-key="tituloDocumento"><span>DIPLOMA</span><div class="handle"></div></div>
+      <div id="nombreAlumno" class="textbox" data-key="nombreAlumno"><span>Victor Jose Carrero Carrero</span><div class="handle"></div></div>
+      <div id="rutAlumno" class="textbox" data-key="rutAlumno"><span>12.345.678-9</span><div class="handle"></div></div>
+      <div id="programa" class="textbox" data-key="programa"><span>Medicina Naturopatica</span><div class="handle"></div></div>
+      <div id="documentoOtorgado" class="textbox" data-key="documentoOtorgado"><span>Titulo de Naturopata</span><div class="handle"></div></div>
+      <div id="registro" class="textbox" data-key="registro"><span>123 132 1234</span><div class="handle"></div></div>
+      <div id="fecha" class="textbox" data-key="fecha"><span>28 de junio de 2026</span><div class="handle"></div></div>
+      <div id="cveFea" class="textbox" data-key="cveFea"><span>XXXXX</span><div class="handle"></div></div>
+    </section>
   </main>
+
 </div>
 
 <script>
+const STORAGE_KEY = "delta_diploma_v5_coords";
+
+const defaultCoords = {
+  tituloDocumento:{x:515,y:405,w:510,h:65},
+  nombreAlumno:{x:420,y:540,w:700,h:70},
+  rutAlumno:{x:795,y:622,w:270,h:36},
+  programa:{x:480,y:690,w:575,h:40},
+  documentoOtorgado:{x:625,y:742,w:430,h:40},
+  registro:{x:655,y:850,w:205,h:28},
+  fecha:{x:1010,y:850,w:290,h:28},
+  cveFea:{x:1195,y:905,w:230,h:28}
+};
+
+let selected = null;
+let dragging = false;
+let offsetX = 0;
+let offsetY = 0;
+let zoom = 1;
+
+function el(id){ return document.getElementById(id); }
+
+function setStatus(msg,type="ok"){
+  const s = el("status");
+  s.className = "status " + type;
+  s.innerText = msg;
+  setTimeout(()=>{s.className="status";},3500);
+}
+
 function limpiarMojibake(texto){
   return String(texto || "")
     .replaceAll("ÃÂ¡","Ã¡").replaceAll("ÃÂ©","Ã©").replaceAll("ÃÂ­","Ã­").replaceAll("ÃÂ³","Ã³").replaceAll("ÃÂº","Ãº")
-    .replaceAll("ÃÃ","Ã").replaceAll("Ãâ°","Ã").replaceAll("ÃÃ","Ã").replaceAll("Ãâ","Ã").replaceAll("ÃÅ¡","Ã")
     .replaceAll("ÃÂ±","Ã±").replaceAll("Ãâ","Ã")
     .replaceAll("ÃÂ°","Â°");
 }
 
-function reducirFuenteSiNecesario(elemento, maxSize, minSize){
-  elemento.style.fontSize = maxSize + "px";
-  let size = maxSize;
-  while(elemento.scrollWidth > elemento.clientWidth && size > minSize){
-    size -= 2;
-    elemento.style.fontSize = size + "px";
-  }
-}
-
 function actualizarDiploma(){
-  const titulo = limpiarMojibake(document.getElementById("inputTituloDocumento").value);
-  const nombre = limpiarMojibake(document.getElementById("inputNombreAlumno").value);
-  const rut = limpiarMojibake(document.getElementById("inputRutAlumno").value);
-  const programa = limpiarMojibake(document.getElementById("inputPrograma").value);
-  const documento = limpiarMojibake(document.getElementById("inputDocumentoOtorgado").value);
-  const registro = limpiarMojibake(document.getElementById("inputRegistro").value);
-  const fecha = limpiarMojibake(document.getElementById("inputFecha").value);
-  const cve = limpiarMojibake(document.getElementById("inputCveFea").value);
-
-  document.getElementById("tituloDocumento").innerText = titulo;
-  document.getElementById("nombreAlumno").innerText = nombre;
-  document.getElementById("rutAlumno").innerText = rut;
-  document.getElementById("programa").innerText = programa;
-  document.getElementById("documentoOtorgado").innerText = documento;
-  document.getElementById("registro").innerText = registro;
-  document.getElementById("fecha").innerText = fecha;
-  document.getElementById("cveFea").innerText = cve;
-
-  reducirFuenteSiNecesario(document.getElementById("tituloDocumento"), 56, 42);
-  reducirFuenteSiNecesario(document.getElementById("nombreAlumno"), 58, 42);
-  reducirFuenteSiNecesario(document.getElementById("programa"), 28, 20);
-  reducirFuenteSiNecesario(document.getElementById("documentoOtorgado"), 28, 19);
+  el("tituloDocumento").querySelector("span").innerText = limpiarMojibake(el("inputTituloDocumento").value);
+  el("nombreAlumno").querySelector("span").innerText = limpiarMojibake(el("inputNombreAlumno").value);
+  el("rutAlumno").querySelector("span").innerText = limpiarMojibake(el("inputRutAlumno").value);
+  el("programa").querySelector("span").innerText = limpiarMojibake(el("inputPrograma").value);
+  el("documentoOtorgado").querySelector("span").innerText = limpiarMojibake(el("inputDocumentoOtorgado").value);
+  el("registro").querySelector("span").innerText = limpiarMojibake(el("inputRegistro").value);
+  el("fecha").querySelector("span").innerText = limpiarMojibake(el("inputFecha").value);
+  el("cveFea").querySelector("span").innerText = limpiarMojibake(el("inputCveFea").value);
 }
 
-function limpiar(){
-  document.getElementById("inputNombreAlumno").value = "";
-  document.getElementById("inputRutAlumno").value = "";
-  document.getElementById("inputPrograma").value = "";
-  document.getElementById("inputDocumentoOtorgado").value = "";
-  document.getElementById("inputRegistro").value = "";
-  document.getElementById("inputFecha").value = "";
-  document.getElementById("inputCveFea").value = "";
+function aplicarCoords(coords){
+  Object.entries(coords).forEach(([id,c])=>{
+    const node = el(id);
+    if(!node) return;
+    node.style.left = c.x + "px";
+    node.style.top = c.y + "px";
+    node.style.width = c.w + "px";
+    node.style.height = c.h + "px";
+  });
+  actualizarCoordInfo();
+}
+
+function obtenerCoords(){
+  const coords = {};
+  document.querySelectorAll(".textbox").forEach(node=>{
+    coords[node.id] = {
+      x:parseInt(node.style.left || node.offsetLeft,10),
+      y:parseInt(node.style.top || node.offsetTop,10),
+      w:parseInt(node.style.width || node.offsetWidth,10),
+      h:parseInt(node.style.height || node.offsetHeight,10)
+    };
+  });
+  return coords;
+}
+
+function guardarCoordenadas(){
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(obtenerCoords()));
+  setStatus("Coordenadas guardadas correctamente.");
+}
+
+function cargarCoordenadas(){
+  const saved = localStorage.getItem(STORAGE_KEY);
+  if(!saved){
+    aplicarCoords(defaultCoords);
+    setStatus("No habÃ­a coordenadas guardadas. Se cargaron las iniciales.");
+    return;
+  }
+  aplicarCoords(JSON.parse(saved));
+  setStatus("Coordenadas cargadas.");
+}
+
+function resetearCoordenadas(){
+  if(!confirm("Â¿Restablecer posiciones iniciales?")) return;
+  localStorage.removeItem(STORAGE_KEY);
+  aplicarCoords(defaultCoords);
+  setStatus("Posiciones restablecidas.");
+}
+
+function seleccionar(node){
+  document.querySelectorAll(".textbox").forEach(n=>n.classList.remove("selected"));
+  selected = node;
+  selected.classList.add("selected");
+  actualizarCoordInfo();
+}
+
+function actualizarCoordInfo(){
+  if(!selected){
+    el("coordInfo").innerText = "Selecciona un texto para ver coordenadas.";
+    return;
+  }
+  el("coordInfo").innerText =
+    selected.id + " | X: " + parseInt(selected.style.left || selected.offsetLeft,10) +
+    " | Y: " + parseInt(selected.style.top || selected.offsetTop,10) +
+    " | W: " + parseInt(selected.style.width || selected.offsetWidth,10) +
+    " | H: " + parseInt(selected.style.height || selected.offsetHeight,10);
+}
+
+function moverSeleccion(dx,dy){
+  if(!selected) return;
+  const x = parseInt(selected.style.left || selected.offsetLeft,10) + dx;
+  const y = parseInt(selected.style.top || selected.offsetTop,10) + dy;
+  selected.style.left = x + "px";
+  selected.style.top = y + "px";
+  actualizarCoordInfo();
+}
+
+function iniciarDrag(e,node){
+  seleccionar(node);
+  dragging = true;
+  const rect = node.getBoundingClientRect();
+  offsetX = e.clientX - rect.left;
+  offsetY = e.clientY - rect.top;
+  e.preventDefault();
+}
+
+function drag(e){
+  if(!dragging || !selected) return;
+  const stageRect = el("stage").getBoundingClientRect();
+  const x = (e.clientX - stageRect.left - offsetX) / zoom;
+  const y = (e.clientY - stageRect.top - offsetY) / zoom;
+  selected.style.left = Math.round(x) + "px";
+  selected.style.top = Math.round(y) + "px";
+  actualizarCoordInfo();
+}
+
+function terminarDrag(){
+  dragging = false;
+}
+
+function zoomIn(){
+  zoom = Math.min(1.5, zoom + 0.1);
+  el("stage").style.transform = "scale(" + zoom + ")";
+}
+
+function zoomOut(){
+  zoom = Math.max(0.5, zoom - 0.1);
+  el("stage").style.transform = "scale(" + zoom + ")";
+}
+
+function zoomReset(){
+  zoom = 1;
+  el("stage").style.transform = "scale(1)";
+}
+
+function toggleGuides(){
+  const g = el("guides");
+  g.style.display = g.style.display === "none" ? "block" : "none";
+}
+
+document.querySelectorAll(".textbox").forEach(node=>{
+  node.addEventListener("mousedown",e=>iniciarDrag(e,node));
+  node.addEventListener("touchstart",e=>{
+    const t = e.touches[0];
+    iniciarDrag({clientX:t.clientX,clientY:t.clientY,preventDefault:()=>e.preventDefault()},node);
+  },{passive:false});
+});
+
+document.addEventListener("mousemove",drag);
+document.addEventListener("mouseup",terminarDrag);
+
+document.addEventListener("touchmove",e=>{
+  if(!dragging) return;
+  const t = e.touches[0];
+  drag({clientX:t.clientX,clientY:t.clientY});
+  e.preventDefault();
+},{passive:false});
+document.addEventListener("touchend",terminarDrag);
+
+document.addEventListener("keydown",e=>{
+  if(!selected) return;
+  const step = e.shiftKey ? 10 : 1;
+  if(e.key === "ArrowLeft"){moverSeleccion(-step,0);e.preventDefault();}
+  if(e.key === "ArrowRight"){moverSeleccion(step,0);e.preventDefault();}
+  if(e.key === "ArrowUp"){moverSeleccion(0,-step);e.preventDefault();}
+  if(e.key === "ArrowDown"){moverSeleccion(0,step);e.preventDefault();}
+});
+
+window.addEventListener("load",()=>{
   actualizarDiploma();
-}
-
-window.addEventListener("load", actualizarDiploma);
+  cargarCoordenadas();
+});
 </script>
 
 </body>
