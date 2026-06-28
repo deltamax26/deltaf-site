@@ -27,10 +27,7 @@ body{
   box-shadow:0 8px 24px rgba(0,0,0,.14);
 }
 
-.panel h2{
-  margin:0 0 12px;
-  color:#00351f;
-}
+.panel h2{margin:0 0 12px;color:#00351f}
 
 .grid{
   display:grid;
@@ -116,14 +113,14 @@ button{
   border-radius:4px;
 }
 
-/* COORDENADAS AJUSTADAS AL DISEÃO FINAL APROBADO */
+/* COORDENADAS V4 */
 
 /* DIPLOMA / CURSO / CERTIFICADO / TÃTULO PROFESIONAL */
 #tituloDocumento{
   left:335px;
-  top:395px;
+  top:410px;
   width:865px;
-  font-size:58px;
+  font-size:56px;
   font-weight:700;
   letter-spacing:8px;
   color:#00351f;
@@ -132,30 +129,30 @@ button{
 
 /* Nombre completo */
 #nombreAlumno{
-  left:335px;
-  top:520px;
-  width:865px;
+  left:330px;
+  top:535px;
+  width:880px;
   font-family:"Snell Roundhand","Zapfino","Brush Script MT",cursive;
-  font-size:62px;
+  font-size:58px;
   color:#050505;
 }
 
-/* CÃ©dula / RUT: debe quedar al lado derecho del rÃ³tulo */
+/* CÃ©dula / RUT: al lado del rÃ³tulo, no abajo */
 #rutAlumno{
-  left:790px;
-  top:620px;
-  width:285px;
-  font-size:25px;
+  left:820px;
+  top:629px;
+  width:260px;
+  font-size:23px;
   font-weight:700;
   text-align:left;
 }
 
-/* Programa / carrera / curso / diplomado */
+/* Programa */
 #programa{
-  left:405px;
+  left:410px;
   top:705px;
-  width:725px;
-  font-size:30px;
+  width:720px;
+  font-size:28px;
   font-weight:700;
   color:#00351f;
 }
@@ -163,37 +160,37 @@ button{
 /* Documento otorgado */
 #documentoOtorgado{
   left:525px;
-  top:763px;
+  top:755px;
   width:520px;
-  font-size:29px;
+  font-size:28px;
   font-weight:700;
   color:#00351f;
 }
 
-/* Registro institucional: al lado del rÃ³tulo */
+/* Registro institucional en lÃ­nea */
 #registro{
-  left:675px;
-  top:852px;
-  width:215px;
-  font-size:20px;
+  left:700px;
+  top:851px;
+  width:205px;
+  font-size:19px;
   text-align:left;
 }
 
-/* Fecha completa: al lado de Fecha de EmisiÃ³n */
+/* Fecha en la misma lÃ­nea que registro */
 #fecha{
-  left:975px;
-  top:852px;
-  width:280px;
-  font-size:20px;
+  left:1010px;
+  top:851px;
+  width:300px;
+  font-size:19px;
   text-align:left;
 }
 
-/* CVE entregado por FEA */
+/* CVE */
 #cveFea{
-  left:1197px;
-  top:908px;
-  width:250px;
-  font-size:22px;
+  left:1190px;
+  top:905px;
+  width:260px;
+  font-size:21px;
   font-weight:700;
   text-align:left;
 }
@@ -243,7 +240,7 @@ button{
 
     <div class="campo">
       <label>Nombre completo</label>
-      <input id="inputNombreAlumno" value="VÃ­ctor JosÃ© Carrero Carrero">
+      <input id="inputNombreAlumno" value="Victor Jose Carrero Carrero">
     </div>
 
     <div class="campo">
@@ -253,12 +250,12 @@ button{
 
     <div class="campo">
       <label>Carrera / Curso / Diplomado</label>
-      <input id="inputPrograma" value="Medicina NaturopÃ¡tica">
+      <input id="inputPrograma" value="Medicina Naturopatica">
     </div>
 
     <div class="campo">
       <label>Documento otorgado</label>
-      <input id="inputDocumentoOtorgado" value="TÃ­tulo de Naturopata">
+      <input id="inputDocumentoOtorgado" value="Titulo de Naturopata">
     </div>
 
     <div class="campo">
@@ -286,13 +283,13 @@ button{
 
 <div class="hoja-wrap">
   <main class="hoja">
-    <img class="fondo" src="img/diploma-base.png?v=20260628-03" alt="Diploma base Delta">
+    <img class="fondo" src="img/diploma-base.png?v=20260628-04" alt="Diploma base Delta">
 
     <div id="tituloDocumento" class="texto" contenteditable="true">DIPLOMA</div>
-    <div id="nombreAlumno" class="texto" contenteditable="true">VÃ­ctor JosÃ© Carrero Carrero</div>
+    <div id="nombreAlumno" class="texto" contenteditable="true">Victor Jose Carrero Carrero</div>
     <div id="rutAlumno" class="texto" contenteditable="true">12.345.678-9</div>
-    <div id="programa" class="texto" contenteditable="true">Medicina NaturopÃ¡tica</div>
-    <div id="documentoOtorgado" class="texto" contenteditable="true">TÃ­tulo de Naturopata</div>
+    <div id="programa" class="texto" contenteditable="true">Medicina Naturopatica</div>
+    <div id="documentoOtorgado" class="texto" contenteditable="true">Titulo de Naturopata</div>
     <div id="registro" class="texto" contenteditable="true">123 132 1234</div>
     <div id="fecha" class="texto" contenteditable="true">28 de junio de 2026</div>
     <div id="cveFea" class="texto" contenteditable="true">XXXXX</div>
@@ -300,6 +297,14 @@ button{
 </div>
 
 <script>
+function limpiarMojibake(texto){
+  return String(texto || "")
+    .replaceAll("ÃÂ¡","Ã¡").replaceAll("ÃÂ©","Ã©").replaceAll("ÃÂ­","Ã­").replaceAll("ÃÂ³","Ã³").replaceAll("ÃÂº","Ãº")
+    .replaceAll("ÃÃ","Ã").replaceAll("Ãâ°","Ã").replaceAll("ÃÃ","Ã").replaceAll("Ãâ","Ã").replaceAll("ÃÅ¡","Ã")
+    .replaceAll("ÃÂ±","Ã±").replaceAll("Ãâ","Ã")
+    .replaceAll("ÃÂ°","Â°");
+}
+
 function reducirFuenteSiNecesario(elemento, maxSize, minSize){
   elemento.style.fontSize = maxSize + "px";
   let size = maxSize;
@@ -310,14 +315,14 @@ function reducirFuenteSiNecesario(elemento, maxSize, minSize){
 }
 
 function actualizarDiploma(){
-  const titulo = document.getElementById("inputTituloDocumento").value;
-  const nombre = document.getElementById("inputNombreAlumno").value;
-  const rut = document.getElementById("inputRutAlumno").value;
-  const programa = document.getElementById("inputPrograma").value;
-  const documento = document.getElementById("inputDocumentoOtorgado").value;
-  const registro = document.getElementById("inputRegistro").value;
-  const fecha = document.getElementById("inputFecha").value;
-  const cve = document.getElementById("inputCveFea").value;
+  const titulo = limpiarMojibake(document.getElementById("inputTituloDocumento").value);
+  const nombre = limpiarMojibake(document.getElementById("inputNombreAlumno").value);
+  const rut = limpiarMojibake(document.getElementById("inputRutAlumno").value);
+  const programa = limpiarMojibake(document.getElementById("inputPrograma").value);
+  const documento = limpiarMojibake(document.getElementById("inputDocumentoOtorgado").value);
+  const registro = limpiarMojibake(document.getElementById("inputRegistro").value);
+  const fecha = limpiarMojibake(document.getElementById("inputFecha").value);
+  const cve = limpiarMojibake(document.getElementById("inputCveFea").value);
 
   document.getElementById("tituloDocumento").innerText = titulo;
   document.getElementById("nombreAlumno").innerText = nombre;
@@ -328,10 +333,10 @@ function actualizarDiploma(){
   document.getElementById("fecha").innerText = fecha;
   document.getElementById("cveFea").innerText = cve;
 
-  reducirFuenteSiNecesario(document.getElementById("tituloDocumento"), 58, 42);
-  reducirFuenteSiNecesario(document.getElementById("nombreAlumno"), 62, 44);
-  reducirFuenteSiNecesario(document.getElementById("programa"), 30, 20);
-  reducirFuenteSiNecesario(document.getElementById("documentoOtorgado"), 29, 19);
+  reducirFuenteSiNecesario(document.getElementById("tituloDocumento"), 56, 42);
+  reducirFuenteSiNecesario(document.getElementById("nombreAlumno"), 58, 42);
+  reducirFuenteSiNecesario(document.getElementById("programa"), 28, 20);
+  reducirFuenteSiNecesario(document.getElementById("documentoOtorgado"), 28, 19);
 }
 
 function limpiar(){
