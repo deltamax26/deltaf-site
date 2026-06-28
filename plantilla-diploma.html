@@ -2,7 +2,9 @@
 <html lang="es">
 <head>
 <meta charset="UTF-8">
-<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+<meta http-equiv="Pragma" content="no-cache">
+<meta http-equiv="Expires" content="0">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Plantilla Diploma Delta</title>
 
@@ -120,6 +122,7 @@ button {
   font-family: Georgia, "Times New Roman", serif;
   outline: none;
   line-height: 1.1;
+  white-space: normal;
 }
 
 .texto:focus {
@@ -128,68 +131,78 @@ button {
   border-radius: 4px;
 }
 
+/* Campo principal: TÃTULO PROFESIONAL / DIPLOMA / CURSO */
 #tituloDocumento {
-  left: 330px;
-  top: 400px;
-  width: 875px;
+  left: 315px;
+  top: 405px;
+  width: 905px;
   font-size: 58px;
   font-weight: 700;
-  letter-spacing: 6px;
+  letter-spacing: 8px;
   color: #00351f;
   text-transform: uppercase;
 }
 
+/* Nombre del estudiante */
 #nombreAlumno {
   left: 360px;
-  top: 535px;
-  width: 810px;
+  top: 575px;
+  width: 820px;
   font-family: "Snell Roundhand", "Zapfino", "Brush Script MT", cursive;
-  font-size: 64px;
+  font-size: 62px;
   color: #050505;
 }
 
+/* CÃ©dula / RUT */
 #rutAlumno {
-  left: 570px;
-  top: 650px;
-  width: 390px;
-  font-size: 25px;
+  left: 565px;
+  top: 635px;
+  width: 410px;
+  font-size: 24px;
 }
 
+/* Nombre del programa */
 #programa {
-  left: 430px;
-  top: 735px;
-  width: 685px;
+  left: 420px;
+  top: 725px;
+  width: 700px;
   font-size: 30px;
   font-weight: 700;
 }
 
+/* Documento otorgado */
 #documentoOtorgado {
-  left: 590px;
-  top: 792px;
-  width: 420px;
-  font-size: 24px;
+  left: 565px;
+  top: 775px;
+  width: 430px;
+  font-size: 25px;
   font-weight: 700;
 }
 
+/* Registro institucional */
 #registro {
-  left: 805px;
-  top: 858px;
-  width: 245px;
+  left: 780px;
+  top: 842px;
+  width: 270px;
   font-size: 22px;
+  text-align: left;
 }
 
+/* Fecha completa */
 #fecha {
-  left: 625px;
-  top: 915px;
-  width: 375px;
+  left: 690px;
+  top: 895px;
+  width: 360px;
   font-size: 22px;
+  text-align: left;
 }
 
+/* CÃ³digo FEA / CVE */
 #cveFea {
-  left: 1185px;
-  top: 908px;
-  width: 250px;
-  font-size: 23px;
+  left: 1130px;
+  top: 900px;
+  width: 310px;
+  font-size: 21px;
   font-weight: 700;
   text-align: left;
 }
@@ -281,7 +294,7 @@ button {
 
     <div class="campo">
       <label>Fecha de emisiÃ³n</label>
-      <input id="inputFecha" value="____ de __________ de 20__">
+      <input id="inputFecha" value="28 de junio de 2026">
     </div>
 
     <div class="campo">
@@ -299,7 +312,7 @@ button {
 
 <div class="hoja-wrap">
   <main class="hoja">
-    <img class="fondo" src="img/diploma-base.png" alt="Diploma base Delta">
+    <img class="fondo" src="img/diploma-base.png?v=20260628-01" alt="Diploma base Delta">
 
     <div id="tituloDocumento" class="texto" contenteditable="true">DIPLOMA</div>
     <div id="nombreAlumno" class="texto" contenteditable="true">Nombre Completo del Estudiante</div>
@@ -307,7 +320,7 @@ button {
     <div id="programa" class="texto" contenteditable="true">Nombre de la Carrera, Curso o Diplomado</div>
     <div id="documentoOtorgado" class="texto" contenteditable="true">TÃ­tulo Profesional</div>
     <div id="registro" class="texto" contenteditable="true"></div>
-    <div id="fecha" class="texto" contenteditable="true">____ de __________ de 20__</div>
+    <div id="fecha" class="texto" contenteditable="true">28 de junio de 2026</div>
     <div id="cveFea" class="texto" contenteditable="true"></div>
   </main>
 </div>
@@ -349,6 +362,8 @@ function limpiar() {
   document.getElementById("inputCveFea").value = "";
   actualizarDiploma();
 }
+
+window.addEventListener("load", actualizarDiploma);
 </script>
 
 </body>
