@@ -2,6 +2,7 @@
 <html lang="es">
 <head>
 <meta charset="UTF-8">
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
 <meta http-equiv="Pragma" content="no-cache">
 <meta http-equiv="Expires" content="0">
@@ -341,7 +342,7 @@ button{
         <option>DIPLOMA</option>
         <option>CURSO</option>
         <option>CERTIFICADO</option>
-        <option>TÃTULO PROFESIONAL</option>
+        <option>TITULO PROFESIONAL</option>
         <option>DIPLOMADO</option>
         <option>ESPECIALIDAD</option>
       </select>
@@ -353,7 +354,7 @@ button{
     </div>
 
     <div class="campo">
-      <label>CÃ©dula de Identidad NÂ°</label>
+      <label>Cedula de Identidad No.</label>
       <input id="inputRutAlumno" value="12.345.678-9">
     </div>
 
@@ -368,12 +369,12 @@ button{
     </div>
 
     <div class="campo">
-      <label>Registro Institucional NÂ°</label>
+      <label>Registro Institucional No.</label>
       <input id="inputRegistro" value="123 132 1234">
     </div>
 
     <div class="campo">
-      <label>Fecha de emisiÃ³n</label>
+      <label>Fecha de emision</label>
       <input id="inputFecha" value="28 de junio de 2026">
     </div>
 
@@ -385,9 +386,9 @@ button{
     <button class="btn-azul" style="width:100%;margin-top:6px;" onclick="actualizarDiploma()">Actualizar textos</button>
 
     <div class="help">
-      <strong>CÃ³mo ajustar:</strong><br>
+      <strong>Como ajustar:</strong><br>
       1. Toca o haz clic sobre un texto.<br>
-      2. ArrÃ¡stralo hasta su posiciÃ³n.<br>
+      2. Arrastralo hasta su posicion.<br>
       3. Usa flechas para mover 1 px.<br>
       4. Usa Shift + flechas para mover 10 px.<br>
       5. Presiona <strong>Guardar coordenadas</strong>.
@@ -403,21 +404,21 @@ button{
 
   <main class="stage-wrap">
     <div class="stage-tools">
-      <button class="btn-gris" onclick="zoomOut()">â Zoom</button>
+      <button class="btn-gris" onclick="zoomOut()">- Zoom</button>
       <button class="btn-gris" onclick="zoomReset()">100%</button>
       <button class="btn-gris" onclick="zoomIn()">+ Zoom</button>
-      <button class="btn-gris" onclick="toggleGuides()">Mostrar/Ocultar guÃ­as</button>
+      <button class="btn-gris" onclick="toggleGuides()">Mostrar/Ocultar guias</button>
     </div>
 
     <section id="stage" class="stage">
-      <img class="fondo" src="img/diploma-base.png?v=20260628-v5" alt="Diploma base Delta">
+      <img class="fondo" src="img/diploma-base.png?v=20260628-v6" alt="Diploma base Delta">
 
       <div id="guides" class="guides" style="display:none;">
         <div class="vline"></div>
         <div class="hline"></div>
       </div>
 
-      <div id="tituloDocumento" class="textbox" data-key="tituloDocumento"><span>DIPLOMA</span><div class="handle"></div></div>
+      <div id="tituloDocumento" class="textbox" data-key="tituloDocumento"><span>CURSO</span><div class="handle"></div></div>
       <div id="nombreAlumno" class="textbox" data-key="nombreAlumno"><span>Victor Jose Carrero Carrero</span><div class="handle"></div></div>
       <div id="rutAlumno" class="textbox" data-key="rutAlumno"><span>12.345.678-9</span><div class="handle"></div></div>
       <div id="programa" class="textbox" data-key="programa"><span>Medicina Naturopatica</span><div class="handle"></div></div>
@@ -511,7 +512,7 @@ function cargarCoordenadas(){
   const saved = localStorage.getItem(STORAGE_KEY);
   if(!saved){
     aplicarCoords(defaultCoords);
-    setStatus("No habÃ­a coordenadas guardadas. Se cargaron las iniciales.");
+    setStatus("No habia coordenadas guardadas. Se cargaron las iniciales.");
     return;
   }
   aplicarCoords(JSON.parse(saved));
@@ -519,7 +520,7 @@ function cargarCoordenadas(){
 }
 
 function resetearCoordenadas(){
-  if(!confirm("Â¿Restablecer posiciones iniciales?")) return;
+  if(!confirm("Restablecer posiciones iniciales?")) return;
   localStorage.removeItem(STORAGE_KEY);
   aplicarCoords(defaultCoords);
   setStatus("Posiciones restablecidas.");
@@ -572,9 +573,7 @@ function drag(e){
   actualizarCoordInfo();
 }
 
-function terminarDrag(){
-  dragging = false;
-}
+function terminarDrag(){ dragging = false; }
 
 function zoomIn(){
   zoom = Math.min(1.5, zoom + 0.1);
