@@ -88,8 +88,94 @@ th{background:#e0f2fe;color:#075985;}
 <div class="card"><h3>Ordenes emitidas</h3><p id="ordenesEmitidas">0</p></div>
 <div class="card"><h3>Profesionales registrados</h3><p id="profesionalesRegistrados">0</p></div>
 <div class="card"><h3>Profesionales pendientes</h3><p id="profesionalesPendientes">0</p></div>
+<div class="card"><h3>Diplomas emitidos</h3><p id="diplomasEmitidos">0</p></div>
 </div>
 
+<div class="section">
+<h2>Registro AcadÃ©mico / Generador de Diplomas</h2>
+<p style="color:#64748b;margin-bottom:15px;">
+MÃ³dulo exclusivo del administrador para emitir tÃ­tulos, diplomas, certificados o constancias del Instituto de FormaciÃ³n ClÃ­nica Delta.
+El CVE se ingresa manualmente despuÃ©s de obtener la Firma ElectrÃ³nica Avanzada.
+</p>
+
+<div class="detail-grid">
+<div>
+<label>Nombre completo del estudiante</label>
+<input id="dip_nombre" type="text" placeholder="Ej: Nombre completo del estudiante">
+</div>
+<div>
+<label>N.Âº de identidad / RUT / Pasaporte</label>
+<input id="dip_identidad" type="text" placeholder="Ej: 18.511.044-3">
+</div>
+<div>
+<label>Tipo de documento</label>
+<input id="dip_tipo_documento" type="text" value="TÃ­tulo Profesional" list="listaTiposDocumento">
+<datalist id="listaTiposDocumento">
+<option value="TÃ­tulo Profesional">
+<option value="Diploma">
+<option value="Certificado">
+<option value="Curso">
+<option value="Constancia">
+</datalist>
+</div>
+<div>
+<label>Descriptor institucional</label>
+<input id="dip_descriptor" type="text" value="Institucional Privado">
+</div>
+<div>
+<label>Carrera / Programa / Curso</label>
+<input id="dip_programa" type="text" value="Medicina NaturopÃ¡tica">
+</div>
+<div>
+<label>TÃ­tulo, diploma o certificaciÃ³n otorgada</label>
+<input id="dip_titulo_otorgado" type="text" value="NaturÃ³pata">
+</div>
+<div>
+<label>Fecha de emisiÃ³n</label>
+<input id="dip_fecha" type="date">
+</div>
+<div>
+<label>CVE Firma ElectrÃ³nica Avanzada</label>
+<input id="dip_cve" type="text" placeholder="Ej: FE808519">
+</div>
+<div>
+<label>Registro Institucional</label>
+<input id="dip_registro" type="text" placeholder="Se genera si lo dejas vacÃ­o">
+</div>
+</div>
+
+<label>Texto complementario / observaciÃ³n interna opcional</label>
+<textarea id="dip_observacion" placeholder="Ej: Emitido conforme al plan de estudios aprobado por la DirecciÃ³n AcadÃ©mica."></textarea>
+
+<div class="actions-grid">
+<button class="btn btn-main" onclick="generarYGuardarDiploma()">Generar diploma PDF</button>
+<button class="btn btn-reload" onclick="limpiarFormularioDiploma()">Limpiar formulario</button>
+<button class="btn btn-export" onclick="cargarDiplomasSeguro()">Actualizar diplomas</button>
+</div>
+
+<div id="resultadoDiploma" style="margin-top:15px;"></div>
+
+<h3 style="margin-top:25px;">Diplomas y certificados emitidos</h3>
+<table id="tablaDiplomas">
+<thead>
+<tr>
+<th>Fecha</th>
+<th>Nombre</th>
+<th>Identidad</th>
+<th>Tipo</th>
+<th>Programa</th>
+<th>Otorga</th>
+<th>CVE</th>
+<th>Registro</th>
+<th>Estado</th>
+<th>PDF</th>
+</tr>
+</thead>
+<tbody>
+<tr><td colspan="10">Cargando diplomas...</td></tr>
+</tbody>
+</table>
+</div>
 
 <div class="section">
 <h2>Limpieza administrativa / datos de prueba</h2>
@@ -320,6 +406,7 @@ const SUPABASE_URL = "https://goxkmtnmfessroveanje.supabase.co";
 const SUPABASE_KEY = "sb_publishable_w8xrtEanlJJAc5FYvk1X5A_fKu9vb5d";
 const FUNCTION_EMAIL_URL = "https://goxkmtnmfessroveanje.supabase.co/functions/v1/resend-email";
 const STORAGE_BUCKET = "ordenes";
+const DIPLOMAS_BUCKET = "diplomas";
 
 const MEDICO_NOMBRE = "Dra. Carolina Dominguez";
 const MEDICO_RUT = "RUT Medico: 24.891.056-9";
@@ -338,6 +425,7 @@ let pagosMNBEGlobal = [];
 let ordenesMedicasGlobal = [];
 let solicitudesMedicasGlobal = [];
 let solicitudMedicaSeleccionada = null;
+let diplomasGlobal = [];
 
 function mostrarError(texto){
 const div=document.getElementById("mensajeError");
@@ -584,6 +672,7 @@ pintarTablaPacientes(solicitudesPacientesGlobal);
 pintarTablaSolicitudes(solicitudesGlobal);
 pintarTablaProfesionales(profesionalesGlobal);
 cargarSelectProfesionales(profesionalesGlobal);
+await cargarDiplomasSeguro(false);
 
 }catch(error){
 console.error(error);
@@ -1036,59 +1125,8 @@ content:pdf.base64
 
 mostrarOk("Solicitud aprobada correctamente. Se genero PDF y se envio correo al paciente.");
 cerrarDetalleMedico();
-await 
-function inicializarSeccionesDesplegables(){
-document.querySelectorAll(".section").forEach((section,index)=>{
-if(section.dataset.readyToggle==="1") return;
-
-const h2=section.querySelector("h2");
-if(!h2) return;
-
-const nodes=[];
-let n=h2.nextSibling;
-while(n){
-const next=n.nextSibling;
-nodes.push(n);
-n=next;
-}
-
-const content=document.createElement("div");
-content.className="section-content";
-
-nodes.forEach(node=>content.appendChild(node));
-section.appendChild(content);
-
-const btn=document.createElement("button");
-btn.className="section-toggle";
-btn.type="button";
-btn.textContent=index===0 ? "Ocultar" : "Mostrar";
-h2.appendChild(btn);
-
-if(index>0){
-section.classList.add("collapsed");
-}
-
-function alternar(){
-section.classList.toggle("collapsed");
-btn.textContent=section.classList.contains("collapsed") ? "Mostrar" : "Ocultar";
-}
-
-btn.addEventListener("click",function(e){
-e.stopPropagation();
-alternar();
-});
-
-h2.addEventListener("click",function(e){
-if(e.target===btn) return;
-alternar();
-});
-
-section.dataset.readyToggle="1";
-});
-}
-
 inicializarSeccionesDesplegables();
-cargarDashboard();
+await cargarDashboard();
 
 }catch(error){
 console.error(error);
@@ -1156,59 +1194,8 @@ crearHtmlRechazo(ordenActual,edit.observaciones)
 
 mostrarOk("Solicitud rechazada correctamente y correo enviado.");
 cerrarDetalleMedico();
-await 
-function inicializarSeccionesDesplegables(){
-document.querySelectorAll(".section").forEach((section,index)=>{
-if(section.dataset.readyToggle==="1") return;
-
-const h2=section.querySelector("h2");
-if(!h2) return;
-
-const nodes=[];
-let n=h2.nextSibling;
-while(n){
-const next=n.nextSibling;
-nodes.push(n);
-n=next;
-}
-
-const content=document.createElement("div");
-content.className="section-content";
-
-nodes.forEach(node=>content.appendChild(node));
-section.appendChild(content);
-
-const btn=document.createElement("button");
-btn.className="section-toggle";
-btn.type="button";
-btn.textContent=index===0 ? "Ocultar" : "Mostrar";
-h2.appendChild(btn);
-
-if(index>0){
-section.classList.add("collapsed");
-}
-
-function alternar(){
-section.classList.toggle("collapsed");
-btn.textContent=section.classList.contains("collapsed") ? "Mostrar" : "Ocultar";
-}
-
-btn.addEventListener("click",function(e){
-e.stopPropagation();
-alternar();
-});
-
-h2.addEventListener("click",function(e){
-if(e.target===btn) return;
-alternar();
-});
-
-section.dataset.readyToggle="1";
-});
-}
-
 inicializarSeccionesDesplegables();
-cargarDashboard();
+await cargarDashboard();
 
 }catch(error){
 console.error(error);
@@ -1277,59 +1264,8 @@ crearHtmlModificacion(ordenActual,edit.observaciones)
 
 mostrarOk("Modificacion solicitada correctamente y correo enviado.");
 cerrarDetalleMedico();
-await 
-function inicializarSeccionesDesplegables(){
-document.querySelectorAll(".section").forEach((section,index)=>{
-if(section.dataset.readyToggle==="1") return;
-
-const h2=section.querySelector("h2");
-if(!h2) return;
-
-const nodes=[];
-let n=h2.nextSibling;
-while(n){
-const next=n.nextSibling;
-nodes.push(n);
-n=next;
-}
-
-const content=document.createElement("div");
-content.className="section-content";
-
-nodes.forEach(node=>content.appendChild(node));
-section.appendChild(content);
-
-const btn=document.createElement("button");
-btn.className="section-toggle";
-btn.type="button";
-btn.textContent=index===0 ? "Ocultar" : "Mostrar";
-h2.appendChild(btn);
-
-if(index>0){
-section.classList.add("collapsed");
-}
-
-function alternar(){
-section.classList.toggle("collapsed");
-btn.textContent=section.classList.contains("collapsed") ? "Mostrar" : "Ocultar";
-}
-
-btn.addEventListener("click",function(e){
-e.stopPropagation();
-alternar();
-});
-
-h2.addEventListener("click",function(e){
-if(e.target===btn) return;
-alternar();
-});
-
-section.dataset.readyToggle="1";
-});
-}
-
 inicializarSeccionesDesplegables();
-cargarDashboard();
+await cargarDashboard();
 
 }catch(error){
 console.error(error);
@@ -1467,59 +1403,8 @@ const {error:updatePagoError}=await supabaseClient
 if(updatePagoError) throw updatePagoError;
 
 mostrarOk("Biblioteca MNBE activada correctamente para el profesional.");
-await 
-function inicializarSeccionesDesplegables(){
-document.querySelectorAll(".section").forEach((section,index)=>{
-if(section.dataset.readyToggle==="1") return;
-
-const h2=section.querySelector("h2");
-if(!h2) return;
-
-const nodes=[];
-let n=h2.nextSibling;
-while(n){
-const next=n.nextSibling;
-nodes.push(n);
-n=next;
-}
-
-const content=document.createElement("div");
-content.className="section-content";
-
-nodes.forEach(node=>content.appendChild(node));
-section.appendChild(content);
-
-const btn=document.createElement("button");
-btn.className="section-toggle";
-btn.type="button";
-btn.textContent=index===0 ? "Ocultar" : "Mostrar";
-h2.appendChild(btn);
-
-if(index>0){
-section.classList.add("collapsed");
-}
-
-function alternar(){
-section.classList.toggle("collapsed");
-btn.textContent=section.classList.contains("collapsed") ? "Mostrar" : "Ocultar";
-}
-
-btn.addEventListener("click",function(e){
-e.stopPropagation();
-alternar();
-});
-
-h2.addEventListener("click",function(e){
-if(e.target===btn) return;
-alternar();
-});
-
-section.dataset.readyToggle="1";
-});
-}
-
 inicializarSeccionesDesplegables();
-cargarDashboard();
+await cargarDashboard();
 
 }catch(error){
 console.error(error);
@@ -1540,59 +1425,8 @@ const {error}=await supabaseClient
 if(error) throw error;
 
 mostrarOk("Pago MNBE rechazado correctamente.");
-await 
-function inicializarSeccionesDesplegables(){
-document.querySelectorAll(".section").forEach((section,index)=>{
-if(section.dataset.readyToggle==="1") return;
-
-const h2=section.querySelector("h2");
-if(!h2) return;
-
-const nodes=[];
-let n=h2.nextSibling;
-while(n){
-const next=n.nextSibling;
-nodes.push(n);
-n=next;
-}
-
-const content=document.createElement("div");
-content.className="section-content";
-
-nodes.forEach(node=>content.appendChild(node));
-section.appendChild(content);
-
-const btn=document.createElement("button");
-btn.className="section-toggle";
-btn.type="button";
-btn.textContent=index===0 ? "Ocultar" : "Mostrar";
-h2.appendChild(btn);
-
-if(index>0){
-section.classList.add("collapsed");
-}
-
-function alternar(){
-section.classList.toggle("collapsed");
-btn.textContent=section.classList.contains("collapsed") ? "Mostrar" : "Ocultar";
-}
-
-btn.addEventListener("click",function(e){
-e.stopPropagation();
-alternar();
-});
-
-h2.addEventListener("click",function(e){
-if(e.target===btn) return;
-alternar();
-});
-
-section.dataset.readyToggle="1";
-});
-}
-
 inicializarSeccionesDesplegables();
-cargarDashboard();
+await cargarDashboard();
 
 }catch(error){
 console.error(error);
@@ -1630,59 +1464,8 @@ const {error}=await supabaseClient
 if(error) throw error;
 
 mostrarOk(activar ? "Biblioteca MNBE activada." : "Biblioteca MNBE desactivada.");
-await 
-function inicializarSeccionesDesplegables(){
-document.querySelectorAll(".section").forEach((section,index)=>{
-if(section.dataset.readyToggle==="1") return;
-
-const h2=section.querySelector("h2");
-if(!h2) return;
-
-const nodes=[];
-let n=h2.nextSibling;
-while(n){
-const next=n.nextSibling;
-nodes.push(n);
-n=next;
-}
-
-const content=document.createElement("div");
-content.className="section-content";
-
-nodes.forEach(node=>content.appendChild(node));
-section.appendChild(content);
-
-const btn=document.createElement("button");
-btn.className="section-toggle";
-btn.type="button";
-btn.textContent=index===0 ? "Ocultar" : "Mostrar";
-h2.appendChild(btn);
-
-if(index>0){
-section.classList.add("collapsed");
-}
-
-function alternar(){
-section.classList.toggle("collapsed");
-btn.textContent=section.classList.contains("collapsed") ? "Mostrar" : "Ocultar";
-}
-
-btn.addEventListener("click",function(e){
-e.stopPropagation();
-alternar();
-});
-
-h2.addEventListener("click",function(e){
-if(e.target===btn) return;
-alternar();
-});
-
-section.dataset.readyToggle="1";
-});
-}
-
 inicializarSeccionesDesplegables();
-cargarDashboard();
+await cargarDashboard();
 
 }catch(error){
 console.error(error);
@@ -1869,59 +1652,8 @@ const {error:updateCompraError}=await supabaseClient
 if(updateCompraError) throw updateCompraError;
 
 mostrarOk("Compra aprobada y ordenes cargadas correctamente.");
-await 
-function inicializarSeccionesDesplegables(){
-document.querySelectorAll(".section").forEach((section,index)=>{
-if(section.dataset.readyToggle==="1") return;
-
-const h2=section.querySelector("h2");
-if(!h2) return;
-
-const nodes=[];
-let n=h2.nextSibling;
-while(n){
-const next=n.nextSibling;
-nodes.push(n);
-n=next;
-}
-
-const content=document.createElement("div");
-content.className="section-content";
-
-nodes.forEach(node=>content.appendChild(node));
-section.appendChild(content);
-
-const btn=document.createElement("button");
-btn.className="section-toggle";
-btn.type="button";
-btn.textContent=index===0 ? "Ocultar" : "Mostrar";
-h2.appendChild(btn);
-
-if(index>0){
-section.classList.add("collapsed");
-}
-
-function alternar(){
-section.classList.toggle("collapsed");
-btn.textContent=section.classList.contains("collapsed") ? "Mostrar" : "Ocultar";
-}
-
-btn.addEventListener("click",function(e){
-e.stopPropagation();
-alternar();
-});
-
-h2.addEventListener("click",function(e){
-if(e.target===btn) return;
-alternar();
-});
-
-section.dataset.readyToggle="1";
-});
-}
-
 inicializarSeccionesDesplegables();
-cargarDashboard();
+await cargarDashboard();
 
 }catch(error){
 console.error(error);
@@ -1942,59 +1674,8 @@ const {error}=await supabaseClient
 if(error) throw error;
 
 mostrarOk("Compra rechazada correctamente.");
-await 
-function inicializarSeccionesDesplegables(){
-document.querySelectorAll(".section").forEach((section,index)=>{
-if(section.dataset.readyToggle==="1") return;
-
-const h2=section.querySelector("h2");
-if(!h2) return;
-
-const nodes=[];
-let n=h2.nextSibling;
-while(n){
-const next=n.nextSibling;
-nodes.push(n);
-n=next;
-}
-
-const content=document.createElement("div");
-content.className="section-content";
-
-nodes.forEach(node=>content.appendChild(node));
-section.appendChild(content);
-
-const btn=document.createElement("button");
-btn.className="section-toggle";
-btn.type="button";
-btn.textContent=index===0 ? "Ocultar" : "Mostrar";
-h2.appendChild(btn);
-
-if(index>0){
-section.classList.add("collapsed");
-}
-
-function alternar(){
-section.classList.toggle("collapsed");
-btn.textContent=section.classList.contains("collapsed") ? "Mostrar" : "Ocultar";
-}
-
-btn.addEventListener("click",function(e){
-e.stopPropagation();
-alternar();
-});
-
-h2.addEventListener("click",function(e){
-if(e.target===btn) return;
-alternar();
-});
-
-section.dataset.readyToggle="1";
-});
-}
-
 inicializarSeccionesDesplegables();
-cargarDashboard();
+await cargarDashboard();
 
 }catch(error){
 console.error(error);
@@ -2015,59 +1696,8 @@ const {error}=await supabaseClient
 if(error) throw error;
 
 mostrarOk("Profesional actualizado correctamente.");
-await 
-function inicializarSeccionesDesplegables(){
-document.querySelectorAll(".section").forEach((section,index)=>{
-if(section.dataset.readyToggle==="1") return;
-
-const h2=section.querySelector("h2");
-if(!h2) return;
-
-const nodes=[];
-let n=h2.nextSibling;
-while(n){
-const next=n.nextSibling;
-nodes.push(n);
-n=next;
-}
-
-const content=document.createElement("div");
-content.className="section-content";
-
-nodes.forEach(node=>content.appendChild(node));
-section.appendChild(content);
-
-const btn=document.createElement("button");
-btn.className="section-toggle";
-btn.type="button";
-btn.textContent=index===0 ? "Ocultar" : "Mostrar";
-h2.appendChild(btn);
-
-if(index>0){
-section.classList.add("collapsed");
-}
-
-function alternar(){
-section.classList.toggle("collapsed");
-btn.textContent=section.classList.contains("collapsed") ? "Mostrar" : "Ocultar";
-}
-
-btn.addEventListener("click",function(e){
-e.stopPropagation();
-alternar();
-});
-
-h2.addEventListener("click",function(e){
-if(e.target===btn) return;
-alternar();
-});
-
-section.dataset.readyToggle="1";
-});
-}
-
 inicializarSeccionesDesplegables();
-cargarDashboard();
+await cargarDashboard();
 
 }catch(error){
 console.error(error);
@@ -2123,59 +1753,8 @@ document.getElementById("cantidadOrdenes").value="";
 document.getElementById("motivoOrdenes").value="";
 document.getElementById("profesionalAsignar").value="";
 
-await 
-function inicializarSeccionesDesplegables(){
-document.querySelectorAll(".section").forEach((section,index)=>{
-if(section.dataset.readyToggle==="1") return;
-
-const h2=section.querySelector("h2");
-if(!h2) return;
-
-const nodes=[];
-let n=h2.nextSibling;
-while(n){
-const next=n.nextSibling;
-nodes.push(n);
-n=next;
-}
-
-const content=document.createElement("div");
-content.className="section-content";
-
-nodes.forEach(node=>content.appendChild(node));
-section.appendChild(content);
-
-const btn=document.createElement("button");
-btn.className="section-toggle";
-btn.type="button";
-btn.textContent=index===0 ? "Ocultar" : "Mostrar";
-h2.appendChild(btn);
-
-if(index>0){
-section.classList.add("collapsed");
-}
-
-function alternar(){
-section.classList.toggle("collapsed");
-btn.textContent=section.classList.contains("collapsed") ? "Mostrar" : "Ocultar";
-}
-
-btn.addEventListener("click",function(e){
-e.stopPropagation();
-alternar();
-});
-
-h2.addEventListener("click",function(e){
-if(e.target===btn) return;
-alternar();
-});
-
-section.dataset.readyToggle="1";
-});
-}
-
 inicializarSeccionesDesplegables();
-cargarDashboard();
+await cargarDashboard();
 
 }catch(error){
 console.error(error);
@@ -2227,59 +1806,8 @@ const {error}=await supabaseClient
 if(error) throw error;
 
 mostrarOk("Ordenes asignadas correctamente. Nuevo saldo: " + nuevoSaldo);
-await 
-function inicializarSeccionesDesplegables(){
-document.querySelectorAll(".section").forEach((section,index)=>{
-if(section.dataset.readyToggle==="1") return;
-
-const h2=section.querySelector("h2");
-if(!h2) return;
-
-const nodes=[];
-let n=h2.nextSibling;
-while(n){
-const next=n.nextSibling;
-nodes.push(n);
-n=next;
-}
-
-const content=document.createElement("div");
-content.className="section-content";
-
-nodes.forEach(node=>content.appendChild(node));
-section.appendChild(content);
-
-const btn=document.createElement("button");
-btn.className="section-toggle";
-btn.type="button";
-btn.textContent=index===0 ? "Ocultar" : "Mostrar";
-h2.appendChild(btn);
-
-if(index>0){
-section.classList.add("collapsed");
-}
-
-function alternar(){
-section.classList.toggle("collapsed");
-btn.textContent=section.classList.contains("collapsed") ? "Mostrar" : "Ocultar";
-}
-
-btn.addEventListener("click",function(e){
-e.stopPropagation();
-alternar();
-});
-
-h2.addEventListener("click",function(e){
-if(e.target===btn) return;
-alternar();
-});
-
-section.dataset.readyToggle="1";
-});
-}
-
 inicializarSeccionesDesplegables();
-cargarDashboard();
+await cargarDashboard();
 
 }catch(error){
 console.error(error);
@@ -2301,59 +1829,8 @@ const {error}=await supabaseClient
 if(error) throw error;
 
 mostrarOk("Solicitud de paciente eliminada correctamente.");
-await 
-function inicializarSeccionesDesplegables(){
-document.querySelectorAll(".section").forEach((section,index)=>{
-if(section.dataset.readyToggle==="1") return;
-
-const h2=section.querySelector("h2");
-if(!h2) return;
-
-const nodes=[];
-let n=h2.nextSibling;
-while(n){
-const next=n.nextSibling;
-nodes.push(n);
-n=next;
-}
-
-const content=document.createElement("div");
-content.className="section-content";
-
-nodes.forEach(node=>content.appendChild(node));
-section.appendChild(content);
-
-const btn=document.createElement("button");
-btn.className="section-toggle";
-btn.type="button";
-btn.textContent=index===0 ? "Ocultar" : "Mostrar";
-h2.appendChild(btn);
-
-if(index>0){
-section.classList.add("collapsed");
-}
-
-function alternar(){
-section.classList.toggle("collapsed");
-btn.textContent=section.classList.contains("collapsed") ? "Mostrar" : "Ocultar";
-}
-
-btn.addEventListener("click",function(e){
-e.stopPropagation();
-alternar();
-});
-
-h2.addEventListener("click",function(e){
-if(e.target===btn) return;
-alternar();
-});
-
-section.dataset.readyToggle="1";
-});
-}
-
 inicializarSeccionesDesplegables();
-cargarDashboard();
+await cargarDashboard();
 
 }catch(error){
 console.error(error);
@@ -2377,59 +1854,8 @@ const {error}=await supabaseClient
 if(error) throw error;
 
 mostrarOk("Solicitudes de pacientes antiguas eliminadas correctamente.");
-await 
-function inicializarSeccionesDesplegables(){
-document.querySelectorAll(".section").forEach((section,index)=>{
-if(section.dataset.readyToggle==="1") return;
-
-const h2=section.querySelector("h2");
-if(!h2) return;
-
-const nodes=[];
-let n=h2.nextSibling;
-while(n){
-const next=n.nextSibling;
-nodes.push(n);
-n=next;
-}
-
-const content=document.createElement("div");
-content.className="section-content";
-
-nodes.forEach(node=>content.appendChild(node));
-section.appendChild(content);
-
-const btn=document.createElement("button");
-btn.className="section-toggle";
-btn.type="button";
-btn.textContent=index===0 ? "Ocultar" : "Mostrar";
-h2.appendChild(btn);
-
-if(index>0){
-section.classList.add("collapsed");
-}
-
-function alternar(){
-section.classList.toggle("collapsed");
-btn.textContent=section.classList.contains("collapsed") ? "Mostrar" : "Ocultar";
-}
-
-btn.addEventListener("click",function(e){
-e.stopPropagation();
-alternar();
-});
-
-h2.addEventListener("click",function(e){
-if(e.target===btn) return;
-alternar();
-});
-
-section.dataset.readyToggle="1";
-});
-}
-
 inicializarSeccionesDesplegables();
-cargarDashboard();
+await cargarDashboard();
 
 }catch(error){
 console.error(error);
@@ -2545,59 +1971,8 @@ const {error}=await supabaseClient
 if(error) throw error;
 
 mostrarOk("Compra eliminada correctamente.");
-await 
-function inicializarSeccionesDesplegables(){
-document.querySelectorAll(".section").forEach((section,index)=>{
-if(section.dataset.readyToggle==="1") return;
-
-const h2=section.querySelector("h2");
-if(!h2) return;
-
-const nodes=[];
-let n=h2.nextSibling;
-while(n){
-const next=n.nextSibling;
-nodes.push(n);
-n=next;
-}
-
-const content=document.createElement("div");
-content.className="section-content";
-
-nodes.forEach(node=>content.appendChild(node));
-section.appendChild(content);
-
-const btn=document.createElement("button");
-btn.className="section-toggle";
-btn.type="button";
-btn.textContent=index===0 ? "Ocultar" : "Mostrar";
-h2.appendChild(btn);
-
-if(index>0){
-section.classList.add("collapsed");
-}
-
-function alternar(){
-section.classList.toggle("collapsed");
-btn.textContent=section.classList.contains("collapsed") ? "Mostrar" : "Ocultar";
-}
-
-btn.addEventListener("click",function(e){
-e.stopPropagation();
-alternar();
-});
-
-h2.addEventListener("click",function(e){
-if(e.target===btn) return;
-alternar();
-});
-
-section.dataset.readyToggle="1";
-});
-}
-
 inicializarSeccionesDesplegables();
-cargarDashboard();
+await cargarDashboard();
 
 }catch(error){
 console.error(error);
@@ -2618,59 +1993,8 @@ const {error}=await supabaseClient
 if(error) throw error;
 
 mostrarOk("Pago MNBE eliminado correctamente.");
-await 
-function inicializarSeccionesDesplegables(){
-document.querySelectorAll(".section").forEach((section,index)=>{
-if(section.dataset.readyToggle==="1") return;
-
-const h2=section.querySelector("h2");
-if(!h2) return;
-
-const nodes=[];
-let n=h2.nextSibling;
-while(n){
-const next=n.nextSibling;
-nodes.push(n);
-n=next;
-}
-
-const content=document.createElement("div");
-content.className="section-content";
-
-nodes.forEach(node=>content.appendChild(node));
-section.appendChild(content);
-
-const btn=document.createElement("button");
-btn.className="section-toggle";
-btn.type="button";
-btn.textContent=index===0 ? "Ocultar" : "Mostrar";
-h2.appendChild(btn);
-
-if(index>0){
-section.classList.add("collapsed");
-}
-
-function alternar(){
-section.classList.toggle("collapsed");
-btn.textContent=section.classList.contains("collapsed") ? "Mostrar" : "Ocultar";
-}
-
-btn.addEventListener("click",function(e){
-e.stopPropagation();
-alternar();
-});
-
-h2.addEventListener("click",function(e){
-if(e.target===btn) return;
-alternar();
-});
-
-section.dataset.readyToggle="1";
-});
-}
-
 inicializarSeccionesDesplegables();
-cargarDashboard();
+await cargarDashboard();
 
 }catch(error){
 console.error(error);
@@ -2900,7 +2224,7 @@ await supabaseClient.auth.signOut();
 window.location.href="login.html";
 }
 
-
+\n\nfunction obtenerValorDiploma(id){\nreturn (document.getElementById(id)?.value || "").trim();\n}\n\nfunction generarRegistroDiploma(){\nconst year = new Date().getFullYear();\nconst n = String(Date.now()).slice(-6);\nreturn `IFCD-${year}-${n}`;\n}\n\nfunction limpiarFormularioDiploma(){\ndocument.getElementById("dip_nombre").value="";\ndocument.getElementById("dip_identidad").value="";\ndocument.getElementById("dip_tipo_documento").value="TÃ­tulo Profesional";\ndocument.getElementById("dip_descriptor").value="Institucional Privado";\ndocument.getElementById("dip_programa").value="Medicina NaturopÃ¡tica";\ndocument.getElementById("dip_titulo_otorgado").value="NaturÃ³pata";\ndocument.getElementById("dip_fecha").value=fechaHoyChile();\ndocument.getElementById("dip_cve").value="";\ndocument.getElementById("dip_registro").value="";\ndocument.getElementById("dip_observacion").value="";\ndocument.getElementById("resultadoDiploma").innerHTML="";\n}\n\nasync function generarPdfDiploma(datos){\nconst { jsPDF } = window.jspdf;\nconst doc = new jsPDF("l","mm","a4");\n\nconst W = 297;\nconst H = 210;\nconst verde = [22,64,53];\nconst dorado = [186,154,90];\nconst marfil = [248,245,239];\nconst gris = [70,70,70];\n\ndoc.setFillColor(marfil[0],marfil[1],marfil[2]);\ndoc.rect(0,0,W,H,"F");\n\n// Borde fino institucional\ndoc.setDrawColor(verde[0],verde[1],verde[2]);\ndoc.setLineWidth(0.5);\ndoc.rect(10,10,W-20,H-20);\ndoc.setDrawColor(dorado[0],dorado[1],dorado[2]);\ndoc.setLineWidth(0.25);\ndoc.rect(14,14,W-28,H-28);\n\n// Encabezado\ndoc.setTextColor(verde[0],verde[1],verde[2]);\ndoc.setFont("times","bold");\ndoc.setFontSize(16);\ndoc.text("INSTITUTO DE FORMACIÃN CLÃNICA", W/2, 28, {align:"center"});\ndoc.setFontSize(32);\ndoc.text("DELTA", W/2, 43, {align:"center"});\ndoc.setFontSize(9);\ndoc.setTextColor(dorado[0],dorado[1],dorado[2]);\ndoc.text("SCIENTIA â¢ INTEGRITAS â¢ HUMANITAS", W/2, 51, {align:"center"});\n\n// Sello seco simulado\ndoc.setTextColor(218,212,200);\ndoc.setDrawColor(218,212,200);\ndoc.setLineWidth(0.4);\ndoc.circle(240,145,25);\ndoc.circle(240,145,20);\ndoc.setFont("times","bold");\ndoc.setFontSize(14);\ndoc.text("IFCD",240,143,{align:"center"});\ndoc.setFontSize(7);\ndoc.text("SELLO INSTITUCIONAL",240,151,{align:"center"});\n\n// Cuerpo\ndoc.setTextColor(gris[0],gris[1],gris[2]);\ndoc.setFont("times","normal");\ndoc.setFontSize(13);\ndoc.text("El Instituto de FormaciÃ³n ClÃ­nica Delta", W/2, 67, {align:"center"});\ndoc.text("confiere el presente", W/2, 76, {align:"center"});\n\ndoc.setTextColor(verde[0],verde[1],verde[2]);\ndoc.setFont("times","bold");\ndoc.setFontSize(28);\ndoc.text(datos.tipo_documento.toUpperCase(), W/2, 94, {align:"center"});\n\nif(datos.descriptor){\ndoc.setTextColor(dorado[0],dorado[1],dorado[2]);\ndoc.setFontSize(11);\ndoc.text(datos.descriptor.toUpperCase(), W/2, 102, {align:"center"});\n}\n\ndoc.setTextColor(gris[0],gris[1],gris[2]);\ndoc.setFont("times","normal");\ndoc.setFontSize(12);\ndoc.text("a", W/2, 116, {align:"center"});\n\ndoc.setTextColor(25,25,25);\ndoc.setFont("times","bolditalic");\ndoc.setFontSize(25);\ndoc.text(datos.nombre, W/2, 130, {align:"center"});\n\ndoc.setFont("times","normal");\ndoc.setFontSize(10);\ndoc.setTextColor(gris[0],gris[1],gris[2]);\ndoc.text("N.Âº de identidad: " + datos.identidad, W/2, 138, {align:"center"});\n\nconst textoPrograma = "por haber aprobado satisfactoriamente el plan de estudios del programa:";\ndoc.setFontSize(11);\ndoc.text(textoPrograma, W/2, 151, {align:"center"});\n\ndoc.setFont("times","bold");\ndoc.setFontSize(15);\ndoc.setTextColor(verde[0],verde[1],verde[2]);\ndoc.text(datos.programa.toUpperCase(), W/2, 161, {align:"center"});\n\ndoc.setFont("times","normal");\ndoc.setFontSize(11);\ndoc.setTextColor(gris[0],gris[1],gris[2]);\ndoc.text("otorgÃ¡ndole el tÃ­tulo, diploma o certificaciÃ³n de:", W/2, 172, {align:"center"});\n\ndoc.setFont("times","bold");\ndoc.setFontSize(20);\ndoc.setTextColor(verde[0],verde[1],verde[2]);\ndoc.text(datos.titulo_otorgado.toUpperCase(), W/2, 184, {align:"center"});\n\n// Firma y verificaciÃ³n\ndoc.setTextColor(50,50,50);\ndoc.setFont("times","normal");\ndoc.setFontSize(9);\ndoc.text("Fecha de emisiÃ³n: " + datos.fecha_legible, 25, 183);\ndoc.text("Registro Institucional: " + datos.registro_institucional, 25, 190);\ndoc.text("Firmado electrÃ³nicamente", 25, 197);\ndoc.text("CVE: " + datos.cve, 25, 202);\n\ndoc.setDrawColor(90,90,90);\ndoc.line(120,193,190,193);\ndoc.setFont("times","bold");\ndoc.setFontSize(10);\ndoc.text("Representante y Director AcadÃ©mico",155,199,{align:"center"});\n\n// Nota legal pequeÃ±a\nconst nota = "Este tÃ­tulo corresponde a una certificaciÃ³n otorgada por una instituciÃ³n privada de formaciÃ³n. No constituye un grado acadÃ©mico ni un tÃ­tulo profesional oficial reconocido por el Estado de Chile. El ejercicio profesional se rige por la normativa sanitaria vigente, incluyendo los requisitos que establezca la autoridad competente.";\ndoc.setFont("times","normal");\ndoc.setFontSize(6.2);\ndoc.setTextColor(100,100,100);\nconst lineas = doc.splitTextToSize(nota, 250);\ndoc.text(lineas, W/2, 204, {align:"center"});\n\nconst filename = (datos.registro_institucional || "diploma") + ".pdf";\nreturn {\nblob: doc.output("blob"),\nfilename: filename\n};\n}\n\nasync function subirDiplomaStorage(pdfBlob, filename){\nconst {error}=await supabaseClient.storage\n.from(DIPLOMAS_BUCKET)\n.upload(filename, pdfBlob, {contentType:"application/pdf", upsert:true});\n\nif(error) throw error;\n\nconst {data}=supabaseClient.storage\n.from(DIPLOMAS_BUCKET)\n.getPublicUrl(filename);\n\nreturn data.publicUrl;\n}\n\nasync function generarYGuardarDiploma(){\nlimpiarMensajes();\n\nconst datos={\nnombre: obtenerValorDiploma("dip_nombre"),\nidentidad: obtenerValorDiploma("dip_identidad"),\ntipo_documento: obtenerValorDiploma("dip_tipo_documento") || "TÃ­tulo Profesional",\ndescriptor: obtenerValorDiploma("dip_descriptor"),\nprograma: obtenerValorDiploma("dip_programa") || "Medicina NaturopÃ¡tica",\ntitulo_otorgado: obtenerValorDiploma("dip_titulo_otorgado") || "NaturÃ³pata",\nfecha_emision: obtenerValorDiploma("dip_fecha") || fechaHoyChile(),\ncve: obtenerValorDiploma("dip_cve"),\nregistro_institucional: obtenerValorDiploma("dip_registro") || generarRegistroDiploma(),\nobservacion: obtenerValorDiploma("dip_observacion"),\nestado:"emitido"\n};\n\nif(!datos.nombre){ mostrarError("Debes ingresar el nombre completo del estudiante."); return; }\nif(!datos.identidad){ mostrarError("Debes ingresar el nÃºmero de identidad, RUT o pasaporte."); return; }\nif(!datos.cve){ mostrarError("Debes ingresar manualmente el CVE de la Firma ElectrÃ³nica Avanzada."); return; }\n\ndatos.fecha_legible = new Date(datos.fecha_emision + "T12:00:00").toLocaleDateString("es-CL");\n\ndocument.getElementById("dip_registro").value = datos.registro_institucional;\n\ntry{\nmostrarInfo("Generando diploma PDF y guardando en Registro AcadÃ©mico...");\n\nconst pdf = await generarPdfDiploma(datos);\nconst pdfUrl = await subirDiplomaStorage(pdf.blob, pdf.filename);\n\nconst payload={\nnombre_estudiante: datos.nombre,\nnumero_identidad: datos.identidad,\ntipo_documento: datos.tipo_documento,\ndescriptor: datos.descriptor,\nprograma: datos.programa,\ntitulo_otorgado: datos.titulo_otorgado,\nfecha_emision: datos.fecha_emision,\ncve: datos.cve,\nregistro_institucional: datos.registro_institucional,\nobservacion: datos.observacion,\npdf_url: pdfUrl,\nestado: datos.estado\n};\n\nconst {error}=await supabaseClient\n.from("diplomas")\n.insert([payload]);\n\nif(error) throw error;\n\ndocument.getElementById("resultadoDiploma").innerHTML = `\n<div class="success" style="display:block;">\n<strong>Diploma generado correctamente.</strong><br>\nRegistro: ${limpiarTexto(datos.registro_institucional)}<br>\nCVE: ${limpiarTexto(datos.cve)}<br>\n<a href="${pdfUrl}" target="_blank">Descargar PDF</a>\n</div>`;\n\nmostrarOk("Diploma generado y guardado correctamente.");\nawait cargarDiplomasSeguro(false);\n\n}catch(error){\nconsole.error(error);\nmostrarError("Error al generar diploma: " + error.message + ". Verifica que exista la tabla 'diplomas' y el bucket 'diplomas' en Supabase.");\n}\n}\n\nasync function cargarDiplomasSeguro(mostrarMensaje=true){\ntry{\nconst {data,error}=await supabaseClient\n.from("diplomas")\n.select("*")\n.order("created_at",{ascending:false});\n\nif(error) throw error;\n\ndiplomasGlobal=data||[];\npintarTablaDiplomas(diplomasGlobal);\nconst contador=document.getElementById("diplomasEmitidos");\nif(contador) contador.innerText=diplomasGlobal.length;\nif(mostrarMensaje) mostrarOk("Diplomas actualizados.");\n}catch(error){\nconsole.warn("No se pudo cargar diplomas:",error.message);\nconst tbody=document.querySelector("#tablaDiplomas tbody");\nif(tbody){\ntbody.innerHTML=`<tr><td colspan="10">No se pudo cargar la tabla diplomas. Primero crea la tabla y el bucket en Supabase.</td></tr>`;\n}\nconst contador=document.getElementById("diplomasEmitidos");\nif(contador) contador.innerText="0";\n}\n}\n\nfunction pintarTablaDiplomas(diplomas){\nconst tbody=document.querySelector("#tablaDiplomas tbody");\nif(!tbody) return;\ntbody.innerHTML="";\n\nif(!diplomas || diplomas.length===0){\ntbody.innerHTML=`<tr><td colspan="10">No hay diplomas emitidos.</td></tr>`;\nreturn;\n}\n\ndiplomas.forEach(d=>{\nconst estado=(d.estado || "emitido").toLowerCase();\nconst tr=document.createElement("tr");\ntr.innerHTML=`\n<td>${d.fecha_emision ? new Date(d.fecha_emision + "T12:00:00").toLocaleDateString("es-CL") : formatearFecha(d.created_at)}</td>\n<td>${limpiarTexto(d.nombre_estudiante || "-")}</td>\n<td>${limpiarTexto(d.numero_identidad || "-")}</td>\n<td>${limpiarTexto(d.tipo_documento || "-")}</td>\n<td>${limpiarTexto(d.programa || "-")}</td>\n<td>${limpiarTexto(d.titulo_otorgado || "-")}</td>\n<td>${limpiarTexto(d.cve || "-")}</td>\n<td>${limpiarTexto(d.registro_institucional || "-")}</td>\n<td><span class="badge ${estado}">${limpiarTexto(d.estado || "emitido")}</span></td>\n<td>${d.pdf_url ? `<a href="${d.pdf_url}" target="_blank">Descargar</a>` : "-"}</td>\n`;\ntbody.appendChild(tr);\n});\n}\n
 function inicializarSeccionesDesplegables(){
 document.querySelectorAll(".section").forEach((section,index)=>{
 if(section.dataset.readyToggle==="1") return;
@@ -2946,14 +2270,3 @@ h2.addEventListener("click",function(e){
 if(e.target===btn) return;
 alternar();
 });
-
-section.dataset.readyToggle="1";
-});
-}
-
-inicializarSeccionesDesplegables();
-cargarDashboard();
-</script>
-
-</body>
-</html>
