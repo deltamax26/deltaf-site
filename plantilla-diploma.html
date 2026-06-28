@@ -258,6 +258,20 @@ button{
   text-align:left;
 }
 
+#textoCedula{
+  font-size:22px;
+  font-weight:700;
+  text-align:left;
+  color:#071713;
+}
+
+#textoPlan{
+  font-size:22px;
+  font-weight:700;
+  text-align:center;
+  color:#071713;
+}
+
 .guides .vline,
 .guides .hline{
   position:absolute;
@@ -359,6 +373,16 @@ button{
     </div>
 
     <div class="campo">
+      <label>Texto Cedula</label>
+      <input id="inputTextoCedula" value="Cedula de Identidad NÂ°:">
+    </div>
+
+    <div class="campo">
+      <label>Texto Plan de Estudios</label>
+      <input id="inputTextoPlan" value="por haber aprobado satisfactoriamente el plan de estudios de:">
+    </div>
+
+    <div class="campo">
       <label>Carrera / Curso / Diplomado</label>
       <input id="inputPrograma" value="Medicina Naturopatica">
     </div>
@@ -411,7 +435,7 @@ button{
     </div>
 
     <section id="stage" class="stage">
-      <img class="fondo" src="img/diploma-base.jpeg?v=20260628-v6" alt="Diploma base Delta">
+      <img class="fondo" src="img/diploma-base.jpeg?v=20260628-v7" alt="Diploma base Delta">
 
       <div id="guides" class="guides" style="display:none;">
         <div class="vline"></div>
@@ -420,7 +444,9 @@ button{
 
       <div id="tituloDocumento" class="textbox" data-key="tituloDocumento"><span>CURSO</span><div class="handle"></div></div>
       <div id="nombreAlumno" class="textbox" data-key="nombreAlumno"><span>Victor Jose Carrero Carrero</span><div class="handle"></div></div>
+      <div id="textoCedula" class="textbox" data-key="textoCedula"><span>Cedula de Identidad NÂ°:</span><div class="handle"></div></div>
       <div id="rutAlumno" class="textbox" data-key="rutAlumno"><span>12.345.678-9</span><div class="handle"></div></div>
+      <div id="textoPlan" class="textbox" data-key="textoPlan"><span>por haber aprobado satisfactoriamente el plan de estudios de:</span><div class="handle"></div></div>
       <div id="programa" class="textbox" data-key="programa"><span>Medicina Naturopatica</span><div class="handle"></div></div>
       <div id="documentoOtorgado" class="textbox" data-key="documentoOtorgado"><span>Titulo de Naturopata</span><div class="handle"></div></div>
       <div id="registro" class="textbox" data-key="registro"><span>123 132 1234</span><div class="handle"></div></div>
@@ -437,8 +463,10 @@ const STORAGE_KEY = "delta_diploma_v5_coords";
 const defaultCoords = {
   tituloDocumento:{x:515,y:405,w:510,h:65},
   nombreAlumno:{x:420,y:540,w:700,h:70},
-  rutAlumno:{x:795,y:622,w:270,h:36},
-  programa:{x:480,y:690,w:575,h:40},
+  textoCedula:{x:430,y:625,w:350,h:32},
+  rutAlumno:{x:795,y:625,w:270,h:32},
+  textoPlan:{x:385,y:675,w:770,h:32},
+  programa:{x:480,y:715,w:575,h:40},
   documentoOtorgado:{x:625,y:742,w:430,h:40},
   registro:{x:655,y:850,w:205,h:28},
   fecha:{x:1010,y:850,w:290,h:28},
@@ -462,15 +490,17 @@ function setStatus(msg,type="ok"){
 
 function limpiarMojibake(texto){
   return String(texto || "")
-    .replaceAll("ÃÂ¡","Ã¡").replaceAll("ÃÂ©","Ã©").replaceAll("ÃÂ­","Ã­").replaceAll("ÃÂ³","Ã³").replaceAll("ÃÂº","Ãº")
-    .replaceAll("ÃÂ±","Ã±").replaceAll("Ãâ","Ã")
-    .replaceAll("ÃÂ°","Â°");
+    .replaceAll("ÃÂÃÂ¡","ÃÂ¡").replaceAll("ÃÂÃÂ©","ÃÂ©").replaceAll("ÃÂÃÂ­","ÃÂ­").replaceAll("ÃÂÃÂ³","ÃÂ³").replaceAll("ÃÂÃÂº","ÃÂº")
+    .replaceAll("ÃÂÃÂ±","ÃÂ±").replaceAll("ÃÂÃ¢ÂÂ","ÃÂ")
+    .replaceAll("Ã\x82ÃÂ°","Â°").replaceAll("ÃÂ°","Â°");
 }
 
 function actualizarDiploma(){
   el("tituloDocumento").querySelector("span").innerText = limpiarMojibake(el("inputTituloDocumento").value);
   el("nombreAlumno").querySelector("span").innerText = limpiarMojibake(el("inputNombreAlumno").value);
+  el("textoCedula").querySelector("span").innerText = limpiarMojibake(el("inputTextoCedula").value);
   el("rutAlumno").querySelector("span").innerText = limpiarMojibake(el("inputRutAlumno").value);
+  el("textoPlan").querySelector("span").innerText = limpiarMojibake(el("inputTextoPlan").value);
   el("programa").querySelector("span").innerText = limpiarMojibake(el("inputPrograma").value);
   el("documentoOtorgado").querySelector("span").innerText = limpiarMojibake(el("inputDocumentoOtorgado").value);
   el("registro").querySelector("span").innerText = limpiarMojibake(el("inputRegistro").value);
