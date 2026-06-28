@@ -310,66 +310,30 @@ button{
 }
 
 @media print{
-
-html,
-body{
-    width:297mm;
-    height:210mm;
-    margin:0 !important;
-    padding:0 !important;
-    overflow:hidden !important;
-    background:#fff !important;
+  body{background:white}
+  .topbar,.panel,.stage-tools{display:none!important}
+  .layout{display:block!important}
+  .stage-wrap{padding:0!important;overflow:hidden!important}
+  .stage{
+    margin:0!important;
+    width:297mm!important;
+    height:210mm!important;
+    box-shadow:none!important;
+    transform:none!important;
+  }
+  .textbox{
+    border:none!important;
+    background:transparent!important;
+  }
+  .handle{display:none!important}
+  @page{size:A4 landscape;margin:0}
 }
 
-.topbar,
-.panel,
-.stage-tools{
-    display:none !important;
-}
-
-.layout{
-    display:block !important;
-    width:297mm !important;
-    height:210mm !important;
-    margin:0 !important;
-    padding:0 !important;
-}
-
-.stage-wrap{
-    margin:0 !important;
-    padding:0 !important;
-    overflow:hidden !important;
-}
-
-.stage{
-    position:relative;
-    width:297mm !important;
-    height:210mm !important;
-    margin:0 auto !important;
-    padding:0 !important;
-    box-shadow:none !important;
-    transform:none !important;
-    overflow:hidden !important;
-    page-break-before:avoid !important;
-    page-break-after:avoid !important;
-    page-break-inside:avoid !important;
-}
-
-.textbox{
-    border:none !important;
-    background:transparent !important;
-}
-
-.handle{
-    display:none !important;
-}
-
-@page{
-    size:A4 landscape;
-    margin:0;
-}
-}
 </style>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+
 </head>
 
 <body>
@@ -381,7 +345,7 @@ body{
   </div>
   <div class="top-actions">
     <button class="btn-verde" onclick="guardarCoordenadas()">Guardar coordenadas</button>
-    <button class="btn-dorado" onclick="window.print()">Imprimir / PDF</button>
+    <button class="btn-dorado" onclick="descargarPDF()">Descargar PDF</button>
     <button class="btn-gris" onclick="resetearCoordenadas()">Restablecer</button>
   </div>
 </header>
@@ -415,7 +379,7 @@ body{
 
     <div class="campo">
       <label>Texto Cedula</label>
-      <input id="inputTextoCedula" value="Cedula de Identidad NÃÂ°:">
+      <input id="inputTextoCedula" value="Cedula de Identidad NÂ°:">
     </div>
 
     <div class="campo">
@@ -451,9 +415,9 @@ body{
     <button class="btn-azul" style="width:100%;margin-top:6px;" onclick="actualizarDiploma()">Actualizar textos</button>
 
     <div class="help">
-      <strong>Como ajustar:</strong><br>
+      <strong>CÃ³mo ajustar:</strong><br>
       1. Toca o haz clic sobre un texto.<br>
-      2. Arrastralo hasta su posicion.<br>
+      2. ArrÃ¡stralo hasta su posiciÃ³n.<br>
       3. Usa flechas para mover 1 px.<br>
       4. Usa Shift + flechas para mover 10 px.<br>
       5. Presiona <strong>Guardar coordenadas</strong>.
@@ -472,11 +436,11 @@ body{
       <button class="btn-gris" onclick="zoomOut()">- Zoom</button>
       <button class="btn-gris" onclick="zoomReset()">100%</button>
       <button class="btn-gris" onclick="zoomIn()">+ Zoom</button>
-      <button class="btn-gris" onclick="toggleGuides()">Mostrar/Ocultar guias</button>
+      <button class="btn-gris" onclick="toggleGuides()">Mostrar/Ocultar guÃ­as</button>
     </div>
 
     <section id="stage" class="stage">
-      <img class="fondo" src="img/diploma-base.jpeg?v=20260628-v7" alt="Diploma base Delta">
+      <img class="fondo" src="img/diploma-base.jpeg?v=20260628-v10" alt="Diploma base Delta">
 
       <div id="guides" class="guides" style="display:none;">
         <div class="vline"></div>
@@ -485,7 +449,7 @@ body{
 
       <div id="tituloDocumento" class="textbox" data-key="tituloDocumento"><span>CURSO</span><div class="handle"></div></div>
       <div id="nombreAlumno" class="textbox" data-key="nombreAlumno"><span>Victor Jose Carrero Carrero</span><div class="handle"></div></div>
-      <div id="textoCedula" class="textbox" data-key="textoCedula"><span>Cedula de Identidad NÃÂ°:</span><div class="handle"></div></div>
+      <div id="textoCedula" class="textbox" data-key="textoCedula"><span>Cedula de Identidad NÂ°:</span><div class="handle"></div></div>
       <div id="rutAlumno" class="textbox" data-key="rutAlumno"><span>12.345.678-9</span><div class="handle"></div></div>
       <div id="textoPlan" class="textbox" data-key="textoPlan"><span>por haber aprobado satisfactoriamente el plan de estudios de:</span><div class="handle"></div></div>
       <div id="programa" class="textbox" data-key="programa"><span>Medicina Naturopatica</span><div class="handle"></div></div>
@@ -583,7 +547,7 @@ function cargarCoordenadas(){
   const saved = localStorage.getItem(STORAGE_KEY);
   if(!saved){
     aplicarCoords(defaultCoords);
-    setStatus("No habia coordenadas guardadas. Se cargaron las iniciales.");
+    setStatus("No habÃ­a coordenadas guardadas. Se cargaron las iniciales.");
     return;
   }
   aplicarCoords(JSON.parse(saved));
@@ -591,7 +555,7 @@ function cargarCoordenadas(){
 }
 
 function resetearCoordenadas(){
-  if(!confirm("Restablecer posiciones iniciales?")) return;
+  if(!confirm("Restablecer posiciÃ³nes iniciales?")) return;
   localStorage.removeItem(STORAGE_KEY);
   aplicarCoords(defaultCoords);
   setStatus("Posiciones restablecidas.");
@@ -694,19 +658,66 @@ document.addEventListener("keydown",e=>{
   if(e.key === "ArrowDown"){moverSeleccion(0,step);e.preventDefault();}
 });
 
+
+async function descargarPDF(){
+  const stage = el("stage");
+  const oldTransform = stage.style.transform;
+  const oldZoom = zoom;
+
+  try{
+    // Quitar selecciÃ³n y guÃ­as para que no aparezcan en el PDF
+    document.querySelectorAll(".textbox").forEach(n=>n.classList.remove("selected"));
+    el("guides").style.display = "none";
+    selected = null;
+
+    // Forzar escala real del lienzo antes de capturar
+    zoom = 1;
+    stage.style.transform = "scale(1)";
+
+    // Esperar un instante para que el navegador renderice correctamente
+    await new Promise(resolve => setTimeout(resolve, 250));
+
+    const canvas = await html2canvas(stage, {
+      scale: 3,
+      useCORS: true,
+      allowTaint: true,
+      backgroundColor: null,
+      width: 1536,
+      height: 1024,
+      windowWidth: 1536,
+      windowHeight: 1024,
+      scrollX: 0,
+      scrollY: 0
+    });
+
+    const imgData = canvas.toDataURL("image/jpeg", 0.98);
+
+    const { jsPDF } = window.jspdf;
+    const pdf = new jsPDF({
+      orientation: "landscape",
+      unit: "mm",
+      format: "a4",
+      compress: true
+    });
+
+    pdf.addImage(imgData, "JPEG", 0, 0, 297, 210);
+    pdf.save("Diploma-Delta.pdf");
+
+    setStatus("PDF descargado correctamente.");
+  }catch(error){
+    console.error(error);
+    setStatus("Error al generar el PDF. Revisa que la imagen diploma-base.jpeg exista en /img.", "err");
+  }finally{
+    zoom = oldZoom || 1;
+    stage.style.transform = oldTransform || "scale(1)";
+    actualizarCoordInfo();
+  }
+}
+
 window.addEventListener("load",()=>{
   actualizarDiploma();
   cargarCoordenadas();
 });
-
-window.onbeforeprint = () => {
-  document.body.style.zoom = "100%";
-};
-
-window.onafterprint = () => {
-  document.body.style.zoom = "";
-};
-
 </script>
 
 </body>
