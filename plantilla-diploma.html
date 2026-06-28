@@ -116,12 +116,12 @@ button{
   border-radius:4px;
 }
 
-/* AJUSTADO AL FONDO DEFINITIVO img/diploma-base.png */
+/* COORDENADAS AJUSTADAS AL DISEÃO FINAL APROBADO */
 
 /* DIPLOMA / CURSO / CERTIFICADO / TÃTULO PROFESIONAL */
 #tituloDocumento{
   left:335px;
-  top:380px;
+  top:395px;
   width:865px;
   font-size:58px;
   font-weight:700;
@@ -132,64 +132,68 @@ button{
 
 /* Nombre completo */
 #nombreAlumno{
-  left:350px;
-  top:515px;
-  width:835px;
+  left:335px;
+  top:520px;
+  width:865px;
   font-family:"Snell Roundhand","Zapfino","Brush Script MT",cursive;
   font-size:62px;
   color:#050505;
 }
 
-/* CÃ©dula / RUT */
+/* CÃ©dula / RUT: debe quedar al lado derecho del rÃ³tulo */
 #rutAlumno{
-  left:640px;
-  top:615px;
-  width:300px;
-  font-size:24px;
+  left:790px;
+  top:620px;
+  width:285px;
+  font-size:25px;
+  font-weight:700;
+  text-align:left;
 }
 
 /* Programa / carrera / curso / diplomado */
 #programa{
-  left:410px;
+  left:405px;
   top:705px;
-  width:720px;
-  font-size:29px;
+  width:725px;
+  font-size:30px;
   font-weight:700;
+  color:#00351f;
 }
 
 /* Documento otorgado */
 #documentoOtorgado{
-  left:585px;
-  top:758px;
-  width:420px;
-  font-size:25px;
+  left:525px;
+  top:763px;
+  width:520px;
+  font-size:29px;
   font-weight:700;
+  color:#00351f;
 }
 
-/* Registro institucional */
+/* Registro institucional: al lado del rÃ³tulo */
 #registro{
-  left:780px;
-  top:838px;
-  width:270px;
-  font-size:22px;
+  left:675px;
+  top:852px;
+  width:215px;
+  font-size:20px;
   text-align:left;
 }
 
-/* Fecha completa */
+/* Fecha completa: al lado de Fecha de EmisiÃ³n */
 #fecha{
-  left:665px;
-  top:890px;
-  width:380px;
-  font-size:22px;
+  left:975px;
+  top:852px;
+  width:280px;
+  font-size:20px;
   text-align:left;
 }
 
 /* CVE entregado por FEA */
 #cveFea{
-  left:1180px;
-  top:902px;
-  width:290px;
-  font-size:21px;
+  left:1197px;
+  top:908px;
+  width:250px;
+  font-size:22px;
   font-weight:700;
   text-align:left;
 }
@@ -239,7 +243,7 @@ button{
 
     <div class="campo">
       <label>Nombre completo</label>
-      <input id="inputNombreAlumno" value="Nombre Completo del Estudiante">
+      <input id="inputNombreAlumno" value="VÃ­ctor JosÃ© Carrero Carrero">
     </div>
 
     <div class="campo">
@@ -249,17 +253,17 @@ button{
 
     <div class="campo">
       <label>Carrera / Curso / Diplomado</label>
-      <input id="inputPrograma" value="Nombre de la Carrera, Curso o Diplomado">
+      <input id="inputPrograma" value="Medicina NaturopÃ¡tica">
     </div>
 
     <div class="campo">
       <label>Documento otorgado</label>
-      <input id="inputDocumentoOtorgado" value="TÃ­tulo Profesional">
+      <input id="inputDocumentoOtorgado" value="TÃ­tulo de Naturopata">
     </div>
 
     <div class="campo">
       <label>Registro Institucional NÂ°</label>
-      <input id="inputRegistro" value="">
+      <input id="inputRegistro" value="123 132 1234">
     </div>
 
     <div class="campo">
@@ -269,7 +273,7 @@ button{
 
     <div class="campo">
       <label>CVE FEA</label>
-      <input id="inputCveFea" value="">
+      <input id="inputCveFea" value="XXXXX">
     </div>
   </div>
 
@@ -282,16 +286,16 @@ button{
 
 <div class="hoja-wrap">
   <main class="hoja">
-    <img class="fondo" src="img/diploma-base.png?v=20260628-02" alt="Diploma base Delta">
+    <img class="fondo" src="img/diploma-base.png?v=20260628-03" alt="Diploma base Delta">
 
     <div id="tituloDocumento" class="texto" contenteditable="true">DIPLOMA</div>
-    <div id="nombreAlumno" class="texto" contenteditable="true">Nombre Completo del Estudiante</div>
+    <div id="nombreAlumno" class="texto" contenteditable="true">VÃ­ctor JosÃ© Carrero Carrero</div>
     <div id="rutAlumno" class="texto" contenteditable="true">12.345.678-9</div>
-    <div id="programa" class="texto" contenteditable="true">Nombre de la Carrera, Curso o Diplomado</div>
-    <div id="documentoOtorgado" class="texto" contenteditable="true">TÃ­tulo Profesional</div>
-    <div id="registro" class="texto" contenteditable="true"></div>
+    <div id="programa" class="texto" contenteditable="true">Medicina NaturopÃ¡tica</div>
+    <div id="documentoOtorgado" class="texto" contenteditable="true">TÃ­tulo de Naturopata</div>
+    <div id="registro" class="texto" contenteditable="true">123 132 1234</div>
     <div id="fecha" class="texto" contenteditable="true">28 de junio de 2026</div>
-    <div id="cveFea" class="texto" contenteditable="true"></div>
+    <div id="cveFea" class="texto" contenteditable="true">XXXXX</div>
   </main>
 </div>
 
@@ -326,8 +330,8 @@ function actualizarDiploma(){
 
   reducirFuenteSiNecesario(document.getElementById("tituloDocumento"), 58, 42);
   reducirFuenteSiNecesario(document.getElementById("nombreAlumno"), 62, 44);
-  reducirFuenteSiNecesario(document.getElementById("programa"), 29, 20);
-  reducirFuenteSiNecesario(document.getElementById("documentoOtorgado"), 25, 18);
+  reducirFuenteSiNecesario(document.getElementById("programa"), 30, 20);
+  reducirFuenteSiNecesario(document.getElementById("documentoOtorgado"), 29, 19);
 }
 
 function limpiar(){
