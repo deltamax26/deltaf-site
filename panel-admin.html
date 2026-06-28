@@ -2,7 +2,9 @@
 <html lang="es">
 <head>
 <meta charset="UTF-8">
-<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+<meta http-equiv="Pragma" content="no-cache">
+<meta http-equiv="Expires" content="0">
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>Panel Administrador | DeltaF</title>
@@ -33,7 +35,7 @@ th{background:#e0f2fe;color:#075985;}
 .pendiente{background:#fef3c7;color:#92400e;}
 .emitida,.aprobado,.aprobada{background:#dcfce7;color:#166534;}
 .rechazado,.rechazada{background:#fee2e2;color:#991b1b;}
-.modificacion{background:#ffedd5;color:#9a3412;}
+.modificaciÃ³n{background:#ffedd5;color:#9a3412;}
 .error{background:#fee2e2;color:#991b1b;padding:12px;border-radius:8px;display:none;margin-bottom:20px;}
 .success{background:#dcfce7;color:#166534;padding:12px;border-radius:8px;display:none;margin-bottom:20px;}
 .info{background:#eff6ff;color:#1e40af;padding:12px;border-radius:8px;display:none;margin-bottom:20px;}
@@ -69,7 +71,7 @@ th{background:#e0f2fe;color:#075985;}
 
 <header>
 <h1>Panel Administrador DeltaF</h1>
-<button class="logout" onclick="cerrarSesion()">Cerrar sesion</button>
+<button class="logout" onclick="cerrarSesion()">Cerrar sesiÃ³n</button>
 </header>
 
 <div class="container">
@@ -79,24 +81,24 @@ th{background:#e0f2fe;color:#075985;}
 <div id="mensajeInfo" class="info"></div>
 
 <div class="cards">
-<div class="card"><h3>Total ventas del dia</h3><p id="ventasDia">$0</p></div>
+<div class="card"><h3>Total ventas del dÃ­a</h3><p id="ventasDia">$0</p></div>
 <div class="card"><h3>Total ventas del mes</h3><p id="ventasMes">$0</p></div>
 <div class="card"><h3>Solicitudes profesionales pendientes</h3><p id="solicitudesPendientes">0</p></div>
 <div class="card"><h3>Solicitudes pacientes pendientes</h3><p id="pacientesPendientes">0</p></div>
 <div class="card"><h3>Compras pendientes</h3><p id="comprasPendientes">0</p></div>
 <div class="card"><h3>Pagos MNBE pendientes</h3><p id="pagosMNBEPendientes">0</p></div>
-<div class="card"><h3>Ordenes emitidas</h3><p id="ordenesEmitidas">0</p></div>
-<div class="card"><h3>Profesionales registrados</h3><p id="profesionalesRegistrados">0</p></div>
-<div class="card"><h3>Profesionales pendientes</h3><p id="profesionalesPendientes">0</p></div>
+<div class="card"><h3>Ãrdenes emitidas</h3><p id="Ã³rdenesEmitidas">0</p></div>
+<div class="card"><h3>ProfesiÃ³nales registrados</h3><p id="profesionalesRegistrados">0</p></div>
+<div class="card"><h3>ProfesiÃ³nales pendientes</h3><p id="profesionalesPendientes">0</p></div>
 <div class="card"><h3>Diplomas emitidos</h3><p id="diplomasEmitidos">0</p></div>
 </div>
 
 <div class="section">
-<h2>Registro Academico</h2>
+<h2>Registro AcadÃ©mico / Diplomas</h2>
 <p style="color:#64748b;margin-bottom:15px;">
-Modulo separado para emitir titulos, diplomas, certificados, cursos o constancias del Instituto de Formacion Clinica Delta.
+MÃ³dulo separado para emitir diplomas, certificados, cursos o tÃ­tulos del Instituto de FormaciÃ³n ClÃ­nica Delta. La plantilla usa el fondo oficial <strong>img/diploma-base.png</strong> y solo agrega los datos variables encima.
 </p>
-<a href="registro-academico.html" class="btn btn-main" style="display:inline-block;text-decoration:none;">Abrir Registro Academico</a>
+<a href="plantilla-diploma.html" class="btn btn-main" style="display:inline-block;text-decoration:none;">Abrir Plantilla de Diploma</a>
 </div>
 
 <div class="section">
@@ -105,44 +107,44 @@ Modulo separado para emitir titulos, diplomas, certificados, cursos o constancia
 Usar solo para datos de prueba. Los profesionales aprobados se mantienen. Los profesionales rechazados y solicitudes de pacientes pueden eliminarse manualmente.
 </p>
 
-<button class="btn btn-delete" onclick="eliminarProfesionalesRechazados()">Eliminar profesionales rechazados</button>
-<button class="btn btn-delete" onclick="eliminarPacientesAntiguos30Dias()">Eliminar solicitudes de pacientes con mas de 30 dias</button>
-<button class="btn btn-delete" onclick="resetearVentasDia()">Resetear ventas del dia</button>
+<button class="btn btn-delete" onclick="eliminarProfesiÃ³nalesRechazados()">Eliminar profesionales rechazados</button>
+<button class="btn btn-delete" onclick="eliminarPacientesAntiguos30Dias()">Eliminar solicitudes de pacientes con mÃ¡s de 30 dÃ­as</button>
+<button class="btn btn-delete" onclick="resetearVentasDia()">Resetear ventas del dÃ­a</button>
 <button class="btn btn-delete" onclick="resetearVentasMes()">Resetear ventas del mes</button>
 <button class="btn btn-delete" onclick="resetearTodasLasVentas()">Resetear TODAS las ventas</button>
 <button class="btn btn-reload" onclick="cargarDashboard()">Actualizar panel</button>
 </div>
 
 <div class="section">
-<h2>Gestion medica de solicitudes</h2>
+<h2>GestiÃ³n mÃ©dica de solicitudes</h2>
 <button class="btn btn-reload" onclick="cargarDashboard()">Actualizar</button>
-<button class="btn btn-export" onclick="exportarSolicitudesMedicasExcel()">Exportar solicitudes medicas</button>
+<button class="btn btn-export" onclick="exportarSolicitudesMedicasExcel()">Exportar solicitudes mÃ©dicas</button>
 
 <table id="tablaSolicitudesMedicas">
 <thead>
 <tr>
-<th>Codigo</th>
+<th>CÃ³digo</th>
 <th>Origen</th>
 <th>Paciente</th>
 <th>RUT</th>
 <th>Correo</th>
-<th>Examenes</th>
+<th>ExÃ¡menes</th>
 <th>Fecha</th>
 <th>Estado</th>
-<th>Acciones</th>
+<th>AcciÃ³nes</th>
 </tr>
 </thead>
 <tbody>
-<tr><td colspan="9">Cargando solicitudes medicas...</td></tr>
+<tr><td colspan="9">Cargando solicitudes mÃ©dicas...</td></tr>
 </tbody>
 </table>
 </div>
 
-<div id="detalleMedico" class="section" style="display:none;">
-<h2>Revision medica desde administracion</h2>
+<div id="detalleMÃ©dico" class="section" style="display:none;">
+<h2>RevisiÃ³n mÃ©dica desde administracion</h2>
 
 <div class="detail-grid">
-<div class="field"><small>Codigo</small><div id="detalleCodigo"></div></div>
+<div class="field"><small>CÃ³digo</small><div id="detalleCÃ³digo"></div></div>
 <div class="field"><small>Origen</small><div id="detalleOrigen"></div></div>
 <div class="field"><small>Paciente</small><div id="detallePaciente"></div></div>
 <div class="field"><small>RUT</small><div id="detalleRut"></div></div>
@@ -152,25 +154,25 @@ Usar solo para datos de prueba. Los profesionales aprobados se mantienen. Los pr
 <div class="field"><small>Comprobante</small><div id="detalleComprobante"></div></div>
 </div>
 
-<label>Examenes solicitados / modificados</label>
-<textarea id="detalleExamenesEditable"></textarea>
+<label>ExÃ¡menes solicitados / modificados</label>
+<textarea id="detalleExÃ¡menesEditable"></textarea>
 
-<label style="margin-top:15px;">Motivo / Justificacion clinica</label>
+<label style="margin-top:15px;">Motivo / JustificaciÃ³n clÃ­nica</label>
 <textarea id="detalleMotivoEditable"></textarea>
 
-<label style="margin-top:15px;">Observaciones medicas</label>
-<textarea id="observacionesMedicas" placeholder="Agregar observaciones para el paciente o profesional..."></textarea>
+<label style="margin-top:15px;">Observaciones mÃ©dicas</label>
+<textarea id="observaciÃ³nesMedicas" placeholder="Agregar observaciÃ³nes para el paciente o profesional..."></textarea>
 
 <div class="actions-grid">
 <button class="btn btn-approve" onclick="aprobarComoAdmin()"> Aprobar y enviar PDF</button>
-<button class="btn btn-modify" onclick="solicitarModificacionAdmin()"> Solicitar modificacion</button>
+<button class="btn btn-modify" onclick="solicitarModificaciÃ³nAdmin()"> Solicitar modificaciÃ³n</button>
 <button class="btn btn-reject" onclick="rechazarComoAdmin()"> Rechazar</button>
-<button class="btn btn-reload" onclick="cerrarDetalleMedico()">Cerrar detalle</button>
+<button class="btn btn-reload" onclick="cerrarDetalleMÃ©dico()">Cerrar detalle</button>
 </div>
 </div>
 
 <div class="section">
-<h2>Solicitudes de compra de ordenes</h2>
+<h2>Solicitudes de compra de Ã³rdenes</h2>
 <button class="btn btn-reload" onclick="cargarDashboard()">Actualizar</button>
 <button class="btn btn-export" onclick="exportarComprasExcel()">Exportar compras Excel</button>
 
@@ -178,14 +180,14 @@ Usar solo para datos de prueba. Los profesionales aprobados se mantienen. Los pr
 <thead>
 <tr>
 <th>Fecha</th>
-<th>Profesional</th>
+<th>ProfesiÃ³nal</th>
 <th>Email</th>
 <th>Plan</th>
-<th>Ordenes</th>
+<th>Ãrdenes</th>
 <th>Monto</th>
 <th>Comprobante</th>
 <th>Estado</th>
-<th>Acciones</th>
+<th>AcciÃ³nes</th>
 </tr>
 </thead>
 <tbody>
@@ -204,12 +206,12 @@ Usar solo para datos de prueba. Los profesionales aprobados se mantienen. Los pr
 <thead>
 <tr>
 <th>Fecha</th>
-<th>Profesional</th>
+<th>ProfesiÃ³nal</th>
 <th>Email</th>
 <th>Comprobante / Pago</th>
 <th>Monto</th>
 <th>Estado</th>
-<th>Acciones</th>
+<th>AcciÃ³nes</th>
 </tr>
 </thead>
 <tbody>
@@ -219,11 +221,11 @@ Usar solo para datos de prueba. Los profesionales aprobados se mantienen. Los pr
 </div>
 
 <div class="section">
-<h2>Asignar ordenes manualmente</h2>
+<h2>Asignar Ã³rdenes manualmente</h2>
 
 <div class="form-grid">
 <div>
-<label>Profesional</label>
+<label>ProfesiÃ³nal</label>
 <select id="profesionalAsignar">
 <option value="">Cargando profesionales...</option>
 </select>
@@ -231,16 +233,16 @@ Usar solo para datos de prueba. Los profesionales aprobados se mantienen. Los pr
 
 <div>
 <label>Cantidad</label>
-<input id="cantidadOrdenes" type="number" min="1" placeholder="Ej: 10">
+<input id="cantidadÃrdenes" type="number" min="1" placeholder="Ej: 10">
 </div>
 
 <div>
 <label>Motivo</label>
-<input id="motivoOrdenes" type="text" placeholder="Ej: Pago manual, transferencia, compensacion">
+<input id="motivoÃrdenes" type="text" placeholder="Ej: Pago manual, transferencia, compensaciÃ³n">
 </div>
 
 <div>
-<button class="btn btn-main" onclick="asignarOrdenesManual()">Asignar ordenes</button>
+<button class="btn btn-main" onclick="asignarÃrdenesManual()">Asignar Ã³rdenes</button>
 </div>
 </div>
 </div>
@@ -257,13 +259,13 @@ Usar solo para datos de prueba. Los profesionales aprobados se mantienen. Los pr
 <th>Paciente</th>
 <th>RUT</th>
 <th>Correo</th>
-<th>Telefono</th>
-<th>Examenes</th>
+<th>TelÃ©fono</th>
+<th>ExÃ¡menes</th>
 <th>Motivo</th>
 <th>Comprobante / Pago</th>
 <th>Monto</th>
 <th>Estado</th>
-<th>Acciones</th>
+<th>AcciÃ³nes</th>
 </tr>
 </thead>
 <tbody>
@@ -273,23 +275,23 @@ Usar solo para datos de prueba. Los profesionales aprobados se mantienen. Los pr
 </div>
 
 <div class="section">
-<h2>Profesionales inscritos</h2>
+<h2>ProfesiÃ³nales inscritos</h2>
 <button class="btn btn-reload" onclick="cargarDashboard()">Actualizar</button>
 
-<table id="tablaProfesionales">
+<table id="tablaProfesiÃ³nales">
 <thead>
 <tr>
 <th>Fecha</th>
 <th>Nombre</th>
 <th>RUT</th>
 <th>Email</th>
-<th>Profesion</th>
+<th>ProfesiÃ³n</th>
 <th>Registro SIS</th>
-<th>Telefono</th>
-<th>Ordenes</th>
+<th>TelÃ©fono</th>
+<th>Ãrdenes</th>
 <th>MNBE</th>
 <th>Estado</th>
-<th>Acciones</th>
+<th>AcciÃ³nes</th>
 </tr>
 </thead>
 <tbody>
@@ -308,8 +310,8 @@ Usar solo para datos de prueba. Los profesionales aprobados se mantienen. Los pr
 <th>Fecha</th>
 <th>Paciente</th>
 <th>RUT</th>
-<th>Profesional</th>
-<th>Examenes</th>
+<th>ProfesiÃ³nal</th>
+<th>ExÃ¡menes</th>
 <th>Monto</th>
 <th>Estado</th>
 <th>Comprobante / Pago</th>
@@ -327,14 +329,14 @@ Usar solo para datos de prueba. Los profesionales aprobados se mantienen. Los pr
 const SUPABASE_URL = "https://goxkmtnmfessroveanje.supabase.co";
 const SUPABASE_KEY = "sb_publishable_w8xrtEanlJJAc5FYvk1X5A_fKu9vb5d";
 const FUNCTION_EMAIL_URL = "https://goxkmtnmfessroveanje.supabase.co/functions/v1/resend-email";
-const STORAGE_BUCKET = "ordenes";
+const STORAGE_BUCKET = "Ã³rdenes";
 const DIPLOMAS_BUCKET = "diplomas";
 const REGISTRO_ACADEMICO_FUNCTION_URL = SUPABASE_URL + "/functions/v1/clever-api";
 
 const MEDICO_NOMBRE = "Dra. Carolina Dominguez";
-const MEDICO_RUT = "RUT Medico: 24.891.056-9";
+const MEDICO_RUT = "RUT MÃ©dico: 24.891.056-9";
 const MEDICO_REGISTRO = "Registro SIS: 544925";
-const MEDICO_ESPECIALIDAD = "Medico autorizador";
+const MEDICO_ESPECIALIDAD = "MÃ©dico autorizador";
 const LOGO_URL = "https://deltaf.site/img/logo-deltaf.png";
 const FIRMA_URL = "https://deltaf.site/img/firma-carolina.jpg";
 
@@ -345,7 +347,7 @@ let profesionalesGlobal = [];
 let solicitudesPacientesGlobal = [];
 let comprasGlobal = [];
 let pagosMNBEGlobal = [];
-let ordenesMedicasGlobal = [];
+let Ã³rdenesMedicasGlobal = [];
 let solicitudesMedicasGlobal = [];
 let solicitudMedicaSeleccionada = null;
 let diplomasGlobal = [];
@@ -468,15 +470,15 @@ const {data: pacientes, error: errorPacientes}=await supabaseClient
 
 if(errorPacientes) throw errorPacientes;
 
-const {data: profesionales, error: errorProfesionales}=await supabaseClient
+const {data: profesionales, error: errorProfesiÃ³nales}=await supabaseClient
 .from("profesionales")
 .select("*")
 .order("fecha_creacion",{ascending:false});
 
-if(errorProfesionales) throw errorProfesionales;
+if(errorProfesiÃ³nales) throw errorProfesiÃ³nales;
 
 const {data: compras, error: errorCompras}=await supabaseClient
-.from("compras_ordenes")
+.from("compras_Ã³rdenes")
 .select("*")
 .order("created_at",{ascending:false});
 
@@ -489,33 +491,33 @@ const {data: pagosMNBE, error: errorPagosMNBE}=await supabaseClient
 
 if(errorPagosMNBE) throw errorPagosMNBE;
 
-const {data: ordenesMedicas, error: errorOrdenesMedicas}=await supabaseClient
-.from("ordenes")
+const {data: Ã³rdenesMedicas, error: errorÃrdenesMedicas}=await supabaseClient
+.from("Ã³rdenes")
 .select("*")
 .order("created_at",{ascending:false});
 
-if(errorOrdenesMedicas) throw errorOrdenesMedicas;
+if(errorÃrdenesMedicas) throw errorÃrdenesMedicas;
 
 solicitudesGlobal=solicitudes||[];
 solicitudesPacientesGlobal=pacientes||[];
 profesionalesGlobal=(profesionales||[]).filter(p => !['eliminado','eliminada','eliminar','borrado','borrada'].includes((p.estado || '').toLowerCase()));
 comprasGlobal=compras||[];
 pagosMNBEGlobal=pagosMNBE||[];
-ordenesMedicasGlobal=ordenesMedicas||[];
+Ã³rdenesMedicasGlobal=Ã³rdenesMedicas||[];
 
 solicitudesMedicasGlobal=[
-...ordenesMedicasGlobal.map(o=>({
+...Ã³rdenesMedicasGlobal.map(o=>({
 ...o,
 _origen:"profesional",
 _codigo:o.codigo || "-",
-_examenes:o.tipo_orden || "-",
-_tabla:"ordenes"
+_exÃ¡menes:o.tipo_orden || "-",
+_tabla:"Ã³rdenes"
 })),
 ...solicitudesPacientesGlobal.map(p=>({
 ...p,
 _origen:"paciente",
 _codigo:"PAC-" + p.id,
-_examenes:p.examenes_solicitados || "-",
+_exÃ¡menes:p.exÃ¡menes_solicitados || "-",
 _tabla:"solicitudes_pacientes"
 }))
 ];
@@ -532,7 +534,7 @@ let pagosMNBEPendientes=0;
 let emitidas=0;
 let profesionalesPendientes=0;
 
-ordenesMedicasGlobal.forEach(s=>{
+Ã³rdenesMedicasGlobal.forEach(s=>{
 const estado=(s.estado || "pendiente").toLowerCase();
 if(estado==="pendiente") pendientes++;
 if(estado==="emitida" || estado==="aprobada" || estado==="aprobado") emitidas++;
@@ -584,7 +586,7 @@ document.getElementById("solicitudesPendientes").innerText=pendientes;
 document.getElementById("pacientesPendientes").innerText=pacientesPendientes;
 document.getElementById("comprasPendientes").innerText=comprasPendientes;
 document.getElementById("pagosMNBEPendientes").innerText=pagosMNBEPendientes;
-document.getElementById("ordenesEmitidas").innerText=emitidas;
+document.getElementById("Ã³rdenesEmitidas").innerText=emitidas;
 document.getElementById("profesionalesRegistrados").innerText=profesionalesGlobal.length;
 document.getElementById("profesionalesPendientes").innerText=profesionalesPendientes;
 
@@ -593,8 +595,8 @@ pintarTablaCompras(comprasGlobal);
 pintarTablaPagosMNBE(pagosMNBEGlobal);
 pintarTablaPacientes(solicitudesPacientesGlobal);
 pintarTablaSolicitudes(solicitudesGlobal);
-pintarTablaProfesionales(profesionalesGlobal);
-cargarSelectProfesionales(profesionalesGlobal);
+pintarTablaProfesiÃ³nales(profesionalesGlobal);
+cargarSelectProfesiÃ³nales(profesionalesGlobal);
 
 }catch(error){
 console.error(error);
@@ -607,13 +609,13 @@ const tbody=document.querySelector("#tablaSolicitudesMedicas tbody");
 tbody.innerHTML="";
 
 if(!solicitudes || solicitudes.length===0){
-tbody.innerHTML=`<tr><td colspan="9">No hay solicitudes medicas registradas.</td></tr>`;
+tbody.innerHTML=`<tr><td colspan="9">No hay solicitudes mÃ©dicas registradas.</td></tr>`;
 return;
 }
 
 solicitudes.forEach(s=>{
 const estado=(s.estado || "pendiente").toLowerCase();
-const origenTexto=s._origen==="paciente" ? "Paciente directo" : "Profesional";
+const origenTexto=s._origen==="paciente" ? "Paciente directo" : "ProfesiÃ³nal";
 const origenClase=s._origen==="paciente" ? "origin origin-pac" : "origin origin-prof";
 
 const tr=document.createElement("tr");
@@ -624,7 +626,7 @@ tr.innerHTML=`
 <td>${limpiarTexto(s.nombre_paciente || "-")}</td>
 <td>${limpiarTexto(s.rut_paciente || "-")}</td>
 <td>${limpiarTexto(s.correo_paciente || "-")}</td>
-<td>${limpiarTexto(s._examenes || "-")}</td>
+<td>${limpiarTexto(s._exÃ¡menes || "-")}</td>
 <td>${formatearFecha(s.created_at)}</td>
 <td><span class="badge ${estado}">${s.estado || "pendiente"}</span></td>
 <td>
@@ -640,30 +642,30 @@ function seleccionarSolicitudMedica(origen,id){
 const item=solicitudesMedicasGlobal.find(s=>String(s.id)===String(id) && s._origen===origen);
 
 if(!item){
-mostrarError("No se encontro la solicitud seleccionada.");
+mostrarError("No se encontrÃ³ la solicitud seleccionada.");
 return;
 }
 
 solicitudMedicaSeleccionada={...item};
 
-document.getElementById("detalleCodigo").textContent=item._codigo || "-";
-document.getElementById("detalleOrigen").textContent=item._origen==="paciente" ? "Paciente directo" : "Profesional";
+document.getElementById("detalleCÃ³digo").textContent=item._codigo || "-";
+document.getElementById("detalleOrigen").textContent=item._origen==="paciente" ? "Paciente directo" : "ProfesiÃ³nal";
 document.getElementById("detallePaciente").textContent=item.nombre_paciente || "-";
 document.getElementById("detalleRut").textContent=item.rut_paciente || "-";
 document.getElementById("detalleCorreo").textContent=item.correo_paciente || "-";
 document.getElementById("detalleFecha").textContent=formatearFecha(item.created_at);
 document.getElementById("detalleEstado").textContent=item.estado || "pendiente";
 document.getElementById("detalleComprobante").textContent=item.comprobante || "-";
-document.getElementById("detalleExamenesEditable").value=item._examenes || "";
+document.getElementById("detalleExÃ¡menesEditable").value=item._exÃ¡menes || "";
 document.getElementById("detalleMotivoEditable").value=item.motivo || "";
-document.getElementById("observacionesMedicas").value=item.observaciones || "";
+document.getElementById("observaciÃ³nesMedicas").value=item.observaciÃ³nes || "";
 
-document.getElementById("detalleMedico").style.display="block";
-window.scrollTo({top:document.getElementById("detalleMedico").offsetTop - 20,behavior:"smooth"});
+document.getElementById("detalleMÃ©dico").style.display="block";
+window.scrollTo({top:document.getElementById("detalleMÃ©dico").offsetTop - 20,behavior:"smooth"});
 }
 
-function cerrarDetalleMedico(){
-document.getElementById("detalleMedico").style.display="none";
+function cerrarDetalleMÃ©dico(){
+document.getElementById("detalleMÃ©dico").style.display="none";
 solicitudMedicaSeleccionada=null;
 }
 
@@ -672,9 +674,9 @@ if(!solicitudMedicaSeleccionada){
 throw new Error("No hay solicitud seleccionada.");
 }
 
-const examenes=document.getElementById("detalleExamenesEditable").value.trim();
+const exÃ¡menes=document.getElementById("detalleExÃ¡menesEditable").value.trim();
 const motivo=document.getElementById("detalleMotivoEditable").value.trim();
-const observaciones=document.getElementById("observacionesMedicas").value.trim();
+const observaciÃ³nes=document.getElementById("observaciÃ³nesMedicas").value.trim();
 
 let errorUpdate=null;
 
@@ -682,7 +684,7 @@ if(solicitudMedicaSeleccionada._origen==="paciente"){
 const {error}=await supabaseClient
 .from("solicitudes_pacientes")
 .update({
-examenes_solicitados:examenes,
+exÃ¡menes_solicitados:exÃ¡menes,
 motivo:motivo
 })
 .eq("id",solicitudMedicaSeleccionada.id);
@@ -690,11 +692,11 @@ motivo:motivo
 errorUpdate=error;
 }else{
 const {error}=await supabaseClient
-.from("ordenes")
+.from("Ã³rdenes")
 .update({
-tipo_orden:examenes,
+tipo_orden:exÃ¡menes,
 motivo:motivo,
-observaciones:observaciones
+observaciÃ³nes:observaciÃ³nes
 })
 .eq("id",solicitudMedicaSeleccionada.id);
 
@@ -703,11 +705,11 @@ errorUpdate=error;
 
 if(errorUpdate) throw errorUpdate;
 
-solicitudMedicaSeleccionada._examenes=examenes;
+solicitudMedicaSeleccionada._exÃ¡menes=exÃ¡menes;
 solicitudMedicaSeleccionada.motivo=motivo;
-solicitudMedicaSeleccionada.observaciones=observaciones;
+solicitudMedicaSeleccionada.observaciÃ³nes=observaciÃ³nes;
 
-return {examenes,motivo,observaciones};
+return {exÃ¡menes,motivo,observaciÃ³nes};
 }
 
 async function enviarCorreo(to,subject,html,attachments=[]){
@@ -742,7 +744,7 @@ return {success:false,error:error};
 }
 }
 
-async function generarPdfOrdenBase64(ordenActual,observaciones){
+async function generarPdfOrdenBase64(ordenActual,observaciÃ³nes){
 const { jsPDF } = window.jspdf;
 const doc = new jsPDF("p","mm","a4");
 
@@ -754,9 +756,9 @@ const paciente = limpiarPdf(ordenActual.nombre_paciente || "-");
 const rut = limpiarPdf(ordenActual.rut_paciente || "-");
 const correo = limpiarPdf(ordenActual.correo_paciente || "-");
 const fecha = new Date().toLocaleDateString("es-CL");
-const examenes = limpiarPdf(ordenActual._examenes || "-");
+const exÃ¡menes = limpiarPdf(ordenActual._exÃ¡menes || "-");
 const motivo = limpiarPdf(ordenActual.motivo || "-");
-const obs = limpiarPdf(observaciones || "Sin observaciones.");
+const obs = limpiarPdf(observaciÃ³nes || "Sin observaciÃ³nes.");
 const folio = codigo + "-" + Date.now();
 
 doc.setDrawColor(37,99,235);
@@ -786,14 +788,14 @@ doc.roundedRect(15,36,180,30,3,3,"FD");
 
 doc.setFont("helvetica","bold");
 doc.setFontSize(11);
-doc.text("Datos de emision",20,45);
+doc.text("Datos de emisiÃ³n",20,45);
 
 doc.setFont("helvetica","normal");
 doc.setFontSize(10);
 doc.text("Folio: " + folio,20,53);
-doc.text("Fecha de emision: " + fecha,20,60);
+doc.text("Fecha de emisiÃ³n: " + fecha,20,60);
 doc.text("Estado: APROBADA",125,53);
-doc.text("Origen: " + (ordenActual._origen === "paciente" ? "Paciente directo" : "Profesional"),125,60);
+doc.text("Origen: " + (ordenActual._origen === "paciente" ? "Paciente directo" : "ProfesiÃ³nal"),125,60);
 
 doc.setFillColor(239,246,255);
 doc.roundedRect(15,74,180,36,3,3,"F");
@@ -813,21 +815,21 @@ doc.text("Correo: " + correo,100,101);
 doc.setTextColor(37,99,235);
 doc.setFont("helvetica","bold");
 doc.setFontSize(12);
-doc.text("Examenes solicitados",20,124);
+doc.text("ExÃ¡menes solicitados",20,124);
 
 doc.setTextColor(30,41,59);
 doc.setFont("helvetica","normal");
 doc.setFontSize(10);
 
 let y = 133;
-const examenesLineas = doc.splitTextToSize(examenes,170);
-doc.text(examenesLineas,20,y);
-y += examenesLineas.length * 6 + 8;
+const exÃ¡menesLineas = doc.splitTextToSize(exÃ¡menes,170);
+doc.text(exÃ¡menesLineas,20,y);
+y += exÃ¡menesLineas.length * 6 + 8;
 
 doc.setTextColor(37,99,235);
 doc.setFont("helvetica","bold");
 doc.setFontSize(12);
-doc.text("Motivo / justificacion clinica",20,y);
+doc.text("Motivo / justificacion clÃ­nica",20,y);
 y += 9;
 
 doc.setTextColor(30,41,59);
@@ -845,7 +847,7 @@ y = 25;
 doc.setTextColor(37,99,235);
 doc.setFont("helvetica","bold");
 doc.setFontSize(12);
-doc.text("Observaciones medicas",20,y);
+doc.text("Observaciones mÃ©dicas",20,y);
 y += 9;
 
 doc.setTextColor(30,41,59);
@@ -867,7 +869,7 @@ doc.roundedRect(15,y,180,45,3,3,"FD");
 doc.setTextColor(37,99,235);
 doc.setFont("helvetica","bold");
 doc.setFontSize(12);
-doc.text("Medico autorizador",20,y+10);
+doc.text("MÃ©dico autorizador",20,y+10);
 
 doc.setTextColor(30,41,59);
 doc.setFont("helvetica","bold");
@@ -895,8 +897,8 @@ doc.text("Firma medica autorizadora",132,y+37);
 
 doc.setFontSize(8);
 doc.setTextColor(100,116,139);
-doc.text("Codigo de verificacion: " + folio,20,278);
-doc.text("Documento emitido electronicamente por DeltaF. Validacion sujeta a revision medica.",20,284);
+doc.text("CÃ³digo de verificacion: " + folio,20,278);
+doc.text("Documento emitido electrÃ³nicamente por DeltaF. Validacion sujeta a revision medica.",20,284);
 
 const dataUri = doc.output("datauristring");
 const base64 = obtenerBase64DeDataUri(dataUri);
@@ -926,59 +928,59 @@ const {data:publicData}=supabaseClient.storage
 return publicData.publicUrl;
 }
 
-function crearHtmlAprobacion(ordenActual,observaciones,pdfUrl){
+function crearHtmlAprobacion(ordenActual,observaciÃ³nes,pdfUrl){
 return `
 <div style="font-family:Arial,sans-serif;color:#1e293b;line-height:1.5;">
 <h2 style="color:#2563eb;">Solicitud aprobada - DeltaF</h2>
-<p>Estimado/a, la solicitud de examenes fue revisada y aprobada por el medico autorizador.</p>
+<p>Estimado/a, la solicitud de exÃ¡menes fue revisada y aprobada por el mÃ©dico autorizador.</p>
 <h3>Datos de la solicitud</h3>
-<p><strong>Codigo:</strong> ${limpiarTexto(ordenActual._codigo || "-")}</p>
+<p><strong>CÃ³digo:</strong> ${limpiarTexto(ordenActual._codigo || "-")}</p>
 <p><strong>Paciente:</strong> ${limpiarTexto(ordenActual.nombre_paciente || "-")}</p>
 <p><strong>RUT:</strong> ${limpiarTexto(ordenActual.rut_paciente || "-")}</p>
-<p><strong>Examenes:</strong> ${limpiarTexto(ordenActual._examenes || "-")}</p>
-<h3>Observaciones medicas</h3>
-<p>${limpiarTexto(observaciones || "Sin observaciones adicionales.")}</p>
+<p><strong>ExÃ¡menes:</strong> ${limpiarTexto(ordenActual._exÃ¡menes || "-")}</p>
+<h3>Observaciones mÃ©dicas</h3>
+<p>${limpiarTexto(observaciÃ³nes || "Sin observaciÃ³nes adicionales.")}</p>
 <p><strong>Orden medica en PDF:</strong> se adjunta a este correo.</p>
-<p>Tambien puedes verla aqui: <a href="${pdfUrl}" target="_blank">Descargar orden medica</a></p>
+<p>TambiÃ©n puedes verla aqui: <a href="${pdfUrl}" target="_blank">Descargar orden medica</a></p>
 <hr>
-<p style="font-size:12px;color:#64748b;">DeltaF - Plataforma de solicitudes de examenes.</p>
+<p style="font-size:12px;color:#64748b;">DeltaF - Plataforma de solicitudes de exÃ¡menes.</p>
 </div>
 `;
 }
 
-function crearHtmlRechazo(ordenActual,observaciones){
+function crearHtmlRechazo(ordenActual,observaciÃ³nes){
 return `
 <div style="font-family:Arial,sans-serif;color:#1e293b;line-height:1.5;">
 <h2 style="color:#dc2626;">Solicitud rechazada - DeltaF</h2>
-<p>Estimado/a, la solicitud de examenes fue revisada por el medico autorizador y ha sido rechazada.</p>
+<p>Estimado/a, la solicitud de exÃ¡menes fue revisada por el mÃ©dico autorizador y ha sido rechazada.</p>
 <h3>Datos de la solicitud</h3>
-<p><strong>Codigo:</strong> ${limpiarTexto(ordenActual._codigo || "-")}</p>
+<p><strong>CÃ³digo:</strong> ${limpiarTexto(ordenActual._codigo || "-")}</p>
 <p><strong>Paciente:</strong> ${limpiarTexto(ordenActual.nombre_paciente || "-")}</p>
 <p><strong>RUT:</strong> ${limpiarTexto(ordenActual.rut_paciente || "-")}</p>
-<p><strong>Examenes:</strong> ${limpiarTexto(ordenActual._examenes || "-")}</p>
-<h3>Motivo / observaciones</h3>
-<p>${limpiarTexto(observaciones || "Sin observaciones registradas.")}</p>
+<p><strong>ExÃ¡menes:</strong> ${limpiarTexto(ordenActual._exÃ¡menes || "-")}</p>
+<h3>Motivo / observaciÃ³nes</h3>
+<p>${limpiarTexto(observaciÃ³nes || "Sin observaciÃ³nes registradas.")}</p>
 <hr>
-<p style="font-size:12px;color:#64748b;">DeltaF - Plataforma de solicitudes de examenes.</p>
+<p style="font-size:12px;color:#64748b;">DeltaF - Plataforma de solicitudes de exÃ¡menes.</p>
 </div>
 `;
 }
 
-function crearHtmlModificacion(ordenActual,observaciones){
+function crearHtmlModificaciÃ³n(ordenActual,observaciÃ³nes){
 return `
 <div style="font-family:Arial,sans-serif;color:#1e293b;line-height:1.5;">
-<h2 style="color:#f59e0b;">Solicitud requiere modificacion - DeltaF</h2>
-<p>Estimado/a, el medico autorizador reviso la solicitud y requiere modificaciones antes de aprobarla.</p>
+<h2 style="color:#f59e0b;">Solicitud requiere modificaciÃ³n - DeltaF</h2>
+<p>Estimado/a, el mÃ©dico autorizador reviso la solicitud y requiere modificaciÃ³nes antes de aprobarla.</p>
 <h3>Datos de la solicitud</h3>
-<p><strong>Codigo:</strong> ${limpiarTexto(ordenActual._codigo || "-")}</p>
+<p><strong>CÃ³digo:</strong> ${limpiarTexto(ordenActual._codigo || "-")}</p>
 <p><strong>Paciente:</strong> ${limpiarTexto(ordenActual.nombre_paciente || "-")}</p>
 <p><strong>RUT:</strong> ${limpiarTexto(ordenActual.rut_paciente || "-")}</p>
-<p><strong>Examenes:</strong> ${limpiarTexto(ordenActual._examenes || "-")}</p>
+<p><strong>ExÃ¡menes:</strong> ${limpiarTexto(ordenActual._exÃ¡menes || "-")}</p>
 <h3>Solicitud medica</h3>
-<p>${limpiarTexto(observaciones || "-")}</p>
+<p>${limpiarTexto(observaciÃ³nes || "-")}</p>
 <p>Por favor revise la solicitud en DeltaF y realice las correcciones necesarias.</p>
 <hr>
-<p style="font-size:12px;color:#64748b;">DeltaF - Plataforma de solicitudes de examenes.</p>
+<p style="font-size:12px;color:#64748b;">DeltaF - Plataforma de solicitudes de exÃ¡menes.</p>
 </div>
 `;
 }
@@ -993,17 +995,17 @@ const confirmar=confirm("Aprobar esta solicitud y enviar PDF al paciente?");
 if(!confirmar) return;
 
 try{
-mostrarInfo("Guardando modificaciones, generando PDF y enviando correo...");
+mostrarInfo("Guardando modificaciÃ³nes, generando PDF y enviando correo...");
 
 const edit=await guardarEdicionSolicitudMedica();
 
 const ordenActual={
 ...solicitudMedicaSeleccionada,
-_examenes:edit.examenes,
+_exÃ¡menes:edit.exÃ¡menes,
 motivo:edit.motivo
 };
 
-const pdf=await generarPdfOrdenBase64(ordenActual,edit.observaciones);
+const pdf=await generarPdfOrdenBase64(ordenActual,edit.observaciÃ³nes);
 const pdfUrl=await subirPdfStorage(pdf.blob,pdf.filename);
 
 let errorUpdate=null;
@@ -1020,10 +1022,10 @@ pdf_url:pdfUrl
 errorUpdate=error;
 }else{
 const {error}=await supabaseClient
-.from("ordenes")
+.from("Ã³rdenes")
 .update({
 estado:"aprobada",
-observaciones:edit.observaciones,
+observaciÃ³nes:edit.observaciÃ³nes,
 pdf_url:pdfUrl
 })
 .eq("id",ordenActual.id);
@@ -1036,7 +1038,7 @@ if(errorUpdate) throw errorUpdate;
 await enviarCorreo(
 ordenActual.correo_paciente || "",
 "Orden medica aprobada DeltaF - " + (ordenActual._codigo || ""),
-crearHtmlAprobacion(ordenActual,edit.observaciones,pdfUrl),
+crearHtmlAprobacion(ordenActual,edit.observaciÃ³nes,pdfUrl),
 [
 {
 filename:pdf.filename,
@@ -1046,7 +1048,7 @@ content:pdf.base64
 );
 
 mostrarOk("Solicitud aprobada correctamente. Se genero PDF y se envio correo al paciente.");
-cerrarDetalleMedico();
+cerrarDetalleMÃ©dico();
 inicializarSeccionesDesplegables();
 await cargarDashboard();
 
@@ -1062,10 +1064,10 @@ mostrarError("Primero selecciona una solicitud.");
 return;
 }
 
-const observaciones=document.getElementById("observacionesMedicas").value.trim();
+const observaciÃ³nes=document.getElementById("observaciÃ³nesMedicas").value.trim();
 
-if(!observaciones){
-alert("Para rechazar, escribe una observacion o motivo de rechazo.");
+if(!observaciÃ³nes){
+alert("Para rechazar, escribe una observaciÃ³n o motivo de rechazo.");
 return;
 }
 
@@ -1079,7 +1081,7 @@ const edit=await guardarEdicionSolicitudMedica();
 
 const ordenActual={
 ...solicitudMedicaSeleccionada,
-_examenes:edit.examenes,
+_exÃ¡menes:edit.exÃ¡menes,
 motivo:edit.motivo
 };
 
@@ -1096,10 +1098,10 @@ estado:"rechazada"
 errorUpdate=error;
 }else{
 const {error}=await supabaseClient
-.from("ordenes")
+.from("Ã³rdenes")
 .update({
 estado:"rechazada",
-observaciones:edit.observaciones
+observaciÃ³nes:edit.observaciÃ³nes
 })
 .eq("id",ordenActual.id);
 
@@ -1111,11 +1113,11 @@ if(errorUpdate) throw errorUpdate;
 await enviarCorreo(
 ordenActual.correo_paciente || "",
 "Solicitud rechazada DeltaF - " + (ordenActual._codigo || ""),
-crearHtmlRechazo(ordenActual,edit.observaciones)
+crearHtmlRechazo(ordenActual,edit.observaciÃ³nes)
 );
 
 mostrarOk("Solicitud rechazada correctamente y correo enviado.");
-cerrarDetalleMedico();
+cerrarDetalleMÃ©dico();
 inicializarSeccionesDesplegables();
 await cargarDashboard();
 
@@ -1125,35 +1127,35 @@ mostrarError("Error al rechazar solicitud: " + error.message);
 }
 }
 
-async function solicitarModificacionAdmin(){
+async function solicitarModificaciÃ³nAdmin(){
 if(!solicitudMedicaSeleccionada){
 mostrarError("Primero selecciona una solicitud.");
 return;
 }
 
-const observaciones=document.getElementById("observacionesMedicas").value.trim();
+const observaciÃ³nes=document.getElementById("observaciÃ³nesMedicas").value.trim();
 
-if(!observaciones){
-alert("Para solicitar modificacion, escribe la observacion medica.");
+if(!observaciÃ³nes){
+alert("Para solicitar modificaciÃ³n, escribe la observaciÃ³n medica.");
 return;
 }
 
-const confirmar=confirm("Solicitar modificacion de esta solicitud?");
+const confirmar=confirm("Solicitar modificaciÃ³n de esta solicitud?");
 if(!confirmar) return;
 
 try{
-mostrarInfo("Registrando solicitud de modificacion y enviando correo...");
+mostrarInfo("Registrando solicitud de modificaciÃ³n y enviando correo...");
 
 const edit=await guardarEdicionSolicitudMedica();
 
 const ordenActual={
 ...solicitudMedicaSeleccionada,
-_examenes:edit.examenes,
+_exÃ¡menes:edit.exÃ¡menes,
 motivo:edit.motivo
 };
 
 let errorUpdate=null;
-const texto="Solicitud de modificacion medica: " + edit.observaciones;
+const texto="Solicitud de modificaciÃ³n medica: " + edit.observaciÃ³nes;
 
 if(ordenActual._origen==="paciente"){
 const {error}=await supabaseClient
@@ -1166,10 +1168,10 @@ estado:"pendiente"
 errorUpdate=error;
 }else{
 const {error}=await supabaseClient
-.from("ordenes")
+.from("Ã³rdenes")
 .update({
 estado:"pendiente",
-observaciones:texto
+observaciÃ³nes:texto
 })
 .eq("id",ordenActual.id);
 
@@ -1180,22 +1182,22 @@ if(errorUpdate) throw errorUpdate;
 
 await enviarCorreo(
 ordenActual.correo_paciente || "",
-"Solicitud requiere modificacion DeltaF - " + (ordenActual._codigo || ""),
-crearHtmlModificacion(ordenActual,edit.observaciones)
+"Solicitud requiere modificaciÃ³n DeltaF - " + (ordenActual._codigo || ""),
+crearHtmlModificaciÃ³n(ordenActual,edit.observaciÃ³nes)
 );
 
-mostrarOk("Modificacion solicitada correctamente y correo enviado.");
-cerrarDetalleMedico();
+mostrarOk("ModificaciÃ³n solicitada correctamente y correo enviado.");
+cerrarDetalleMÃ©dico();
 inicializarSeccionesDesplegables();
 await cargarDashboard();
 
 }catch(error){
 console.error(error);
-mostrarError("Error al solicitar modificacion: " + error.message);
+mostrarError("Error al solicitar modificaciÃ³n: " + error.message);
 }
 }
 
-function obtenerProfesionalPorId(id){
+function obtenerProfesiÃ³nalPorId(id){
 return profesionalesGlobal.find(p => String(p.id) === String(id));
 }
 
@@ -1210,17 +1212,17 @@ return;
 
 compras.forEach(c=>{
 const estado=(c.estado || "pendiente").toLowerCase();
-const profesional=obtenerProfesionalPorId(c.profesional_id);
-const nombreProfesional=profesional ? profesional.nombre : "-";
+const profesional=obtenerProfesiÃ³nalPorId(c.profesional_id);
+const nombreProfesiÃ³nal=profesional ? profesional.nombre : "-";
 
 const tr=document.createElement("tr");
 
 tr.innerHTML=`
 <td>${c.created_at ? new Date(c.created_at).toLocaleDateString("es-CL") : "-"}</td>
-<td>${nombreProfesional}</td>
+<td>${nombreProfesiÃ³nal}</td>
 <td>${c.profesional_email || "-"}</td>
 <td>${c.plan || "-"}</td>
-<td><strong>${c.cantidad_ordenes || 0}</strong></td>
+<td><strong>${c.cantidad_Ã³rdenes || 0}</strong></td>
 <td>${formatoPeso(Number(c.monto || 0))}</td>
 <td>${c.comprobante || "-"}</td>
 <td><span class="badge ${estado}">${c.estado || "pendiente"}</span></td>
@@ -1247,8 +1249,8 @@ return;
 
 pagos.forEach(p=>{
 const estado=(p.estado || "pendiente").toLowerCase();
-const profesional=obtenerProfesionalPorId(p.profesional_id);
-const nombreProfesional=p.nombre_profesional || (profesional ? profesional.nombre : "-");
+const profesional=obtenerProfesiÃ³nalPorId(p.profesional_id);
+const nombreProfesiÃ³nal=p.nombre_profesional || (profesional ? profesional.nombre : "-");
 const email=p.email || (profesional ? profesional.email : "-");
 const monto=Number(p.monto || 49000);
 
@@ -1256,7 +1258,7 @@ const tr=document.createElement("tr");
 
 tr.innerHTML=`
 <td>${p.created_at ? new Date(p.created_at).toLocaleDateString("es-CL") : "-"}</td>
-<td>${limpiarTexto(nombreProfesional)}</td>
+<td>${limpiarTexto(nombreProfesiÃ³nal)}</td>
 <td>${limpiarTexto(email)}</td>
 <td><strong>${limpiarTexto(p.codigo_pago || "-")}</strong></td>
 <td>${formatoPeso(monto)}</td>
@@ -1276,7 +1278,7 @@ async function aprobarPagoMNBE(id){
 const pago=pagosMNBEGlobal.find(p => String(p.id) === String(id));
 
 if(!pago){
-mostrarError("No se encontro el pago MNBE seleccionado.");
+mostrarError("No se encontrÃ³ el pago MNBE seleccionado.");
 return;
 }
 
@@ -1287,18 +1289,18 @@ mostrarError("Este pago MNBE ya fue aprobado anteriormente.");
 return;
 }
 
-const profesional=obtenerProfesionalPorId(pago.profesional_id);
+const profesional=obtenerProfesiÃ³nalPorId(pago.profesional_id);
 
 if(!profesional){
-mostrarError("No se encontro el profesional asociado a este pago MNBE.");
+mostrarError("No se encontrÃ³ el profesional asociado a este pago MNBE.");
 return;
 }
 
 const confirmar=confirm(
 "Aprobar acceso Biblioteca MNBE?\n\n" +
-"Profesional: " + (pago.nombre_profesional || profesional.nombre || "-") + "\n" +
+"ProfesiÃ³nal: " + (pago.nombre_profesional || profesional.nombre || "-") + "\n" +
 "Email: " + (pago.email || profesional.email || "-") + "\n" +
-"Codigo Transbank: " + (pago.codigo_pago || "-") + "\n" +
+"CÃ³digo Transbank: " + (pago.codigo_pago || "-") + "\n" +
 "Monto: " + formatoPeso(Number(pago.monto || 49000)) + "\n\n" +
 "Esto activara acceso_mnbe en el perfil profesional."
 );
@@ -1306,7 +1308,7 @@ const confirmar=confirm(
 if(!confirmar) return;
 
 try{
-const {error:updateProfesionalError}=await supabaseClient
+const {error:updateProfesiÃ³nalError}=await supabaseClient
 .from("profesionales")
 .update({
 acceso_mnbe:true,
@@ -1315,7 +1317,7 @@ pago_mnbe_codigo:pago.codigo_pago || ""
 })
 .eq("id",profesional.id);
 
-if(updateProfesionalError) throw updateProfesionalError;
+if(updateProfesiÃ³nalError) throw updateProfesiÃ³nalError;
 
 const {error:updatePagoError}=await supabaseClient
 .from("pagos_mnbe")
@@ -1356,11 +1358,11 @@ mostrarError("Error al rechazar pago MNBE: " + error.message);
 }
 }
 
-async function alternarMNBEProfesional(profesionalId, activar){
-const profesional=obtenerProfesionalPorId(profesionalId);
+async function alternarMNBEProfesiÃ³nal(profesionalId, activar){
+const profesional=obtenerProfesiÃ³nalPorId(profesionalId);
 
 if(!profesional){
-mostrarError("No se encontro el profesional.");
+mostrarError("No se encontrÃ³ el profesional.");
 return;
 }
 
@@ -1395,18 +1397,18 @@ mostrarError("Error al cambiar acceso MNBE: " + error.message);
 }
 }
 
-function cargarSelectProfesionales(profesionales){
+function cargarSelectProfesiÃ³nales(profesionales){
 const select=document.getElementById("profesionalAsignar");
 select.innerHTML=`<option value="">Selecciona un profesional</option>`;
 
 profesionales.forEach(p=>{
 const nombre=valorCampo(p,["nombre","nombre_completo","nombreCompleto","full_name"]);
-const email=valorCampo(p,["email","correo","correo_electronico"]);
-const ordenes=Number(p.ordenes_disponibles || 0);
+const email=valorCampo(p,["email","correo","correo_electrÃ³nico"]);
+const Ã³rdenes=Number(p.Ã³rdenes_disponibles || 0);
 
 const option=document.createElement("option");
 option.value=p.id;
-option.textContent=`${nombre} - ${email} - ${ordenes} ordenes`;
+option.textContent=`${nombre} - ${email} - ${Ã³rdenes} Ã³rdenes`;
 select.appendChild(option);
 });
 }
@@ -1430,7 +1432,7 @@ tr.innerHTML=`
 <td>${s.rut_paciente || "-"}</td>
 <td>${s.correo_paciente || "-"}</td>
 <td>${s.telefono_paciente || "-"}</td>
-<td>${s.examenes_solicitados || "-"}</td>
+<td>${s.exÃ¡menes_solicitados || "-"}</td>
 <td>${s.motivo || "-"}</td>
 <td>${s.comprobante || "-"}</td>
 <td>${formatoPeso(Number(s.monto || 0))}</td>
@@ -1445,8 +1447,8 @@ tbody.appendChild(tr);
 });
 }
 
-function pintarTablaProfesionales(profesionales){
-const tbody=document.querySelector("#tablaProfesionales tbody");
+function pintarTablaProfesiÃ³nales(profesionales){
+const tbody=document.querySelector("#tablaProfesiÃ³nales tbody");
 tbody.innerHTML="";
 
 if(!profesionales || profesionales.length===0){
@@ -1459,11 +1461,11 @@ const estado=(p.estado || "pendiente").toLowerCase();
 
 const nombre=valorCampo(p,["nombre","nombre_completo","nombreCompleto","full_name"]);
 const rut=valorCampo(p,["rut","run"]);
-const email=valorCampo(p,["email","correo","correo_electronico"]);
+const email=valorCampo(p,["email","correo","correo_electrÃ³nico"]);
 const profesion=valorCampo(p,["profesion","especialidad"]);
 const registro=valorCampo(p,["registro_sis","registroSIS","sis","registro_superintendencia"]);
 const telefono=valorCampo(p,["telefono","celular"]);
-const ordenes=Number(p.ordenes_disponibles || 0);
+const Ã³rdenes=Number(p.Ã³rdenes_disponibles || 0);
 
 const tr=document.createElement("tr");
 
@@ -1475,17 +1477,17 @@ tr.innerHTML=`
 <td>${profesion}</td>
 <td>${registro}</td>
 <td>${telefono}</td>
-<td><strong>${ordenes}</strong></td>
+<td><strong>${Ã³rdenes}</strong></td>
 <td>
 <span class="badge ${p.acceso_mnbe ? 'aprobado' : 'pendiente'}">${p.acceso_mnbe ? 'Activo' : 'Sin acceso'}</span>
 </td>
 <td><span class="badge ${estado}">${p.estado || "pendiente"}</span></td>
 <td>
-<button class="btn btn-approve" onclick="cambiarEstadoProfesional('${p.id}','aprobado')">Aprobar</button>
-<button class="btn btn-reject" onclick="cambiarEstadoProfesional('${p.id}','rechazado')">Rechazar</button>
-<button class="btn btn-orders" onclick="asignarOrdenesRapido('${p.id}')">+ Ordenes</button>
-${p.acceso_mnbe ? `<button class="btn btn-mnbe-off" onclick="alternarMNBEProfesional('${p.id}',false)">Desactivar MNBE</button>` : `<button class="btn btn-mnbe" onclick="alternarMNBEProfesional('${p.id}',true)">Activar MNBE</button>`}
-${estado === "rechazado" || estado === "rechazada" ? `<button class="btn btn-delete" onclick="eliminarProfesionalRechazado('${p.id}')">Eliminar rechazado</button>` : ``}
+<button class="btn btn-approve" onclick="cambiarEstadoProfesiÃ³nal('${p.id}','aprobado')">Aprobar</button>
+<button class="btn btn-reject" onclick="cambiarEstadoProfesiÃ³nal('${p.id}','rechazado')">Rechazar</button>
+<button class="btn btn-orders" onclick="asignarÃrdenesRapido('${p.id}')">+ Ãrdenes</button>
+${p.acceso_mnbe ? `<button class="btn btn-mnbe-off" onclick="alternarMNBEProfesiÃ³nal('${p.id}',false)">Desactivar MNBE</button>` : `<button class="btn btn-mnbe" onclick="alternarMNBEProfesiÃ³nal('${p.id}',true)">Activar MNBE</button>`}
+${estado === "rechazado" || estado === "rechazada" ? `<button class="btn btn-delete" onclick="eliminarProfesiÃ³nalRechazado('${p.id}')">Eliminar rechazado</button>` : ``}
 </td>
 `;
 
@@ -1511,7 +1513,7 @@ tr.innerHTML=`
 <td>${s.paciente_nombre || s.nombre_paciente || "-"}</td>
 <td>${s.paciente_rut || s.rut_paciente || "-"}</td>
 <td>${s.profesional_nombre || s.nombre_profesional || "-"}</td>
-<td>${s.examenes || s.examen_solicitado || "-"}</td>
+<td>${s.exÃ¡menes || s.examen_solicitado || "-"}</td>
 <td>${formatoPeso(Number(s.monto || s.valor || 0))}</td>
 <td><span class="badge ${estado}">${s.estado || "Pendiente"}</span></td>
 <td>${s.codigo_transbank || s.codigo_pago || "-"}</td>
@@ -1525,7 +1527,7 @@ async function aprobarCompra(id){
 const compra=comprasGlobal.find(c => String(c.id) === String(id));
 
 if(!compra){
-mostrarError("No se encontro la compra seleccionada.");
+mostrarError("No se encontrÃ³ la compra seleccionada.");
 return;
 }
 
@@ -1536,22 +1538,22 @@ mostrarError("Esta compra ya fue aprobada anteriormente.");
 return;
 }
 
-const profesional=obtenerProfesionalPorId(compra.profesional_id);
+const profesional=obtenerProfesiÃ³nalPorId(compra.profesional_id);
 
 if(!profesional){
-mostrarError("No se encontro el profesional asociado a esta compra.");
+mostrarError("No se encontrÃ³ el profesional asociado a esta compra.");
 return;
 }
 
-const cantidad=Number(compra.cantidad_ordenes || 0);
-const saldoActual=Number(profesional.ordenes_disponibles || 0);
+const cantidad=Number(compra.cantidad_Ã³rdenes || 0);
+const saldoActual=Number(profesional.Ã³rdenes_disponibles || 0);
 const nuevoSaldo=saldoActual + cantidad;
 
 const confirmar=confirm(
 "Aprobar esta compra?\n\n" +
-"Profesional: " + profesional.nombre + "\n" +
+"ProfesiÃ³nal: " + profesional.nombre + "\n" +
 "Plan: " + (compra.plan || "-") + "\n" +
-"Ordenes a cargar: " + cantidad + "\n" +
+"Ãrdenes a cargar: " + cantidad + "\n" +
 "Saldo actual: " + saldoActual + "\n" +
 "Nuevo saldo: " + nuevoSaldo
 );
@@ -1559,21 +1561,21 @@ const confirmar=confirm(
 if(!confirmar) return;
 
 try{
-const {error:updateProfesionalError}=await supabaseClient
+const {error:updateProfesiÃ³nalError}=await supabaseClient
 .from("profesionales")
-.update({ordenes_disponibles:nuevoSaldo})
+.update({Ã³rdenes_disponibles:nuevoSaldo})
 .eq("id",profesional.id);
 
-if(updateProfesionalError) throw updateProfesionalError;
+if(updateProfesiÃ³nalError) throw updateProfesiÃ³nalError;
 
 const {error:updateCompraError}=await supabaseClient
-.from("compras_ordenes")
+.from("compras_Ã³rdenes")
 .update({estado:"aprobada"})
 .eq("id",id);
 
 if(updateCompraError) throw updateCompraError;
 
-mostrarOk("Compra aprobada y ordenes cargadas correctamente.");
+mostrarOk("Compra aprobada y Ã³rdenes cargadas correctamente.");
 inicializarSeccionesDesplegables();
 await cargarDashboard();
 
@@ -1589,7 +1591,7 @@ if(!confirmar) return;
 
 try{
 const {error}=await supabaseClient
-.from("compras_ordenes")
+.from("compras_Ã³rdenes")
 .update({estado:"rechazada"})
 .eq("id",id);
 
@@ -1605,7 +1607,7 @@ mostrarError("Error al rechazar compra: " + error.message);
 }
 }
 
-async function cambiarEstadoProfesional(id,nuevoEstado){
+async function cambiarEstadoProfesiÃ³nal(id,nuevoEstado){
 const confirmar=confirm("Seguro que deseas cambiar este profesional a estado: " + nuevoEstado + "?");
 if(!confirmar) return;
 
@@ -1617,7 +1619,7 @@ const {error}=await supabaseClient
 
 if(error) throw error;
 
-mostrarOk("Profesional actualizado correctamente.");
+mostrarOk("ProfesiÃ³nal actualizado correctamente.");
 inicializarSeccionesDesplegables();
 await cargarDashboard();
 
@@ -1627,10 +1629,10 @@ mostrarError("Error al actualizar profesional: " + error.message);
 }
 }
 
-async function asignarOrdenesManual(){
+async function asignarÃrdenesManual(){
 const profesionalId=document.getElementById("profesionalAsignar").value;
-const cantidad=Number(document.getElementById("cantidadOrdenes").value);
-const motivo=document.getElementById("motivoOrdenes").value.trim();
+const cantidad=Number(document.getElementById("cantidadÃrdenes").value);
+const motivo=document.getElementById("motivoÃrdenes").value.trim();
 
 if(!profesionalId){
 mostrarError("Debes seleccionar un profesional.");
@@ -1638,22 +1640,22 @@ return;
 }
 
 if(!cantidad || cantidad <= 0){
-mostrarError("Debes ingresar una cantidad valida de ordenes.");
+mostrarError("Debes ingresar una cantidad valida de Ã³rdenes.");
 return;
 }
 
-const profesional=obtenerProfesionalPorId(profesionalId);
+const profesional=obtenerProfesiÃ³nalPorId(profesionalId);
 
 if(!profesional){
-mostrarError("No se encontro el profesional seleccionado.");
+mostrarError("No se encontrÃ³ el profesional seleccionado.");
 return;
 }
 
-const saldoActual=Number(profesional.ordenes_disponibles || 0);
+const saldoActual=Number(profesional.Ã³rdenes_disponibles || 0);
 const nuevoSaldo=saldoActual + cantidad;
 
 const confirmar=confirm(
-"Asignar " + cantidad + " ordenes a " + profesional.nombre + "?\n\n" +
+"Asignar " + cantidad + " Ã³rdenes a " + profesional.nombre + "?\n\n" +
 "Saldo actual: " + saldoActual + "\n" +
 "Nuevo saldo: " + nuevoSaldo + "\n\n" +
 "Motivo: " + (motivo || "Sin motivo")
@@ -1664,15 +1666,15 @@ if(!confirmar) return;
 try{
 const {error}=await supabaseClient
 .from("profesionales")
-.update({ordenes_disponibles:nuevoSaldo})
+.update({Ã³rdenes_disponibles:nuevoSaldo})
 .eq("id",profesionalId);
 
 if(error) throw error;
 
-mostrarOk("Ordenes asignadas correctamente. Nuevo saldo: " + nuevoSaldo);
+mostrarOk("Ãrdenes asignadas correctamente. Nuevo saldo: " + nuevoSaldo);
 
-document.getElementById("cantidadOrdenes").value="";
-document.getElementById("motivoOrdenes").value="";
+document.getElementById("cantidadÃrdenes").value="";
+document.getElementById("motivoÃrdenes").value="";
 document.getElementById("profesionalAsignar").value="";
 
 inicializarSeccionesDesplegables();
@@ -1680,19 +1682,19 @@ await cargarDashboard();
 
 }catch(error){
 console.error(error);
-mostrarError("Error al asignar ordenes: " + error.message);
+mostrarError("Error al asignar Ã³rdenes: " + error.message);
 }
 }
 
-async function asignarOrdenesRapido(profesionalId){
-const profesional=obtenerProfesionalPorId(profesionalId);
+async function asignarÃrdenesRapido(profesionalId){
+const profesional=obtenerProfesiÃ³nalPorId(profesionalId);
 
 if(!profesional){
-mostrarError("No se encontro el profesional.");
+mostrarError("No se encontrÃ³ el profesional.");
 return;
 }
 
-const cantidadTexto=prompt("Cuantas ordenes deseas agregar a " + profesional.nombre + "?");
+const cantidadTexto=prompt("Cuantas Ã³rdenes deseas agregar a " + profesional.nombre + "?");
 
 if(cantidadTexto === null) return;
 
@@ -1705,12 +1707,12 @@ return;
 
 const motivo=prompt("Motivo de la asignacion:", "Pago manual / Transbank caido") || "";
 
-const saldoActual=Number(profesional.ordenes_disponibles || 0);
+const saldoActual=Number(profesional.Ã³rdenes_disponibles || 0);
 const nuevoSaldo=saldoActual + cantidad;
 
 const confirmar=confirm(
 "Confirmar asignacion\n\n" +
-"Profesional: " + profesional.nombre + "\n" +
+"ProfesiÃ³nal: " + profesional.nombre + "\n" +
 "Cantidad: " + cantidad + "\n" +
 "Saldo actual: " + saldoActual + "\n" +
 "Nuevo saldo: " + nuevoSaldo + "\n" +
@@ -1722,24 +1724,24 @@ if(!confirmar) return;
 try{
 const {error}=await supabaseClient
 .from("profesionales")
-.update({ordenes_disponibles:nuevoSaldo})
+.update({Ã³rdenes_disponibles:nuevoSaldo})
 .eq("id",profesionalId);
 
 if(error) throw error;
 
-mostrarOk("Ordenes asignadas correctamente. Nuevo saldo: " + nuevoSaldo);
+mostrarOk("Ãrdenes asignadas correctamente. Nuevo saldo: " + nuevoSaldo);
 inicializarSeccionesDesplegables();
 await cargarDashboard();
 
 }catch(error){
 console.error(error);
-mostrarError("Error al asignar ordenes: " + error.message);
+mostrarError("Error al asignar Ã³rdenes: " + error.message);
 }
 }
 
 
 async function eliminarSolicitudPaciente(id){
-const confirmar=confirm("Eliminar esta solicitud de paciente particular? Esta accion no se puede deshacer.");
+const confirmar=confirm("Eliminar esta solicitud de paciente particular? Esta acciÃ³n no se puede deshacer.");
 if(!confirmar) return;
 
 try{
@@ -1761,7 +1763,7 @@ mostrarError("Error al eliminar solicitud de paciente: " + error.message);
 }
 
 async function eliminarPacientesAntiguos30Dias(){
-const confirmar=confirm("Eliminar solicitudes de pacientes particulares con mas de 30 dias? Esta accion no se puede deshacer.");
+const confirmar=confirm("Eliminar solicitudes de pacientes particulares con mÃ¡s de 30 dÃ­as? Esta acciÃ³n no se puede deshacer.");
 if(!confirmar) return;
 
 const fechaLimite=new Date();
@@ -1785,11 +1787,11 @@ mostrarError("Error al eliminar solicitudes antiguas: " + error.message);
 }
 }
 
-async function eliminarProfesionalRechazado(id){
+async function eliminarProfesiÃ³nalRechazado(id){
 const profesional=profesionalesGlobal.find(p=>String(p.id)===String(id));
 
 if(!profesional){
-mostrarError("No se encontro el profesional.");
+mostrarError("No se encontrÃ³ el profesional.");
 return;
 }
 
@@ -1818,15 +1820,15 @@ const ocultar=await supabaseClient
 if(ocultar.error) throw ocultar.error;
 
 /* Luego intentamos borrar registros de prueba relacionados. Si alguno falla, no detenemos el proceso. */
-await supabaseClient.from("compras_ordenes").delete().eq("profesional_id",id);
+await supabaseClient.from("compras_Ã³rdenes").delete().eq("profesional_id",id);
 await supabaseClient.from("pagos_mnbe").delete().eq("profesional_id",id);
-await supabaseClient.from("ordenes").delete().eq("profesional_id",id);
-await supabaseClient.from("fichas_clinicas").delete().eq("profesional_id",id);
+await supabaseClient.from("Ã³rdenes").delete().eq("profesional_id",id);
+await supabaseClient.from("fichas_clÃ­nicas").delete().eq("profesional_id",id);
 
 /* Intento final de borrado fisico. Si falla, ya quedo oculto. */
 await supabaseClient.from("profesionales").delete().eq("id",id);
 
-mostrarOk("Profesional rechazado eliminado/ocultado correctamente.");
+mostrarOk("ProfesiÃ³nal rechazado eliminado/ocultado correctamente.");
 await cargarDashboard();
 
 }catch(error){
@@ -1835,7 +1837,7 @@ mostrarError("Error al eliminar profesional rechazado: " + error.message);
 }
 }
 
-async function eliminarProfesionalesRechazados(){
+async function eliminarProfesiÃ³nalesRechazados(){
 const rechazados=profesionalesGlobal.filter(p=>{
 const e=(p.estado || "").toLowerCase();
 return e==="rechazado" || e==="rechazada";
@@ -1864,14 +1866,14 @@ if(ocultar.error) throw ocultar.error;
 
 /* Intentamos limpiar registros relacionados sin bloquear el proceso si algo falla. */
 for(const id of ids){
-await supabaseClient.from("compras_ordenes").delete().eq("profesional_id",id);
+await supabaseClient.from("compras_Ã³rdenes").delete().eq("profesional_id",id);
 await supabaseClient.from("pagos_mnbe").delete().eq("profesional_id",id);
-await supabaseClient.from("ordenes").delete().eq("profesional_id",id);
-await supabaseClient.from("fichas_clinicas").delete().eq("profesional_id",id);
+await supabaseClient.from("Ã³rdenes").delete().eq("profesional_id",id);
+await supabaseClient.from("fichas_clÃ­nicas").delete().eq("profesional_id",id);
 await supabaseClient.from("profesionales").delete().eq("id",id);
 }
 
-mostrarOk("Profesionales rechazados eliminados/ocultados correctamente.");
+mostrarOk("ProfesiÃ³nales rechazados eliminados/ocultados correctamente.");
 await cargarDashboard();
 
 }catch(error){
@@ -1881,12 +1883,12 @@ mostrarError("Error al eliminar profesionales rechazados: " + error.message);
 }
 
 async function eliminarCompraOrden(id){
-const confirmar=confirm("Eliminar esta compra/venta de ordenes? Esto quitara el registro del contador de ventas.");
+const confirmar=confirm("Eliminar esta compra/venta de Ã³rdenes? Esto quitara el registro del contador de ventas.");
 if(!confirmar) return;
 
 try{
 const {error}=await supabaseClient
-.from("compras_ordenes")
+.from("compras_Ã³rdenes")
 .delete()
 .eq("id",id);
 
@@ -1951,7 +1953,7 @@ mensaje="Resetear TODAS las ventas registradas?";
 const texto=prompt(mensaje + "\\n\\nPara confirmar escribe: RESETEAR");
 
 if(texto !== "RESETEAR"){
-mostrarError("Accion cancelada. No se escribio la frase de confirmacion.");
+mostrarError("AcciÃ³n cancelada. No se escribio la frase de confirmacion.");
 return;
 }
 
@@ -1975,17 +1977,17 @@ console.warn("No se pudo resetear " + nombreTabla, res.error);
 /*
 Reseteo real:
 No eliminamos filas, dejamos los montos en 0. Asi el contador queda en cero aunque la fila siga existiendo.
-Esto cubre ventas de pacientes, compras profesionales, pagos MNBE, ordenes y resumen administrativo.
+Esto cubre ventas de pacientes, compras profesionales, pagos MNBE, Ã³rdenes y resumen administrativo.
 */
 await intentar("solicitudes_pacientes",{monto:0});
-await intentar("compras_ordenes",{monto:0});
+await intentar("compras_Ã³rdenes",{monto:0});
 await intentar("pagos_mnbe",{monto:0});
-await intentar("ordenes",{monto:0, valor:0});
+await intentar("Ã³rdenes",{monto:0, valor:0});
 await intentar("solicitudes",{monto:0, valor:0});
 
 /* Si alguna tabla no acepta valor/monto juntos, intentamos columnas por separado */
-await intentar("ordenes",{monto:0});
-await intentar("ordenes",{valor:0});
+await intentar("Ã³rdenes",{monto:0});
+await intentar("Ã³rdenes",{valor:0});
 await intentar("solicitudes",{monto:0});
 await intentar("solicitudes",{valor:0});
 
@@ -2018,11 +2020,11 @@ resetearTodasLasVentas();
 
 function exportarSolicitudesMedicasExcel(){
 if(!solicitudesMedicasGlobal || solicitudesMedicasGlobal.length===0){
-alert("No hay solicitudes medicas para exportar.");
+alert("No hay solicitudes mÃ©dicas para exportar.");
 return;
 }
 
-let csv="Codigo,Origen,Paciente,RUT,Correo,Examenes,Motivo,Fecha,Estado,PDF\n";
+let csv="CÃ³digo,Origen,Paciente,RUT,Correo,ExÃ¡menes,Motivo,Fecha,Estado,PDF\n";
 
 solicitudesMedicasGlobal.forEach(s=>{
 csv += `"${limpiarCSV(s._codigo || "-")}",`;
@@ -2030,7 +2032,7 @@ csv += `"${limpiarCSV(s._origen || "-")}",`;
 csv += `"${limpiarCSV(s.nombre_paciente || "-")}",`;
 csv += `"${limpiarCSV(s.rut_paciente || "-")}",`;
 csv += `"${limpiarCSV(s.correo_paciente || "-")}",`;
-csv += `"${limpiarCSV(s._examenes || "-")}",`;
+csv += `"${limpiarCSV(s._exÃ¡menes || "-")}",`;
 csv += `"${limpiarCSV(s.motivo || "-")}",`;
 csv += `"${limpiarCSV(s.created_at ? new Date(s.created_at).toLocaleDateString("es-CL") : "-")}",`;
 csv += `"${limpiarCSV(s.estado || "pendiente")}",`;
@@ -2047,10 +2049,10 @@ alert("No hay pagos MNBE para exportar.");
 return;
 }
 
-let csv="Fecha,Profesional,Email,Comprobante / Pago,Monto,Estado\n";
+let csv="Fecha,ProfesiÃ³nal,Email,Comprobante / Pago,Monto,Estado\n";
 
 pagosMNBEGlobal.forEach(p=>{
-const profesional=obtenerProfesionalPorId(p.profesional_id);
+const profesional=obtenerProfesiÃ³nalPorId(p.profesional_id);
 csv += `"${limpiarCSV(p.created_at ? new Date(p.created_at).toLocaleDateString("es-CL") : "-" )}",`;
 csv += `"${limpiarCSV(p.nombre_profesional || (profesional ? profesional.nombre : "-"))}",`;
 csv += `"${limpiarCSV(p.email || (profesional ? profesional.email : "-"))}",`;
@@ -2068,21 +2070,21 @@ alert("No hay compras para exportar.");
 return;
 }
 
-let csv="Fecha,Profesional,Email,Plan,Cantidad Ordenes,Monto,Comprobante,Estado\n";
+let csv="Fecha,ProfesiÃ³nal,Email,Plan,Cantidad Ãrdenes,Monto,Comprobante,Estado\n";
 
 comprasGlobal.forEach(c=>{
-const profesional=obtenerProfesionalPorId(c.profesional_id);
+const profesional=obtenerProfesiÃ³nalPorId(c.profesional_id);
 csv += `"${limpiarCSV(c.created_at ? new Date(c.created_at).toLocaleDateString("es-CL") : "-")}",`;
 csv += `"${limpiarCSV(profesional ? profesional.nombre : "-")}",`;
 csv += `"${limpiarCSV(c.profesional_email || "-")}",`;
 csv += `"${limpiarCSV(c.plan || "-")}",`;
-csv += `"${limpiarCSV(c.cantidad_ordenes || 0)}",`;
+csv += `"${limpiarCSV(c.cantidad_Ã³rdenes || 0)}",`;
 csv += `"${limpiarCSV(c.monto || 0)}",`;
 csv += `"${limpiarCSV(c.comprobante || "-")}",`;
 csv += `"${limpiarCSV(c.estado || "pendiente")}"\n`;
 });
 
-descargarCSV(csv,"compras_ordenes_deltaf.csv");
+descargarCSV(csv,"compras_Ã³rdenes_deltaf.csv");
 }
 
 function exportarPacientesExcel(){
@@ -2091,7 +2093,7 @@ alert("No hay solicitudes de pacientes para exportar.");
 return;
 }
 
-let csv="Fecha,Paciente,RUT,Correo,Telefono,Examenes,Motivo,Comprobante / Pago,Monto,Estado\n";
+let csv="Fecha,Paciente,RUT,Correo,TelÃ©fono,ExÃ¡menes,Motivo,Comprobante / Pago,Monto,Estado\n";
 
 solicitudesPacientesGlobal.forEach(s=>{
 csv += `"${limpiarCSV(s.created_at ? new Date(s.created_at).toLocaleDateString("es-CL") : "-")}",`;
@@ -2099,7 +2101,7 @@ csv += `"${limpiarCSV(s.nombre_paciente || "-")}",`;
 csv += `"${limpiarCSV(s.rut_paciente || "-")}",`;
 csv += `"${limpiarCSV(s.correo_paciente || "-")}",`;
 csv += `"${limpiarCSV(s.telefono_paciente || "-")}",`;
-csv += `"${limpiarCSV(s.examenes_solicitados || "-")}",`;
+csv += `"${limpiarCSV(s.exÃ¡menes_solicitados || "-")}",`;
 csv += `"${limpiarCSV(s.motivo || "-")}",`;
 csv += `"${limpiarCSV(s.comprobante || "-")}",`;
 csv += `"${limpiarCSV(s.monto || 0)}",`;
@@ -2115,14 +2117,14 @@ alert("No hay datos para exportar.");
 return;
 }
 
-let csv="Fecha,Paciente,RUT,Profesional,Examenes,Monto,Estado,Comprobante / Pago\n";
+let csv="Fecha,Paciente,RUT,ProfesiÃ³nal,ExÃ¡menes,Monto,Estado,Comprobante / Pago\n";
 
 solicitudesGlobal.forEach(s=>{
 csv += `"${limpiarCSV(s.created_at ? new Date(s.created_at).toLocaleDateString("es-CL") : "-")}",`;
 csv += `"${limpiarCSV(s.paciente_nombre || s.nombre_paciente || "-")}",`;
 csv += `"${limpiarCSV(s.paciente_rut || s.rut_paciente || "-")}",`;
 csv += `"${limpiarCSV(s.profesional_nombre || s.nombre_profesional || "-")}",`;
-csv += `"${limpiarCSV(s.examenes || s.examen_solicitado || "-")}",`;
+csv += `"${limpiarCSV(s.exÃ¡menes || s.examen_solicitado || "-")}",`;
 csv += `"${limpiarCSV(s.monto || s.valor || 0)}",`;
 csv += `"${limpiarCSV(s.estado || "Pendiente")}",`;
 csv += `"${limpiarCSV(s.codigo_transbank || s.codigo_pago || "-")}"\n`;
@@ -2161,14 +2163,14 @@ function generarRegistroDiploma(){
 function limpiarFormularioDiploma(){
   document.getElementById("dip_nombre").value="";
   document.getElementById("dip_identidad").value="";
-  document.getElementById("dip_tipo_documento").value="Titulo Profesional";
+  document.getElementById("dip_tipo_documento").value="Titulo ProfesiÃ³nal";
   document.getElementById("dip_descriptor").value="Institucional Privado";
   document.getElementById("dip_programa").value="Medicina Naturopatica";
   document.getElementById("dip_titulo_otorgado").value="Naturopata";
   document.getElementById("dip_fecha").value=fechaHoyChile();
   document.getElementById("dip_cve").value="";
   document.getElementById("dip_registro").value="";
-  document.getElementById("dip_observaciones").value="";
+  document.getElementById("dip_observaciÃ³nes").value="";
   document.getElementById("resultadoDiploma").innerHTML="";
 }
 
@@ -2221,7 +2223,7 @@ async function generarPdfDiploma(datos){
   doc.setTextColor(gris[0],gris[1],gris[2]);
   doc.setFont("times","normal");
   doc.setFontSize(13);
-  doc.text("El Instituto de Formacion Clinica Delta", W/2, 67, {align:"center"});
+  doc.text("El Instituto de FormaciÃ³n ClÃ­nica Delta", W/2, 67, {align:"center"});
   doc.text("confiere el presente", W/2, 76, {align:"center"});
 
   doc.setTextColor(verde[0],verde[1],verde[2]);
@@ -2272,18 +2274,18 @@ async function generarPdfDiploma(datos){
   doc.setTextColor(50,50,50);
   doc.setFont("times","normal");
   doc.setFontSize(9);
-  doc.text("Fecha de emision: " + datos.fecha_legible, 25, 183);
+  doc.text("Fecha de emisiÃ³n: " + datos.fecha_legible, 25, 183);
   doc.text("Registro Institucional: " + datos.registro_institucional, 25, 190);
-  doc.text("Firmado electronicamente", 25, 197);
+  doc.text("Firmado electrÃ³nicamente", 25, 197);
   doc.text("CVE: " + datos.cve, 25, 202);
 
   doc.setDrawColor(90,90,90);
   doc.line(120,193,190,193);
   doc.setFont("times","bold");
   doc.setFontSize(10);
-  doc.text("Representante y Director Academico",155,199,{align:"center"});
+  doc.text("Representante y Director AcadÃ©mico",155,199,{align:"center"});
 
-  const nota = "Este titulo corresponde a una certificacion otorgada por una institucion privada de formacion. No constituye un grado academico ni un titulo profesional oficial reconocido por el Estado de Chile. El ejercicio profesional se rige por la normativa sanitaria vigente, incluyendo los requisitos que establezca la autoridad competente.";
+  const nota = "Este titulo corresponde a una certificacion otorgada por una institucion privada de formacion. No constituye un grado acadÃ©mico ni un titulo profesional oficial reconocido por el Estado de Chile. El ejercicio profesional se rige por la normativa sanitaria vigente, incluyendo los requisitos que establezca la autoridad competente.";
   doc.setFont("times","normal");
   doc.setFontSize(6.2);
   doc.setTextColor(100,100,100);
@@ -2301,7 +2303,7 @@ async function generarPdfDiploma(datos){
   };
 }
 
-async function llamarRegistroAcademico(payload){
+async function llamarRegistroAcadÃ©mico(payload){
   const response = await fetch(REGISTRO_ACADEMICO_FUNCTION_URL, {
     method:"POST",
     headers:{
@@ -2315,7 +2317,7 @@ async function llamarRegistroAcademico(payload){
   const data = await response.json().catch(()=>({}));
 
   if(!response.ok || !data.success){
-    throw new Error(data.error || "Error al guardar el documento en Registro Academico.");
+    throw new Error(data.error || "Error al guardar el documento en Registro AcadÃ©mico.");
   }
 
   return data;
@@ -2327,14 +2329,14 @@ async function generarYGuardarDiploma(){
   const datos={
     nombre: obtenerValorDiploma("dip_nombre"),
     identidad: obtenerValorDiploma("dip_identidad"),
-    tipo_documento: obtenerValorDiploma("dip_tipo_documento") || "Titulo Profesional",
+    tipo_documento: obtenerValorDiploma("dip_tipo_documento") || "Titulo ProfesiÃ³nal",
     descriptor: obtenerValorDiploma("dip_descriptor"),
     programa: obtenerValorDiploma("dip_programa") || "Medicina Naturopatica",
     titulo_otorgado: obtenerValorDiploma("dip_titulo_otorgado") || "Naturopata",
-    fecha_emision: obtenerValorDiploma("dip_fecha") || fechaHoyChile(),
+    fecha_emisiÃ³n: obtenerValorDiploma("dip_fecha") || fechaHoyChile(),
     cve: obtenerValorDiploma("dip_cve"),
     registro_institucional: obtenerValorDiploma("dip_registro") || generarRegistroDiploma(),
-    observaciones: obtenerValorDiploma("dip_observaciones"),
+    observaciÃ³nes: obtenerValorDiploma("dip_observaciÃ³nes"),
     estado:"Emitido"
   };
 
@@ -2342,11 +2344,11 @@ async function generarYGuardarDiploma(){
   if(!datos.identidad){ mostrarError("Debes ingresar el numero de identidad, RUT o pasaporte."); return; }
   if(!datos.cve){ mostrarError("Debes ingresar manualmente el CVE de la Firma Electronica Avanzada."); return; }
 
-  datos.fecha_legible = new Date(datos.fecha_emision + "T12:00:00").toLocaleDateString("es-CL");
+  datos.fecha_legible = new Date(datos.fecha_emisiÃ³n + "T12:00:00").toLocaleDateString("es-CL");
   document.getElementById("dip_registro").value = datos.registro_institucional;
 
   try{
-    mostrarInfo("Generando diploma PDF y guardando en Registro Academico mediante Edge Function...");
+    mostrarInfo("Generando diploma PDF y guardando en Registro AcadÃ©mico mediante Edge Function...");
 
     const pdf = await generarPdfDiploma(datos);
 
@@ -2357,15 +2359,15 @@ async function generarYGuardarDiploma(){
       descriptor_institucional: datos.descriptor,
       programa: datos.programa,
       titulo_otorgado: datos.titulo_otorgado,
-      fecha_emision: datos.fecha_emision,
+      fecha_emisiÃ³n: datos.fecha_emisiÃ³n,
       cve: datos.cve,
       registro_institucional: datos.registro_institucional,
       pdf_base64: pdf.base64,
       filename: pdf.filename,
-      observaciones: datos.observaciones
+      observaciÃ³nes: datos.observaciÃ³nes
     };
 
-    const resultado = await llamarRegistroAcademico(payload);
+    const resultado = await llamarRegistroAcadÃ©mico(payload);
     const pdfUrl = resultado.pdf_url;
 
     document.getElementById("resultadoDiploma").innerHTML = `
@@ -2376,7 +2378,7 @@ async function generarYGuardarDiploma(){
       <a href="${pdfUrl}" target="_blank">Descargar PDF</a>
     </div>`;
 
-    mostrarOk("Documento generado y guardado correctamente en Registro Academico.");
+    mostrarOk("Documento generado y guardado correctamente en Registro AcadÃ©mico.");
     await cargarDiplomasSeguro(false);
 
   }catch(error){
@@ -2419,7 +2421,7 @@ function pintarTablaDiplomas(diplomas){
     const nombre = d.nombre_completo || d.nombre_estudiante || "-";
     const tr=document.createElement("tr");
     tr.innerHTML=`
-      <td>${d.fecha_emision ? new Date(d.fecha_emision + "T12:00:00").toLocaleDateString("es-CL") : formatearFecha(d.created_at)}</td>
+      <td>${d.fecha_emisiÃ³n ? new Date(d.fecha_emisiÃ³n + "T12:00:00").toLocaleDateString("es-CL") : formatearFecha(d.created_at)}</td>
       <td>${limpiarTexto(nombre)}</td>
       <td>${limpiarTexto(d.numero_identidad || "-")}</td>
       <td>${limpiarTexto(d.tipo_documento || "-")}</td>
