@@ -406,6 +406,7 @@ const SUPABASE_KEY = "sb_publishable_w8xrtEanlJJAc5FYvk1X5A_fKu9vb5d";
 const FUNCTION_EMAIL_URL = "https://goxkmtnmfessroveanje.supabase.co/functions/v1/resend-email";
 const STORAGE_BUCKET = "ordenes";
 const DIPLOMAS_BUCKET = "diplomas";
+const REGISTRO_ACADEMICO_FUNCTION_URL = SUPABASE_URL + "/functions/v1/clever-api";
 
 const MEDICO_NOMBRE = "Dra. Carolina Dominguez";
 const MEDICO_RUT = "RUT Medico: 24.891.056-9";
@@ -2269,16 +2270,19 @@ async function generarPdfDiploma(datos){
   doc.setLineWidth(0.25);
   doc.rect(14,14,W-28,H-28);
 
+  // Encabezado institucional
   doc.setTextColor(verde[0],verde[1],verde[2]);
   doc.setFont("times","bold");
   doc.setFontSize(16);
   doc.text("INSTITUTO DE FORMACION CLINICA", W/2, 28, {align:"center"});
   doc.setFontSize(32);
   doc.text("DELTA", W/2, 43, {align:"center"});
+
   doc.setFontSize(9);
   doc.setTextColor(dorado[0],dorado[1],dorado[2]);
   doc.text("SCIENTIA  -  INTEGRITAS  -  HUMANITAS", W/2, 51, {align:"center"});
 
+  // Sello seco simulado
   doc.setTextColor(218,212,200);
   doc.setDrawColor(218,212,200);
   doc.setLineWidth(0.4);
@@ -2290,6 +2294,7 @@ async function generarPdfDiploma(datos){
   doc.setFontSize(7);
   doc.text("SELLO INSTITUCIONAL",240,151,{align:"center"});
 
+  // Cuerpo del diploma
   doc.setTextColor(gris[0],gris[1],gris[2]);
   doc.setFont("times","normal");
   doc.setFontSize(13);
@@ -2340,6 +2345,7 @@ async function generarPdfDiploma(datos){
   doc.setTextColor(verde[0],verde[1],verde[2]);
   doc.text(datos.titulo_otorgado.toUpperCase(), W/2, 184, {align:"center"});
 
+  // Registro y firma electronica
   doc.setTextColor(50,50,50);
   doc.setFont("times","normal");
   doc.setFontSize(9);
@@ -2362,16 +2368,34 @@ async function generarPdfDiploma(datos){
   doc.text(lineas, W/2, 204, {align:"center"});
 
   const filename = (datos.registro_institucional || "diploma") + ".pdf";
-  return { blob: doc.output("blob"), filename: filename };
+  const dataUri = doc.output("datauristring");
+  const base64 = obtenerBase64DeDataUri(dataUri);
+
+  return {
+    blob: doc.output("blob"),
+    base64: base64,
+    filename: filename
+  };
 }
 
-async function subirDiplomaStorage(pdfBlob, filename){
-  const {error}=await supabaseClient.storage
-    .from(DIPLOMAS_BUCKET)
-    .upload(filename, pdfBlob, {contentType:"application/pdf", upsert:true});
-  if(error) throw error;
-  const {data}=supabaseClient.storage.from(DIPLOMAS_BUCKET).getPublicUrl(filename);
-  return data.publicUrl;
+async function llamarRegistroAcademico(payload){
+  const response = await fetch(REGISTRO_ACADEMICO_FUNCTION_URL, {
+    method:"POST",
+    headers:{
+      "Content-Type":"application/json",
+      "Authorization":"Bearer " + SUPABASE_KEY,
+      "apikey":SUPABASE_KEY
+    },
+    body:JSON.stringify(payload)
+  });
+
+  const data = await response.json().catch(()=>({}));
+
+  if(!response.ok || !data.success){
+    throw new Error(data.error || "Error al guardar el documento en Registro Academico.");
+  }
+
+  return data;
 }
 
 async function generarYGuardarDiploma(){
@@ -2388,7 +2412,7 @@ async function generarYGuardarDiploma(){
     cve: obtenerValorDiploma("dip_cve"),
     registro_institucional: obtenerValorDiploma("dip_registro") || generarRegistroDiploma(),
     observaciones: obtenerValorDiploma("dip_observaciones"),
-    estado:"emitido"
+    estado:"Emitido"
   };
 
   if(!datos.nombre){ mostrarError("Debes ingresar el nombre completo del estudiante."); return; }
@@ -2399,42 +2423,42 @@ async function generarYGuardarDiploma(){
   document.getElementById("dip_registro").value = datos.registro_institucional;
 
   try{
-    mostrarInfo("Generando diploma PDF y guardando en Registro Academico...");
+    mostrarInfo("Generando diploma PDF y guardando en Registro Academico mediante Edge Function...");
 
     const pdf = await generarPdfDiploma(datos);
-    const pdfUrl = await subirDiplomaStorage(pdf.blob, pdf.filename);
 
     const payload={
       nombre_completo: datos.nombre,
       numero_identidad: datos.identidad,
       tipo_documento: datos.tipo_documento,
+      descriptor_institucional: datos.descriptor,
       programa: datos.programa,
       titulo_otorgado: datos.titulo_otorgado,
       fecha_emision: datos.fecha_emision,
       cve: datos.cve,
       registro_institucional: datos.registro_institucional,
-      pdf_url: pdfUrl,
-      firmado_por: "Representante y Director Academico",
-      estado: datos.estado,
+      pdf_base64: pdf.base64,
+      filename: pdf.filename,
       observaciones: datos.observaciones
     };
 
-    const {error}=await supabaseClient.from("diplomas").insert([payload]);
-    if(error) throw error;
+    const resultado = await llamarRegistroAcademico(payload);
+    const pdfUrl = resultado.pdf_url;
 
     document.getElementById("resultadoDiploma").innerHTML = `
     <div class="success" style="display:block;">
-      <strong>Diploma generado correctamente.</strong><br>
+      <strong>Documento generado correctamente.</strong><br>
       Registro: ${limpiarTexto(datos.registro_institucional)}<br>
       CVE: ${limpiarTexto(datos.cve)}<br>
       <a href="${pdfUrl}" target="_blank">Descargar PDF</a>
     </div>`;
 
-    mostrarOk("Diploma generado y guardado correctamente.");
+    mostrarOk("Documento generado y guardado correctamente en Registro Academico.");
     await cargarDiplomasSeguro(false);
+
   }catch(error){
     console.error(error);
-    mostrarError("Error al generar diploma: " + error.message + ". Verifica que exista la tabla diplomas y el bucket diplomas en Supabase.");
+    mostrarError("Error al generar diploma: " + error.message);
   }
 }
 
