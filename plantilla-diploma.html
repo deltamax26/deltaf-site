@@ -9,242 +9,212 @@
 <title>Plantilla Diploma Delta</title>
 
 <style>
-* {
-  box-sizing: border-box;
+*{box-sizing:border-box}
+
+body{
+  margin:0;
+  background:#e8e8e8;
+  font-family:Arial,sans-serif;
+  color:#071713;
 }
 
-body {
-  margin: 0;
-  background: #e8e8e8;
-  font-family: Arial, sans-serif;
-  color: #071713;
+.panel{
+  max-width:1180px;
+  margin:18px auto;
+  background:#fff;
+  padding:18px;
+  border-radius:12px;
+  box-shadow:0 8px 24px rgba(0,0,0,.14);
 }
 
-.panel {
-  max-width: 1180px;
-  margin: 18px auto;
-  background: #ffffff;
-  padding: 18px;
-  border-radius: 12px;
-  box-shadow: 0 8px 24px rgba(0,0,0,.14);
+.panel h2{
+  margin:0 0 12px;
+  color:#00351f;
 }
 
-.panel h2 {
-  margin: 0 0 12px;
-  color: #00351f;
+.grid{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:10px;
 }
 
-.grid {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 10px;
+.campo{
+  display:flex;
+  flex-direction:column;
+  gap:5px;
+  font-size:13px;
 }
 
-.campo {
-  display: flex;
-  flex-direction: column;
-  gap: 5px;
-  font-size: 13px;
-}
-
-.campo label {
-  font-weight: 700;
-}
+.campo label{font-weight:700}
 
 .campo input,
-.campo select {
-  width: 100%;
-  padding: 9px 10px;
-  border: 1px solid #cccccc;
-  border-radius: 8px;
-  font-size: 14px;
+.campo select{
+  width:100%;
+  padding:9px 10px;
+  border:1px solid #ccc;
+  border-radius:8px;
+  font-size:14px;
 }
 
-.acciones {
-  margin-top: 14px;
-  display: flex;
-  gap: 10px;
-  flex-wrap: wrap;
+.acciones{
+  margin-top:14px;
+  display:flex;
+  gap:10px;
+  flex-wrap:wrap;
 }
 
-button {
-  border: 0;
-  border-radius: 8px;
-  padding: 10px 14px;
-  font-weight: 700;
-  cursor: pointer;
+button{
+  border:0;
+  border-radius:8px;
+  padding:10px 14px;
+  font-weight:700;
+  cursor:pointer;
 }
 
-.btn-verde {
-  background: #00351f;
-  color: #ffffff;
+.btn-verde{background:#00351f;color:#fff}
+.btn-dorado{background:#b38428;color:#fff}
+.btn-gris{background:#eee;color:#222}
+
+.hoja-wrap{
+  width:100%;
+  overflow-x:auto;
+  padding-bottom:30px;
 }
 
-.btn-dorado {
-  background: #b38428;
-  color: #ffffff;
+.hoja{
+  position:relative;
+  width:1536px;
+  height:1024px;
+  margin:20px auto;
+  background:#f7eed8;
+  box-shadow:0 8px 28px rgba(0,0,0,.22);
+  overflow:hidden;
 }
 
-.btn-gris {
-  background: #eeeeee;
-  color: #222222;
+.fondo{
+  position:absolute;
+  inset:0;
+  width:100%;
+  height:100%;
+  object-fit:cover;
 }
 
-.hoja-wrap {
-  width: 100%;
-  overflow-x: auto;
-  padding-bottom: 30px;
+.texto{
+  position:absolute;
+  z-index:2;
+  text-align:center;
+  color:#071713;
+  font-family:Georgia,"Times New Roman",serif;
+  outline:none;
+  line-height:1.08;
+  white-space:normal;
 }
 
-.hoja {
-  position: relative;
-  width: 1536px;
-  height: 1024px;
-  margin: 20px auto;
-  background: #f7eed8;
-  box-shadow: 0 8px 28px rgba(0,0,0,.22);
-  overflow: hidden;
+.texto:focus{
+  background:rgba(255,255,255,.55);
+  box-shadow:0 0 0 2px rgba(179,132,40,.45);
+  border-radius:4px;
 }
 
-.fondo {
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
+/* AJUSTADO AL FONDO DEFINITIVO img/diploma-base.png */
+
+/* DIPLOMA / CURSO / CERTIFICADO / TÃTULO PROFESIONAL */
+#tituloDocumento{
+  left:335px;
+  top:380px;
+  width:865px;
+  font-size:58px;
+  font-weight:700;
+  letter-spacing:8px;
+  color:#00351f;
+  text-transform:uppercase;
 }
 
-.texto {
-  position: absolute;
-  z-index: 2;
-  text-align: center;
-  color: #071713;
-  font-family: Georgia, "Times New Roman", serif;
-  outline: none;
-  line-height: 1.1;
-  white-space: normal;
-}
-
-.texto:focus {
-  background: rgba(255,255,255,.55);
-  box-shadow: 0 0 0 2px rgba(179,132,40,.45);
-  border-radius: 4px;
-}
-
-/* Campo principal: TÃTULO PROFESIONAL / DIPLOMA / CURSO */
-#tituloDocumento {
-  left: 315px;
-  top: 405px;
-  width: 905px;
-  font-size: 58px;
-  font-weight: 700;
-  letter-spacing: 8px;
-  color: #00351f;
-  text-transform: uppercase;
-}
-
-/* Nombre del estudiante */
-#nombreAlumno {
-  left: 360px;
-  top: 575px;
-  width: 820px;
-  font-family: "Snell Roundhand", "Zapfino", "Brush Script MT", cursive;
-  font-size: 62px;
-  color: #050505;
+/* Nombre completo */
+#nombreAlumno{
+  left:350px;
+  top:515px;
+  width:835px;
+  font-family:"Snell Roundhand","Zapfino","Brush Script MT",cursive;
+  font-size:62px;
+  color:#050505;
 }
 
 /* CÃ©dula / RUT */
-#rutAlumno {
-  left: 565px;
-  top: 635px;
-  width: 410px;
-  font-size: 24px;
+#rutAlumno{
+  left:640px;
+  top:615px;
+  width:300px;
+  font-size:24px;
 }
 
-/* Nombre del programa */
-#programa {
-  left: 420px;
-  top: 725px;
-  width: 700px;
-  font-size: 30px;
-  font-weight: 700;
+/* Programa / carrera / curso / diplomado */
+#programa{
+  left:410px;
+  top:705px;
+  width:720px;
+  font-size:29px;
+  font-weight:700;
 }
 
 /* Documento otorgado */
-#documentoOtorgado {
-  left: 565px;
-  top: 775px;
-  width: 430px;
-  font-size: 25px;
-  font-weight: 700;
+#documentoOtorgado{
+  left:585px;
+  top:758px;
+  width:420px;
+  font-size:25px;
+  font-weight:700;
 }
 
 /* Registro institucional */
-#registro {
-  left: 780px;
-  top: 842px;
-  width: 270px;
-  font-size: 22px;
-  text-align: left;
+#registro{
+  left:780px;
+  top:838px;
+  width:270px;
+  font-size:22px;
+  text-align:left;
 }
 
 /* Fecha completa */
-#fecha {
-  left: 690px;
-  top: 895px;
-  width: 360px;
-  font-size: 22px;
-  text-align: left;
+#fecha{
+  left:665px;
+  top:890px;
+  width:380px;
+  font-size:22px;
+  text-align:left;
 }
 
-/* CÃ³digo FEA / CVE */
-#cveFea {
-  left: 1130px;
-  top: 900px;
-  width: 310px;
-  font-size: 21px;
-  font-weight: 700;
-  text-align: left;
+/* CVE entregado por FEA */
+#cveFea{
+  left:1180px;
+  top:902px;
+  width:290px;
+  font-size:21px;
+  font-weight:700;
+  text-align:left;
 }
 
-@media (max-width: 900px) {
-  .grid {
-    grid-template-columns: 1fr;
-  }
-
-  .hoja {
-    transform: scale(.72);
-    transform-origin: top left;
-    margin-left: 10px;
-    margin-bottom: -250px;
+@media(max-width:900px){
+  .grid{grid-template-columns:1fr}
+  .hoja{
+    transform:scale(.72);
+    transform-origin:top left;
+    margin-left:10px;
+    margin-bottom:-250px;
   }
 }
 
-@media print {
-  body {
-    background: #ffffff;
+@media print{
+  body{background:#fff}
+  .panel{display:none}
+  .hoja-wrap{padding:0;overflow:visible}
+  .hoja{
+    margin:0;
+    width:297mm;
+    height:210mm;
+    box-shadow:none;
   }
-
-  .panel {
-    display: none;
-  }
-
-  .hoja-wrap {
-    padding: 0;
-    overflow: visible;
-  }
-
-  .hoja {
-    margin: 0;
-    width: 297mm;
-    height: 210mm;
-    box-shadow: none;
-  }
-
-  @page {
-    size: A4 landscape;
-    margin: 0;
-  }
+  @page{size:A4 landscape;margin:0}
 }
 </style>
 </head>
@@ -312,7 +282,7 @@ button {
 
 <div class="hoja-wrap">
   <main class="hoja">
-    <img class="fondo" src="img/diploma-base.png?v=20260628-01" alt="Diploma base Delta">
+    <img class="fondo" src="img/diploma-base.png?v=20260628-02" alt="Diploma base Delta">
 
     <div id="tituloDocumento" class="texto" contenteditable="true">DIPLOMA</div>
     <div id="nombreAlumno" class="texto" contenteditable="true">Nombre Completo del Estudiante</div>
@@ -326,33 +296,41 @@ button {
 </div>
 
 <script>
-function actualizarDiploma() {
-  document.getElementById("tituloDocumento").innerText =
-    document.getElementById("inputTituloDocumento").value;
-
-  document.getElementById("nombreAlumno").innerText =
-    document.getElementById("inputNombreAlumno").value;
-
-  document.getElementById("rutAlumno").innerText =
-    document.getElementById("inputRutAlumno").value;
-
-  document.getElementById("programa").innerText =
-    document.getElementById("inputPrograma").value;
-
-  document.getElementById("documentoOtorgado").innerText =
-    document.getElementById("inputDocumentoOtorgado").value;
-
-  document.getElementById("registro").innerText =
-    document.getElementById("inputRegistro").value;
-
-  document.getElementById("fecha").innerText =
-    document.getElementById("inputFecha").value;
-
-  document.getElementById("cveFea").innerText =
-    document.getElementById("inputCveFea").value;
+function reducirFuenteSiNecesario(elemento, maxSize, minSize){
+  elemento.style.fontSize = maxSize + "px";
+  let size = maxSize;
+  while(elemento.scrollWidth > elemento.clientWidth && size > minSize){
+    size -= 2;
+    elemento.style.fontSize = size + "px";
+  }
 }
 
-function limpiar() {
+function actualizarDiploma(){
+  const titulo = document.getElementById("inputTituloDocumento").value;
+  const nombre = document.getElementById("inputNombreAlumno").value;
+  const rut = document.getElementById("inputRutAlumno").value;
+  const programa = document.getElementById("inputPrograma").value;
+  const documento = document.getElementById("inputDocumentoOtorgado").value;
+  const registro = document.getElementById("inputRegistro").value;
+  const fecha = document.getElementById("inputFecha").value;
+  const cve = document.getElementById("inputCveFea").value;
+
+  document.getElementById("tituloDocumento").innerText = titulo;
+  document.getElementById("nombreAlumno").innerText = nombre;
+  document.getElementById("rutAlumno").innerText = rut;
+  document.getElementById("programa").innerText = programa;
+  document.getElementById("documentoOtorgado").innerText = documento;
+  document.getElementById("registro").innerText = registro;
+  document.getElementById("fecha").innerText = fecha;
+  document.getElementById("cveFea").innerText = cve;
+
+  reducirFuenteSiNecesario(document.getElementById("tituloDocumento"), 58, 42);
+  reducirFuenteSiNecesario(document.getElementById("nombreAlumno"), 62, 44);
+  reducirFuenteSiNecesario(document.getElementById("programa"), 29, 20);
+  reducirFuenteSiNecesario(document.getElementById("documentoOtorgado"), 25, 18);
+}
+
+function limpiar(){
   document.getElementById("inputNombreAlumno").value = "";
   document.getElementById("inputRutAlumno").value = "";
   document.getElementById("inputPrograma").value = "";
